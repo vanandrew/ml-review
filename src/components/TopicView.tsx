@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { Topic, UserProgress, TopicProgress, QuizScore } from '../types';
+import { useState, useMemo } from 'react';
+import { Topic, TopicProgress, QuizScore } from '../types';
 import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp } from 'lucide-react';
 import Quiz from './Quiz';
 import BiasVarianceDemo from './BiasVarianceDemo';
+import { getQuizQuestionsForTopic } from '../data/quizQuestions';
+import { selectRandomQuestions } from '../utils/quizUtils';
 
 interface TopicViewProps {
   topic: Topic;
@@ -14,6 +16,17 @@ export default function TopicView({ topic, userProgress, onProgressUpdate }: Top
   const [activeTab, setActiveTab] = useState<'theory' | 'code' | 'questions' | 'demo' | 'quiz'>('theory');
   const [showQuiz, setShowQuiz] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
+  
+  // Get full question pool for this topic
+  const questionPool = useMemo(() => {
+    // Try to get from separate question files first
+    const poolQuestions = getQuizQuestionsForTopic(topic.id);
+    // Fall back to questions in topic definition if no pool exists
+    return poolQuestions.length > 0 ? poolQuestions : (topic.quizQuestions || []);
+  }, [topic.id, topic.quizQuestions]);
+
+  // Select random questions when quiz starts (regenerate on each quiz start)
+  const [quizQuestions, setQuizQuestions] = useState(() => selectRandomQuestions(questionPool, 10));
 
   const updateStatus = (status: 'not_started' | 'reviewing' | 'mastered') => {
     const newProgress: TopicProgress = {
@@ -39,12 +52,18 @@ export default function TopicView({ topic, userProgress, onProgressUpdate }: Top
     setShowQuiz(false);
   };
 
+  const handleStartQuiz = () => {
+    // Generate new random questions each time quiz starts
+    setQuizQuestions(selectRandomQuestions(questionPool, 10));
+    setShowQuiz(true);
+  };
+
   const tabs = [
     { id: 'theory', label: 'Theory', icon: BookOpen, count: null },
     { id: 'code', label: 'Code Examples', icon: Code, count: topic.codeExamples?.length || 0 },
     { id: 'questions', label: 'Interview Questions', icon: HelpCircle, count: topic.interviewQuestions?.length || 0 },
     ...(topic.hasInteractiveDemo ? [{ id: 'demo', label: 'Interactive Demo', icon: Play, count: null }] : []),
-    { id: 'quiz', label: 'Practice Quiz', icon: Brain, count: topic.quizQuestions?.length || 0 }
+    { id: 'quiz', label: 'Practice Quiz', icon: Brain, count: questionPool.length || 0 }
   ];
 
   return (
@@ -218,18 +237,21 @@ export default function TopicView({ topic, userProgress, onProgressUpdate }: Top
 
         {activeTab === 'quiz' && (
           <div>
-            {showQuiz && topic.quizQuestions && topic.quizQuestions.length > 0 ? (
+            {showQuiz && questionPool.length > 0 ? (
               <Quiz
-                questions={topic.quizQuestions}
+                questions={quizQuestions}
                 onComplete={handleQuizComplete}
                 onClose={handleQuizClose}
               />
             ) : (
               <div className="text-center py-8">
-                {topic.quizQuestions && topic.quizQuestions.length > 0 ? (
+                {questionPool.length > 0 ? (
                   <div>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Test your knowledge with {topic.quizQuestions.length} practice questions
+                    <p className="text-gray-600 dark:text-gray-400 mb-2">
+                      Test your knowledge with a quiz from a pool of {questionPool.length} questions
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mb-4">
+                      Each quiz randomly selects {Math.min(10, questionPool.length)} questions
                     </p>
                     {userProgress?.quizScores && userProgress.quizScores.length > 0 && (
                       <div className="mb-6">
@@ -251,7 +273,7 @@ export default function TopicView({ topic, userProgress, onProgressUpdate }: Top
                       </div>
                     )}
                     <button
-                      onClick={() => setShowQuiz(true)}
+                      onClick={handleStartQuiz}
                       className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
                       Start Quiz

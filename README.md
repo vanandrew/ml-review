@@ -1,4 +1,30 @@
-# ML Interview Prep
+# ML## Features
+
+- 📚 **Comprehensive Content**: 52 topics covering foundations to advanced ML concepts
+- 💬 **342+ Interview Questions**: Detailed 3-5 paragraph answers for each question
+- 🧪 **Practice Quizzes**: Random 10-question quizzes from large question pools (20+ questions per topic)
+- 💻 **Code Examples**: Python implementations for key concepts
+- 📈 **Progress Tracking**: Mark topics as reviewing or mastered, with localStorage persistence
+- 🎮 **Interactive Demo**: Bias-Variance Tradeoff visualization
+- 🎲 **Quiz Variety**: Different random questions each time you take a quiz
+- 🌙 **Dark/Light Theme**: Toggle between themes for comfortable learning
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- 🔍 **Category Navigation**: Organized into 8 major ML categories
+- 💾 **Auto-Save**: Progress automatically saved to browser localStorage
+
+## Quiz System
+
+The app features a comprehensive quiz system with:
+- **Large question pools** (20-25 questions per topic)
+- **Random selection** of 10 questions per quiz
+- **Fresh experience** every time you retake a quiz
+- **Progress tracking** with score history
+
+**Current Status**: 7 of 52 topics have complete quiz pools (13%)
+- ✅ All Foundations topics (7/7) - **COMPLETE**
+- ⏸️ Classical ML, Neural Networks, Computer Vision, NLP, Transformers, Advanced Topics, ML Systems - **IN PROGRESS**
+
+See [QUIZ_TODO.md](QUIZ_TODO.md) for contribution opportunities!rep
 
 A comprehensive platform to master machine learning concepts for technical interviews, built with React and TypeScript.
 

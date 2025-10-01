@@ -12,6 +12,7 @@ export const categories: Category[] = [
       'overfitting-underfitting',
       'regularization',
       'cross-validation',
+      'hyperparameter-tuning',
       'evaluation-metrics'
     ]
   },

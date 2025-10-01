@@ -1167,5 +1167,288 @@ print("\\nRMSE is more sensitive to outliers due to squaring errors!")`,
         explanation: 'PR-AUC is best for highly imbalanced datasets. Accuracy would be 99.9% by predicting everything as non-fraud. ROC-AUC can be overly optimistic due to the large number of true negatives. PR-AUC focuses on positive class performance.'
       }
     ]
+  },
+  'hyperparameter-tuning': {
+    id: 'hyperparameter-tuning',
+    title: 'Hyperparameter Tuning',
+    category: 'foundations',
+    description: 'Techniques and strategies for optimizing model hyperparameters to improve performance.',
+    content: `
+      <h2>Overview</h2>
+      <p>Hyperparameter tuning is the process of finding the optimal configuration of hyperparameters—settings that control the learning process but are not learned from data—to maximize model performance.</p>
+
+      <h3>Hyperparameters vs Parameters</h3>
+      <p><strong>Parameters</strong> are learned from training data (e.g., weights in neural networks, coefficients in linear regression).</p>
+      <p><strong>Hyperparameters</strong> are set before training and control the learning process (e.g., learning rate, number of trees, regularization strength).</p>
+
+      <h3>Common Hyperparameters</h3>
+      <ul>
+        <li><strong>Learning rate:</strong> Step size for gradient descent</li>
+        <li><strong>Batch size:</strong> Number of samples per gradient update</li>
+        <li><strong>Number of epochs:</strong> How many times to iterate through training data</li>
+        <li><strong>Regularization strength (α, λ):</strong> Penalty for model complexity</li>
+        <li><strong>Network architecture:</strong> Number of layers, neurons per layer</li>
+        <li><strong>Tree depth:</strong> Maximum depth for decision trees</li>
+        <li><strong>Number of estimators:</strong> Number of trees in ensemble methods</li>
+      </ul>
+
+      <h3>Tuning Strategies</h3>
+
+      <h4>1. Manual Search</h4>
+      <p>Trying different values based on intuition and domain knowledge. Simple but inefficient and requires expertise.</p>
+
+      <h4>2. Grid Search</h4>
+      <p>Exhaustively searches through a manually specified subset of hyperparameter space. Tests all combinations of specified values.</p>
+      <ul>
+        <li><strong>Pros:</strong> Comprehensive, reproducible, parallelizable</li>
+        <li><strong>Cons:</strong> Computationally expensive, curse of dimensionality, may miss optimal values between grid points</li>
+      </ul>
+
+      <h4>3. Random Search</h4>
+      <p>Samples random combinations of hyperparameters from specified distributions. Often more efficient than grid search.</p>
+      <ul>
+        <li><strong>Pros:</strong> Better coverage of hyperparameter space, more efficient for high-dimensional spaces</li>
+        <li><strong>Cons:</strong> No guarantee of finding optimal values, may need many iterations</li>
+      </ul>
+
+      <h4>4. Bayesian Optimization</h4>
+      <p>Uses probabilistic model to predict promising hyperparameter regions, focusing search on areas likely to improve performance.</p>
+      <ul>
+        <li><strong>Pros:</strong> Sample efficient, can find good solutions with fewer evaluations</li>
+        <li><strong>Cons:</strong> More complex to implement, overhead for building surrogate model</li>
+      </ul>
+
+      <h4>5. Automated Methods</h4>
+      <p>Advanced techniques like Hyperband, BOHB (Bayesian Optimization and HyperBand), and population-based training that combine multiple strategies.</p>
+
+      <h3>Best Practices</h3>
+      <ul>
+        <li><strong>Use validation set:</strong> Tune on validation data, never on test set</li>
+        <li><strong>Use cross-validation:</strong> Get more reliable estimates of performance</li>
+        <li><strong>Start coarse, then refine:</strong> Begin with wide ranges, narrow down to promising regions</li>
+        <li><strong>Log scale for learning rates:</strong> Try 0.001, 0.01, 0.1 rather than 0.01, 0.02, 0.03</li>
+        <li><strong>Prioritize important hyperparameters:</strong> Focus on those with largest impact (learning rate, regularization)</li>
+        <li><strong>Use early stopping:</strong> Save computation by stopping poor configurations early</li>
+        <li><strong>Track experiments:</strong> Record all configurations and results for analysis</li>
+      </ul>
+
+      <h3>Common Pitfalls</h3>
+      <ul>
+        <li><strong>Overfitting to validation set:</strong> Too much tuning can overfit; use separate test set for final evaluation</li>
+        <li><strong>Ignoring computational cost:</strong> Balance performance gains against training time</li>
+        <li><strong>Not considering interaction effects:</strong> Hyperparameters often interact; tune related ones together</li>
+        <li><strong>Using test set for tuning:</strong> This leaks information and inflates performance estimates</li>
+      </ul>
+
+      <h3>Tools and Libraries</h3>
+      <ul>
+        <li><strong>Scikit-learn:</strong> GridSearchCV, RandomizedSearchCV</li>
+        <li><strong>Optuna:</strong> Bayesian optimization framework</li>
+        <li><strong>Ray Tune:</strong> Scalable hyperparameter tuning library</li>
+        <li><strong>Keras Tuner:</strong> Hyperparameter tuning for neural networks</li>
+        <li><strong>Hyperopt:</strong> Distributed hyperparameter optimization</li>
+        <li><strong>Weights & Biases Sweeps:</strong> Experiment tracking with hyperparameter optimization</li>
+      </ul>
+    `,
+    codeExamples: [
+      {
+        language: 'python',
+        explanation: 'Grid Search with Cross-Validation',
+        code: `from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
+
+# Create dataset
+X, y = make_classification(n_samples=1000, n_features=20, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Define hyperparameter grid
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [5, 10, 15, None],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+# Initialize model and grid search
+rf = RandomForestClassifier(random_state=42)
+grid_search = GridSearchCV(
+    estimator=rf,
+    param_grid=param_grid,
+    cv=5,  # 5-fold cross-validation
+    scoring='accuracy',
+    n_jobs=-1,  # Use all CPU cores
+    verbose=2
+)
+
+# Perform grid search
+grid_search.fit(X_train, y_train)
+
+# Best hyperparameters and score
+print(f"Best parameters: {grid_search.best_params_}")
+print(f"Best cross-validation score: {grid_search.best_score_:.3f}")
+print(f"Test score: {grid_search.score(X_test, y_test):.3f}")
+
+# All results
+import pandas as pd
+results = pd.DataFrame(grid_search.cv_results_)
+print(results[['params', 'mean_test_score', 'std_test_score']].sort_values('mean_test_score', ascending=False).head())`
+      },
+      {
+        language: 'python',
+        explanation: 'Random Search with Cross-Validation',
+        code: `from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint, uniform
+import numpy as np
+
+# Define hyperparameter distributions
+param_distributions = {
+    'n_estimators': randint(50, 300),
+    'max_depth': [5, 10, 15, 20, None],
+    'min_samples_split': randint(2, 20),
+    'min_samples_leaf': randint(1, 10),
+    'max_features': uniform(0.1, 0.9)  # Fraction of features
+}
+
+# Initialize random search
+random_search = RandomizedSearchCV(
+    estimator=RandomForestClassifier(random_state=42),
+    param_distributions=param_distributions,
+    n_iter=50,  # Number of random combinations to try
+    cv=5,
+    scoring='accuracy',
+    n_jobs=-1,
+    random_state=42,
+    verbose=2
+)
+
+# Perform random search
+random_search.fit(X_train, y_train)
+
+print(f"Best parameters: {random_search.best_params_}")
+print(f"Best CV score: {random_search.best_score_:.3f}")
+print(f"Test score: {random_search.score(X_test, y_test):.3f}")`
+      },
+      {
+        language: 'python',
+        explanation: 'Bayesian Optimization with Optuna',
+        code: `import optuna
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+def objective(trial):
+    # Suggest hyperparameters
+    params = {
+        'n_estimators': trial.suggest_int('n_estimators', 50, 300),
+        'max_depth': trial.suggest_int('max_depth', 5, 30),
+        'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
+        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
+        'max_features': trial.suggest_float('max_features', 0.1, 1.0)
+    }
+    
+    # Create model and evaluate
+    model = RandomForestClassifier(**params, random_state=42)
+    score = cross_val_score(model, X_train, y_train, cv=5, scoring='accuracy').mean()
+    
+    return score
+
+# Create study and optimize
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=100, show_progress_bar=True)
+
+# Best results
+print(f"Best parameters: {study.best_params}")
+print(f"Best score: {study.best_value:.3f}")
+
+# Visualize optimization history
+import matplotlib.pyplot as plt
+optuna.visualization.matplotlib.plot_optimization_history(study)
+plt.show()
+
+# Feature importances
+optuna.visualization.matplotlib.plot_param_importances(study)
+plt.show()`
+      },
+      {
+        language: 'python',
+        explanation: 'Neural Network Hyperparameter Tuning',
+        code: `import tensorflow as tf
+from tensorflow import keras
+from keras_tuner import RandomSearch
+
+def build_model(hp):
+    model = keras.Sequential()
+    
+    # Tune number of layers and units
+    for i in range(hp.Int('num_layers', 1, 4)):
+        model.add(keras.layers.Dense(
+            units=hp.Int(f'units_{i}', min_value=32, max_value=512, step=32),
+            activation='relu'
+        ))
+        
+        # Tune dropout
+        if hp.Boolean('dropout'):
+            model.add(keras.layers.Dropout(rate=hp.Float('dropout_rate', 0.1, 0.5, step=0.1)))
+    
+    model.add(keras.layers.Dense(10, activation='softmax'))
+    
+    # Tune learning rate
+    learning_rate = hp.Float('learning_rate', 1e-4, 1e-2, sampling='log')
+    
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=learning_rate),
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    
+    return model
+
+# Create tuner
+tuner = RandomSearch(
+    build_model,
+    objective='val_accuracy',
+    max_trials=50,
+    executions_per_trial=2,
+    directory='tuning_results',
+    project_name='nn_tuning'
+)
+
+# Load data
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+x_train = x_train.reshape(-1, 784).astype('float32') / 255
+x_test = x_test.reshape(-1, 784).astype('float32') / 255
+
+# Search for best hyperparameters
+tuner.search(
+    x_train, y_train,
+    epochs=10,
+    validation_split=0.2,
+    callbacks=[keras.callbacks.EarlyStopping(patience=3)]
+)
+
+# Get best model
+best_model = tuner.get_best_models(num_models=1)[0]
+best_hyperparameters = tuner.get_best_hyperparameters(num_trials=1)[0]
+
+print(f"Best hyperparameters: {best_hyperparameters.values}")
+test_loss, test_accuracy = best_model.evaluate(x_test, y_test)
+print(f"Test accuracy: {test_accuracy:.3f}")`
+      }
+    ],
+    interviewQuestions: [
+      {
+        question: 'Why might random search outperform grid search, even with fewer iterations?',
+        answer: 'Random search often outperforms grid search because it explores the hyperparameter space more effectively, particularly when some hyperparameters are more important than others. Consider tuning two hyperparameters: one critical (learning rate) and one less important (batch size). Grid search with 9 values per parameter tests 81 combinations but only 9 distinct values for each hyperparameter. Random search with 81 trials samples different values each time, effectively exploring more diverse values for the important hyperparameter.\n\nMathematically, if one hyperparameter has much larger impact on performance, random search is more likely to find good values for it. Grid search might waste computation testing poor values of the important hyperparameter paired with different values of the less important one. Random search also doesn\'t suffer from the curse of dimensionality as severely—with 5 hyperparameters and 5 values each, grid search requires 3,125 evaluations, while random search can sample any number of points, focusing budget efficiently.\n\nPractically, random search provides better coverage when you\'re uncertain about hyperparameter ranges. If optimal learning rate is 0.007 but your grid tests [0.001, 0.01, 0.1], you\'ll miss it. Random search sampling from log-uniform[0.0001, 1] is more likely to try values near 0.007. Additionally, random search is embarrassingly parallel and can be stopped anytime, while grid search requires completing all combinations to avoid bias. Research by Bergstra & Bengio (2012) showed random search can find comparable or better solutions than grid search with 2-3× fewer evaluations in practice.'
+      },
+      {
+        question: 'How would you avoid overfitting to the validation set during hyperparameter tuning?',
+        answer: 'Overfitting to the validation set occurs when you tune hyperparameters extensively, essentially using validation performance to "train" your hyperparameter choices. The solution is a three-way split: training set for learning parameters, validation set for tuning hyperparameters, and a held-out test set for final evaluation that\'s never used during development.\n\nBest practices: Use cross-validation during hyperparameter search to get more robust estimates—5-fold or 10-fold CV on your training data gives better signal than a single validation split, reducing the risk of tuning to noise. Limit the number of hyperparameter configurations you try relative to validation set size. With 100 validation samples, testing 1000 configurations is likely to overfit; with 10,000 samples, testing 1000 is reasonable. Keep the test set completely separate until the very end—one evaluation only, after all development decisions are final.\n\nFor nested cross-validation, the outer loop evaluates model performance while the inner loop tunes hyperparameters. This gives unbiased performance estimates but is computationally expensive: 5x5 nested CV means 25 model trainings per hyperparameter configuration. Use early stopping during tuning—if 50 configurations haven\'t improved over the best in 10 trials, stop searching. This prevents endless tuning that fits validation noise.\n\nMonitor the gap between validation and test performance. If validation accuracy is 95% but test is 85%, you\'ve overfit to validation. In this case, use simpler models, reduce hyperparameter search space, or get more validation data. For competitions or critical applications, use time-based splits if data has temporal structure, ensuring validation and test come from later time periods than training. This prevents leakage and tests generalization to future data, which is ultimately what matters in production.'
+      },
+      {
+        question: 'You have limited compute budget. How would you prioritize which hyperparameters to tune?',
+        answer: 'With limited budget, focus on hyperparameters with the largest impact on performance, typically learning rate and regularization strength. Start with a coarse random search over these critical hyperparameters using wide ranges on log scales (e.g., learning rate from 1e-5 to 1, L2 penalty from 1e-5 to 10). These often account for 80% of the performance variance.\n\nFor tree-based models, prioritize: (1) number of trees/estimators—more is usually better until diminishing returns, (2) max depth—controls overfitting, (3) learning rate for boosting—critical for gradient boosting. For neural networks: (1) learning rate—single most important, (2) network architecture (depth and width), (3) regularization (dropout, weight decay), (4) batch size and optimizer type. For SVMs: (1) regularization parameter C, (2) kernel type, (3) kernel-specific parameters like gamma for RBF.\n\nUse a sequential strategy: first tune the most important hyperparameters with other values at reasonable defaults. Once you find good values, fix those and tune the next tier. For example, find optimal learning rate and regularization, then tune batch size and momentum with the optimal learning rate fixed. This multi-stage approach is more efficient than joint optimization when budget is tight.\n\nApply early stopping aggressively—allocate initial budget to quick evaluations (fewer epochs, smaller data samples) to eliminate poor configurations, then allocate remaining budget to train promising configurations fully. Use learning curves: if a configuration performs poorly after 10% of training, it\'s unlikely to become best by the end. Modern methods like Hyperband and BOHB implement this principle systematically, achieving good results with 10-100× less compute than exhaustive search. Finally, leverage transfer learning—if tuning similar models, start with hyperparameters that worked well on related tasks rather than searching from scratch.'
+      }
+    ]
   }
 };
