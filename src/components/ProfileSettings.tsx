@@ -1,0 +1,208 @@
+import { User, Palette, Bell, Settings as SettingsIcon } from 'lucide-react';
+
+interface ProfileSettingsProps {
+  selectedTheme: string;
+  selectedBadge: string;
+  dailyGoal: number;
+  onThemeChange: (theme: string) => void;
+  onBadgeChange: (badge: string) => void;
+  onDailyGoalChange: (goal: number) => void;
+  purchasedItems: string[];
+}
+
+const AVAILABLE_BADGES = ['⭐', '🚀', '🧠', '🎯', '💎', '🏆', '🔥', '⚡'];
+const AVAILABLE_THEMES = [
+  { id: 'default', name: 'Default', colors: 'from-blue-500 to-purple-500', free: true },
+  { id: 'theme-ocean', name: 'Ocean', colors: 'from-blue-400 to-cyan-500', free: false },
+  { id: 'theme-forest', name: 'Forest', colors: 'from-green-400 to-emerald-600', free: false },
+  { id: 'theme-sunset', name: 'Sunset', colors: 'from-orange-400 to-pink-500', free: false },
+];
+
+export default function ProfileSettings({
+  selectedTheme,
+  selectedBadge,
+  dailyGoal,
+  onThemeChange,
+  onBadgeChange,
+  onDailyGoalChange,
+  purchasedItems,
+}: ProfileSettingsProps) {
+  const canUseTheme = (themeId: string) => {
+    const theme = AVAILABLE_THEMES.find(t => t.id === themeId);
+    return theme?.free || purchasedItems.includes(themeId);
+  };
+
+  const canUseBadge = (badge: string) => {
+    const badgeMap: Record<string, string> = {
+      '⭐': 'free',
+      '🚀': 'badge-rocket',
+      '🧠': 'badge-brain',
+      '🎯': 'free',
+      '💎': 'free',
+      '🏆': 'free',
+      '🔥': 'free',
+      '⚡': 'free',
+    };
+    const itemId = badgeMap[badge];
+    return itemId === 'free' || purchasedItems.includes(itemId);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+          <SettingsIcon className="w-8 h-8" />
+          Profile Settings
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Customize your learning experience
+        </p>
+      </div>
+
+      {/* Profile Badge */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <User className="w-6 h-6" />
+          Profile Badge
+        </h2>
+        
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-3">
+          {AVAILABLE_BADGES.map(badge => {
+            const canUse = canUseBadge(badge);
+            const isSelected = selectedBadge === badge;
+            
+            return (
+              <button
+                key={badge}
+                onClick={() => canUse && onBadgeChange(badge)}
+                disabled={!canUse}
+                className={`
+                  text-4xl p-4 rounded-lg border-2 transition-all
+                  ${isSelected 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-110' 
+                    : canUse
+                    ? 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-105'
+                    : 'border-gray-200 dark:border-gray-700 opacity-30 cursor-not-allowed'
+                  }
+                `}
+              >
+                {badge}
+                {!canUse && <div className="text-xs mt-1">🔒</div>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Theme Selection */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <Palette className="w-6 h-6" />
+          Accent Theme
+        </h2>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {AVAILABLE_THEMES.map(theme => {
+            const canUse = canUseTheme(theme.id);
+            const isSelected = selectedTheme === theme.id;
+            
+            return (
+              <button
+                key={theme.id}
+                onClick={() => canUse && onThemeChange(theme.id)}
+                disabled={!canUse}
+                className={`
+                  relative p-4 rounded-lg border-2 transition-all
+                  ${isSelected 
+                    ? 'border-gray-900 dark:border-white scale-105' 
+                    : canUse
+                    ? 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                    : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                  }
+                `}
+              >
+                <div className={`w-full h-16 rounded-lg bg-gradient-to-r ${theme.colors} mb-2`} />
+                <p className="font-medium text-gray-900 dark:text-white">{theme.name}</p>
+                {!canUse && (
+                  <div className="absolute top-2 right-2 text-xl">🔒</div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+          💎 Purchase additional themes in the Gem Shop
+        </p>
+      </div>
+
+      {/* Daily Goal */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <Bell className="w-6 h-6" />
+          Daily XP Goal
+        </h2>
+        
+        <div className="flex gap-3">
+          {[10, 20, 50, 100].map(goal => (
+            <button
+              key={goal}
+              onClick={() => onDailyGoalChange(goal)}
+              className={`
+                flex-1 py-3 px-4 rounded-lg font-bold transition-all
+                ${dailyGoal === goal
+                  ? 'bg-blue-500 text-white scale-105 shadow-lg'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }
+              `}
+            >
+              {goal} XP
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Notification Preferences */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          Preferences
+        </h2>
+        
+        <div className="space-y-3">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              defaultChecked={true}
+              className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+            />
+            <span className="text-gray-700 dark:text-gray-300">
+              Show XP animations
+            </span>
+          </label>
+          
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              defaultChecked={true}
+              className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+            />
+            <span className="text-gray-700 dark:text-gray-300">
+              Show confetti on perfect scores
+            </span>
+          </label>
+          
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              defaultChecked={true}
+              className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+            />
+            <span className="text-gray-700 dark:text-gray-300">
+              Show daily motivational quote
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}

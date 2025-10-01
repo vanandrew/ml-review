@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Topic, TopicProgress, QuizScore } from '../types';
+import { Topic, TopicProgress, QuizScore, GamificationData } from '../types';
 import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp } from 'lucide-react';
 import Quiz from './Quiz';
 import BiasVarianceDemo from './BiasVarianceDemo';
@@ -9,10 +9,13 @@ import { selectRandomQuestions } from '../utils/quizUtils';
 interface TopicViewProps {
   topic: Topic;
   userProgress: TopicProgress | undefined;
+  gamificationData: GamificationData;
   onProgressUpdate: (progress: TopicProgress) => void;
+  onAwardXP: (amount: number, reason: string) => void;
+  onQuizComplete: (score: QuizScore) => void;
 }
 
-export default function TopicView({ topic, userProgress, onProgressUpdate }: TopicViewProps) {
+export default function TopicView({ topic, userProgress, onProgressUpdate, onQuizComplete }: TopicViewProps) {
   const [activeTab, setActiveTab] = useState<'theory' | 'code' | 'questions' | 'demo' | 'quiz'>('theory');
   const [showQuiz, setShowQuiz] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
@@ -43,9 +46,13 @@ export default function TopicView({ topic, userProgress, onProgressUpdate }: Top
       ...userProgress,
       status: userProgress?.status || 'reviewing',
       lastAccessed: new Date(),
-      quizScores: [...(userProgress?.quizScores || []), quizScore]
+      quizScores: [...(userProgress?.quizScores || []), quizScore],
+      firstCompletion: userProgress?.firstCompletion || new Date(),
     };
     onProgressUpdate(newProgress);
+    
+    // Call parent handler for gamification tracking
+    onQuizComplete(quizScore);
   };
 
   const handleQuizClose = () => {

@@ -1,22 +1,38 @@
-import React from 'react';
-import { ChevronRight, BookOpen, CheckCircle, Circle } from 'lucide-react';
+
+import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings } from 'lucide-react';
 import { categories } from '../data/categories';
-import { UserProgress } from '../types';
+import { UserProgress, GamificationData } from '../types';
+import GamificationStats from './GamificationStats';
+import GemDisplay from './GemDisplay';
 
 interface SidebarProps {
   selectedTopic: string | null;
   selectedCategory: string | null;
   userProgress: UserProgress;
+  gamificationData: GamificationData;
   onTopicSelect: (topicId: string, categoryId: string) => void;
   onCategorySelect: (categoryId: string) => void;
+  onDashboardSelect: () => void;
+  showingDashboard: boolean;
+  onShopSelect?: () => void;
+  onSettingsSelect?: () => void;
+  showingShop?: boolean;
+  showingSettings?: boolean;
 }
 
 export default function Sidebar({
   selectedTopic,
   selectedCategory,
   userProgress,
+  gamificationData,
   onTopicSelect,
-  onCategorySelect
+  onCategorySelect,
+  onDashboardSelect,
+  showingDashboard,
+  onShopSelect,
+  onSettingsSelect,
+  showingShop,
+  showingSettings,
 }: SidebarProps) {
   const getProgressIcon = (topicId: string) => {
     const progress = userProgress[topicId];
@@ -51,7 +67,7 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+    <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
       <div className="p-4">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">
           ML Interview Prep
@@ -61,7 +77,62 @@ export default function Sidebar({
         </p>
       </div>
 
-      <nav className="mt-8 scrollbar-thin overflow-y-auto max-h-[calc(100vh-120px)]">
+      {/* Gamification Stats */}
+      <div className="px-4 mb-4">
+        <GamificationStats gamificationData={gamificationData} />
+      </div>
+
+      {/* Gem Display */}
+      <div className="px-4 mb-4">
+        <GemDisplay gems={gamificationData.gems} onClick={onShopSelect} />
+      </div>
+
+      <nav className="flex-1 scrollbar-thin overflow-y-auto">
+        {/* Dashboard Button */}
+        <div className="px-2 mb-2">
+          <button
+            onClick={onDashboardSelect}
+            className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+              showingDashboard
+                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span>Dashboard</span>
+          </button>
+        </div>
+
+        {/* Shop Button */}
+        <div className="px-2 mb-2">
+          <button
+            onClick={onShopSelect}
+            className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+              showingShop
+                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-medium'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <ShoppingCart className="w-4 h-4" />
+            <span>Gem Shop</span>
+          </button>
+        </div>
+
+        {/* Settings Button */}
+        <div className="px-2 mb-2">
+          <button
+            onClick={onSettingsSelect}
+            className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+              showingSettings
+                ? 'bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <Settings className="w-4 h-4" />
+            <span>Settings</span>
+          </button>
+        </div>
+
         <div className="px-4 py-2">
           <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
             Categories

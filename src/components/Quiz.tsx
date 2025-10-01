@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { QuizQuestion, QuizScore } from '../types';
 import { CheckCircle, XCircle, RotateCcw, Trophy, Clock } from 'lucide-react';
+import { XP_PER_CORRECT_ANSWER, XP_PERFECT_BONUS } from '../utils/gamification';
 
 interface QuizProps {
   questions: QuizQuestion[];
@@ -47,10 +48,15 @@ export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
       // Complete quiz
       const endTime = new Date();
       const score = calculateScore();
+      
+      // Calculate XP earned
+      const xpEarned = (score * XP_PER_CORRECT_ANSWER) + (score === questions.length ? XP_PERFECT_BONUS : 0);
+      
       const quizScore: QuizScore = {
         score,
         totalQuestions: questions.length,
-        date: endTime
+        date: endTime,
+        xpEarned
       };
 
       setQuizState(prev => ({
