@@ -83,6 +83,10 @@ function App() {
             unlockedDate: new Date(a.unlockedDate)
           }));
         }
+        // Ensure challengeModeHighScore exists (for backwards compatibility)
+        if (data.challengeModeHighScore === undefined) {
+          data.challengeModeHighScore = 0;
+        }
         setGamificationData(data);
       } catch (error) {
         console.error('Failed to load gamification data:', error);
