@@ -88,6 +88,8 @@ export interface GamificationData {
   challengeModeStats: ChallengeModeStats;
   selectedTheme: string;
   selectedBadge: string;
+  // Endless Challenge Mode
+  challengeModeHighScore: number;
 }
 
 export interface GemTransaction {

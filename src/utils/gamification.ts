@@ -109,6 +109,8 @@ export function initializeGamificationData(): GamificationData {
     },
     selectedTheme: 'default',
     selectedBadge: '⭐',
+    // Endless Challenge Mode
+    challengeModeHighScore: 0,
   };
 }
 

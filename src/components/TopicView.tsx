@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Topic, TopicProgress, QuizScore, GamificationData } from '../types';
 import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp } from 'lucide-react';
 import Quiz from './Quiz';
@@ -30,6 +30,13 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
 
   // Select random questions when quiz starts (regenerate on each quiz start)
   const [quizQuestions, setQuizQuestions] = useState(() => selectRandomQuestions(questionPool, 10));
+
+  // Reset quiz state when topic changes
+  useEffect(() => {
+    setShowQuiz(false);
+    setActiveTab('theory');
+    setQuizQuestions(selectRandomQuestions(questionPool, 10));
+  }, [topic.id, questionPool]);
 
   const updateStatus = (status: 'not_started' | 'reviewing' | 'mastered') => {
     const newProgress: TopicProgress = {
@@ -246,6 +253,7 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
           <div>
             {showQuiz && questionPool.length > 0 ? (
               <Quiz
+                key={`${topic.id}-${quizQuestions[0]?.id || Date.now()}`}
                 questions={quizQuestions}
                 onComplete={handleQuizComplete}
                 onClose={handleQuizClose}

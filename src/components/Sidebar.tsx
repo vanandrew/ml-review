@@ -1,5 +1,5 @@
 
-import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings } from 'lucide-react';
+import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap } from 'lucide-react';
 import { categories } from '../data/categories';
 import { UserProgress, GamificationData } from '../types';
 import GamificationStats from './GamificationStats';
@@ -16,8 +16,10 @@ interface SidebarProps {
   showingDashboard: boolean;
   onShopSelect?: () => void;
   onSettingsSelect?: () => void;
+  onChallengeSelect?: () => void;
   showingShop?: boolean;
   showingSettings?: boolean;
+  showingChallengeMode?: boolean;
 }
 
 export default function Sidebar({
@@ -31,8 +33,10 @@ export default function Sidebar({
   showingDashboard,
   onShopSelect,
   onSettingsSelect,
+  onChallengeSelect,
   showingShop,
   showingSettings,
+  showingChallengeMode,
 }: SidebarProps) {
   const getProgressIcon = (topicId: string) => {
     const progress = userProgress[topicId];
@@ -100,6 +104,21 @@ export default function Sidebar({
           >
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
+          </button>
+        </div>
+
+        {/* Challenge Mode Button */}
+        <div className="px-2 mb-2">
+          <button
+            onClick={onChallengeSelect}
+            className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+              showingChallengeMode
+                ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 text-yellow-700 dark:text-yellow-400 font-medium border border-yellow-300 dark:border-yellow-700'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <Zap className="w-4 h-4" />
+            <span>Challenge Mode</span>
           </button>
         </div>
 

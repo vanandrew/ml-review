@@ -5,11 +5,13 @@ import TopicView from './components/TopicView';
 import DashboardView from './components/DashboardView';
 import GemShop from './components/GemShop';
 import ProfileSettings from './components/ProfileSettings';
+import ChallengeMode from './components/ChallengeMode';
 import XPReward from './components/XPReward';
 import AchievementModal from './components/AchievementModal';
 import ConfettiAnimation from './components/ConfettiAnimation';
 import LevelUpModal from './components/LevelUpModal';
 import { getTopicById } from './data/topicsIndex';
+import { quizQuestionPools } from './data/quizQuestions';
 import { initializeGamificationData, calculateLevel, XP_PER_CORRECT_ANSWER, XP_PERFECT_BONUS, XP_FIRST_TIME_COMPLETION, checkAndResetDailyProgress } from './utils/gamification';
 import { updateStreak } from './utils/streak';
 import { checkForNewAchievements } from './utils/achievements';
@@ -28,8 +30,12 @@ function App() {
   const [showingDashboard, setShowingDashboard] = useState(false);
   const [showingShop, setShowingShop] = useState(false);
   const [showingSettings, setShowingSettings] = useState(false);
+  const [showingChallengeMode, setShowingChallengeMode] = useState(false);
   const [userProgress, setUserProgress] = useState<UserProgress>({});
-  const [gamificationData, setGamificationData] = useState<GamificationData>(initializeGamificationData());
+  const [gamificationData, setGamificationData] = useState<GamificationData>({
+    ...initializeGamificationData(),
+    challengeModeHighScore: 0,
+  });
   const [xpReward, setXpReward] = useState<{ amount: number; reason: string } | null>(null);
   const [newAchievement, setNewAchievement] = useState<AchievementDefinition | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -132,15 +138,15 @@ function App() {
       });
     }
 
-    // Check and generate weekly challenge
-    if (shouldGenerateNewChallenge(gamificationData.weeklyChallenge)) {
+    // Check and generate weekly challenge (initialize if null or regenerate if expired)
+    if (!gamificationData.weeklyChallenge || shouldGenerateNewChallenge(gamificationData.weeklyChallenge)) {
       const newChallenge = generateWeeklyChallenge();
       setGamificationData(prev => ({
         ...prev,
         weeklyChallenge: newChallenge,
       }));
     }
-  }, []); // Only run on mount
+  }, [gamificationData.weeklyChallenge]); // Re-run when challenge changes
 
   useEffect(() => {
     // Save theme to localStorage and apply to document
@@ -263,6 +269,9 @@ function App() {
     const isEarlyBird = hour < 8;
     const isNightOwl = hour >= 22;
 
+    // Check if this is a review of an already mastered topic
+    const wasAlreadyMastered = userProgress[topicId]?.status === 'mastered';
+
     // Update gamification stats and check weekly challenge
     setGamificationData(prev => {
       const updatedData = {
@@ -279,7 +288,18 @@ function App() {
       // Update weekly challenge progress if exists
       let updatedChallenge = prev.weeklyChallenge;
       if (updatedChallenge) {
+        // Track quiz completions
         updatedChallenge = updateChallengeProgress(updatedChallenge, 'complete_quizzes', 1);
+        
+        // Track reviews of mastered topics
+        if (wasAlreadyMastered) {
+          updatedChallenge = updateChallengeProgress(updatedChallenge, 'review_topics', 1);
+        }
+        
+        // Track newly mastered topics
+        if (isPerfect && !wasAlreadyMastered) {
+          updatedChallenge = updateChallengeProgress(updatedChallenge, 'master_topics', 1);
+        }
         
         // Check if challenge just completed and award bonus XP and gems
         const wasIncomplete = prev.weeklyChallenge && !isChallengeComplete(prev.weeklyChallenge);
@@ -362,7 +382,29 @@ function App() {
     setShowingSettings(true);
     setShowingShop(false);
     setShowingDashboard(false);
+    setShowingChallengeMode(false);
     setSelectedTopic(null);
+  };
+
+  const handleChallengeSelect = () => {
+    setShowingChallengeMode(true);
+    setShowingDashboard(false);
+    setShowingShop(false);
+    setShowingSettings(false);
+    setSelectedTopic(null);
+  };
+
+  const handleChallengeComplete = (score: number) => {
+    if (score > gamificationData.challengeModeHighScore) {
+      setGamificationData(prev => ({
+        ...prev,
+        challengeModeHighScore: score,
+      }));
+    }
+  };
+
+  const handleChallengeExit = () => {
+    setShowingChallengeMode(false);
   };
 
   const handlePurchaseItem = (itemId: string) => {
@@ -450,8 +492,10 @@ function App() {
           showingDashboard={showingDashboard}
           onShopSelect={handleShopSelect}
           onSettingsSelect={handleSettingsSelect}
+          onChallengeSelect={handleChallengeSelect}
           showingShop={showingShop}
           showingSettings={showingSettings}
+          showingChallengeMode={showingChallengeMode}
         />
 
         {/* Main Content */}
@@ -465,6 +509,8 @@ function App() {
                   ? 'Gem Shop'
                   : showingSettings
                   ? 'Settings'
+                  : showingChallengeMode
+                  ? 'Challenge Mode'
                   : selectedTopic
                   ? selectedTopic.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
                   : 'Getting Started'
@@ -481,7 +527,27 @@ function App() {
 
           <div className="p-6">
             <div className="max-w-4xl">
-              {showingShop ? (
+              {showingChallengeMode ? (
+                (() => {
+                  // Get all questions from mastered topics
+                  const masteredTopicIds = Object.entries(userProgress)
+                    .filter(([_, progress]) => progress.status === 'mastered')
+                    .map(([topicId]) => topicId);
+
+                  const allMasteredQuestions = masteredTopicIds.flatMap(topicId => 
+                    quizQuestionPools[topicId] || []
+                  );
+
+                  return (
+                    <ChallengeMode
+                      allQuestions={allMasteredQuestions}
+                      highScore={gamificationData.challengeModeHighScore}
+                      onComplete={handleChallengeComplete}
+                      onExit={handleChallengeExit}
+                    />
+                  );
+                })()
+              ) : showingShop ? (
                 <GemShop
                   currentGems={gamificationData.gems}
                   purchasedItems={gamificationData.purchasedItems}
