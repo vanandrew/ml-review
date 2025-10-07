@@ -407,7 +407,7 @@ centers = kmeans.cluster_centers_`,
 
       <div class="info-box info-box-purple">
         <h4>📈 The Error Decomposition</h4>
-        <p class="text-center text-lg my-2"><strong>Expected Error = Bias² + Variance + Irreducible Error</strong></p>
+        <p class="text-center text-lg my-2"><strong>$\\text{Expected Error} = \\text{Bias}^2 + \\text{Variance} + \\text{Irreducible Error}$</strong></p>
         <table>
           <tr>
             <td class="text-center">
@@ -433,8 +433,8 @@ centers = kmeans.cluster_centers_`,
       <h3>The Mathematical Foundation</h3>
       <p>When we build a machine learning model, the expected prediction error on new data can be mathematically decomposed into three distinct components:</p>
       
-      <p><strong>Expected Error = Bias² + Variance + Irreducible Error</strong></p>
-      
+      <p><strong>$\\text{Expected Error} = \\text{Bias}^2 + \\text{Variance} + \\text{Irreducible Error}$</strong></p>
+
       <p>Each component represents a different source of error:</p>
       <ul>
         <li><strong>Bias²:</strong> The systematic error from incorrect assumptions in the learning algorithm. It measures how far off our model's average prediction is from the true value.</li>
@@ -1143,7 +1143,7 @@ print(f"Test: {test_df['date'].min()} to {test_df['date'].max()}")`,
       </ul>
       
       <p><strong>The Mathematical Connection:</strong></p>
-      <p>Expected Error = Bias² + Variance + Irreducible Error</p>
+      <p>$\\text{Expected Error} = \\text{Bias}^2 + \\text{Variance} + \\text{Irreducible Error}$</p>
       <ul>
         <li><strong>Underfitting:</strong> Bias² dominates the error term</li>
         <li><strong>Overfitting:</strong> Variance dominates the error term</li>
@@ -1417,8 +1417,8 @@ complex_model = RandomForestClassifier(max_depth=None)`,
       <h3>L2 Regularization (Ridge Regression / Weight Decay)</h3>
       
       <p><strong>Mathematical Formulation:</strong></p>
-      <p>Loss = Original Loss + λ × Σ(w²)</p>
-      <p>where λ (lambda) is the regularization strength parameter and w represents model weights.</p>
+      <p>$\\text{Loss} = \\text{Original Loss} + \\lambda \\sum w^2$</p>
+      <p>where $\\lambda$ (lambda) is the regularization strength parameter and $w$ represents model weights.</p>
       
       <p>L2 regularization adds a penalty term proportional to the sum of squared weights to the loss function. During training, the optimization algorithm must balance minimizing prediction error (original loss) with keeping weights small (regularization term). This creates "weight decay" because the gradient of the squared weights term always pushes weights toward zero.</p>
       
@@ -1437,7 +1437,7 @@ complex_model = RandomForestClassifier(max_depth=None)`,
       <p>Finding optimal λ requires hyperparameter tuning via cross-validation. Plot validation performance vs λ: as λ increases from zero, validation performance improves (reducing overfitting), reaches a peak (optimal regularization), then degrades (causing underfitting).</p>
       
       <p><strong>Weight Decay in Neural Networks:</strong></p>
-      <p>In the context of neural networks trained with gradient descent, L2 regularization is often called "weight decay." The gradient of the L2 penalty term is 2λw, which when subtracted during the weight update acts as exponential decay: weights multiplicatively shrink by a factor of (1-2λη) each iteration (where η is learning rate). This equivalence between L2 regularization and weight decay holds for standard gradient descent.</p>
+      <p>In the context of neural networks trained with gradient descent, L2 regularization is often called "weight decay." The gradient of the L2 penalty term is $2\\lambda w$, which when subtracted during the weight update acts as exponential decay: weights multiplicatively shrink by a factor of $(1-2\\lambda\\eta)$ each iteration (where $\\eta$ is learning rate). This equivalence between L2 regularization and weight decay holds for standard gradient descent.</p>
       
       <p><strong>When to Use L2:</strong></p>
       <ul>
@@ -1460,7 +1460,7 @@ complex_model = RandomForestClassifier(max_depth=None)`,
       <h3>L1 Regularization (Lasso Regression)</h3>
       
       <p><strong>Mathematical Formulation:</strong></p>
-      <p>Loss = Original Loss + λ × Σ|w|</p>
+      <p>$\\text{Loss} = \\text{Original Loss} + \\lambda \\sum |w|$</p>
       
       <p>L1 regularization adds a penalty proportional to the sum of absolute values of weights. Unlike L2's quadratic penalty, L1's linear penalty treats all weight magnitudes equally—doubling a weight doubles its penalty. Critically, the absolute value function creates a non-smooth penalty at zero that encourages exact sparsity.</p>
       
@@ -1500,21 +1500,21 @@ complex_model = RandomForestClassifier(max_depth=None)`,
 
       <h3>Elastic Net: Combining L1 and L2</h3>
       
-      <p><strong>Formula:</strong> Loss = Original Loss + λ₁ × Σ|w| + λ₂ × Σ(w²)</p>
-      <p>Or equivalently: Loss = Original Loss + λ × [α × Σ|w| + (1-α) × Σ(w²)]</p>
+      <p><strong>Formula:</strong> $\\text{Loss} = \\text{Original Loss} + \\lambda_1 \\sum |w| + \\lambda_2 \\sum w^2$</p>
+      <p>Or equivalently: $\\text{Loss} = \\text{Original Loss} + \\lambda [\\alpha \\sum |w| + (1-\\alpha) \\sum w^2]$</p>
       
-      <p>Elastic Net combines L1 and L2 regularization, getting benefits of both: L1's sparsity and feature selection with L2's stability and ability to keep groups of correlated features. The mixing parameter α controls the balance: α=1 is pure L1, α=0 is pure L2, and intermediate values blend them.</p>
+      <p>Elastic Net combines L1 and L2 regularization, getting benefits of both: L1's sparsity and feature selection with L2's stability and ability to keep groups of correlated features. The mixing parameter $\\alpha$ controls the balance: $\\alpha=1$ is pure L1, $\\alpha=0$ is pure L2, and intermediate values blend them.</p>
       
       <p><strong>Why Elastic Net?</strong></p>
       <ul>
         <li><strong>Grouped selection:</strong> When features are correlated, L1 picks one arbitrarily; L2 includes all. Elastic Net includes groups of correlated features together.</li>
         <li><strong>Stability:</strong> More stable than pure L1 in presence of highly correlated features</li>
         <li><strong>Sparsity with control:</strong> Get sparse solutions (from L1) without sacrificing too much stability (from L2)</li>
-        <li><strong>Flexibility:</strong> Tune α to adjust sparsity-stability tradeoff for your specific problem</li>
+        <li><strong>Flexibility:</strong> Tune $\\alpha$ to adjust sparsity-stability tradeoff for your specific problem</li>
       </ul>
       
       <p><strong>Practical Usage:</strong></p>
-      <p>Start with Elastic Net when you're unsure whether L1 or L2 is better. Use grid search or cross-validation to find optimal α and λ. Common α values to try: [0.1, 0.3, 0.5, 0.7, 0.9]. In practice, Elastic Net often outperforms both pure L1 and pure L2, especially with correlated features.</p>
+      <p>Start with Elastic Net when you're unsure whether L1 or L2 is better. Use grid search or cross-validation to find optimal $\\alpha$ and $\\lambda$. Common $\\alpha$ values to try: [0.1, 0.3, 0.5, 0.7, 0.9]. In practice, Elastic Net often outperforms both pure L1 and pure L2, especially with correlated features.</p>
 
       <h3>Dropout: Regularization for Neural Networks</h3>
       
@@ -1740,7 +1740,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')`,
     interviewQuestions: [
       {
         question: 'What is the difference between L1 and L2 regularization?',
-        answer: 'L1 (Lasso) and L2 (Ridge) regularization both penalize large weights but in fundamentally different ways with distinct consequences. L2 regularization adds a penalty term proportional to the sum of squared weights (λ∑w²) to the loss function. This encourages weights to be small but doesn\'t force them exactly to zero—weights shrink proportionally toward zero but rarely reach it exactly. The penalty is differentiable everywhere, making optimization straightforward with gradient descent. L2 tends to spread weights across all features, giving many features small non-zero weights.\n\nL1 regularization adds a penalty proportional to the sum of absolute values of weights (λ∑|w|). The key difference is that L1 actively drives some weights exactly to zero, performing automatic feature selection. The absolute value creates a non-differentiable point at zero, which geometrically favors sparse solutions—many weights become exactly zero while others remain relatively large. This makes L1 useful when you suspect many features are irrelevant or want an interpretable model with fewer active features. L1 can be more computationally expensive to optimize due to the non-smooth penalty.\n\nThe geometric intuition helps: visualize the loss surface and the constraint region (where the penalty equals a constant). For L2, this region is a circle/sphere (smooth), so the optimal point tends to have non-zero values in all dimensions. For L1, the region is a diamond/polytope with sharp corners along axes—solutions often land on these corners where some coordinates are exactly zero. Practically, L2 is the default choice for general regularization (stable, easy to optimize, good generalization), while L1 is chosen when you want sparsity/feature selection or suspect the true model uses only a subset of available features. Elastic Net combines both, getting benefits of each: L1\'s sparsity and L2\'s grouping of correlated features.'
+        answer: 'L1 (Lasso) and L2 (Ridge) regularization both penalize large weights but in fundamentally different ways with distinct consequences. L2 regularization adds a penalty term proportional to the sum of squared weights ($\\lambda \\sum w^2$) to the loss function. This encourages weights to be small but doesn\'t force them exactly to zero—weights shrink proportionally toward zero but rarely reach it exactly. The penalty is differentiable everywhere, making optimization straightforward with gradient descent. L2 tends to spread weights across all features, giving many features small non-zero weights.\n\nL1 regularization adds a penalty proportional to the sum of absolute values of weights ($\\lambda \\sum |w|$). The key difference is that L1 actively drives some weights exactly to zero, performing automatic feature selection. The absolute value creates a non-differentiable point at zero, which geometrically favors sparse solutions—many weights become exactly zero while others remain relatively large. This makes L1 useful when you suspect many features are irrelevant or want an interpretable model with fewer active features. L1 can be more computationally expensive to optimize due to the non-smooth penalty.\n\nThe geometric intuition helps: visualize the loss surface and the constraint region (where the penalty equals a constant). For L2, this region is a circle/sphere (smooth), so the optimal point tends to have non-zero values in all dimensions. For L1, the region is a diamond/polytope with sharp corners along axes—solutions often land on these corners where some coordinates are exactly zero. Practically, L2 is the default choice for general regularization (stable, easy to optimize, good generalization), while L1 is chosen when you want sparsity/feature selection or suspect the true model uses only a subset of available features. Elastic Net combines both, getting benefits of each: L1\'s sparsity and L2\'s grouping of correlated features.'
       },
       {
         question: 'How does dropout work and why does it prevent overfitting?',
@@ -1756,7 +1756,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')`,
       },
       {
         question: 'If your model is underfitting, should you increase or decrease regularization?',
-        answer: 'If your model is underfitting (high bias), you should decrease regularization or remove it entirely. Regularization penalizes model complexity, intentionally constraining the model to prevent overfitting. When underfitting, the problem is the opposite—your model is too simple and can\'t capture the underlying patterns in the data. Adding more constraints through regularization makes this worse, further limiting the model\'s capacity to fit the training data. Reducing regularization allows the model more freedom to learn complex patterns and fit the training data better.\n\nConcretely, if using L1 or L2 regularization, reduce the regularization parameter λ (sometimes called alpha). Smaller λ means less penalty on large weights, allowing the model to use its full capacity. If using dropout in neural networks, reduce the dropout rate or remove dropout from some layers. If applying early stopping, train for more epochs to let the model fully learn available patterns. The extreme case is λ=0 or dropout rate=0, meaning no regularization at all, which is appropriate when underfitting is severe.\n\nThe diagnostic pattern is: if you see poor performance on both training and validation sets with a small gap between them, you have high bias (underfitting). The solution is to increase model capacity, which includes reducing regularization but also adding features, using more complex model architectures (deeper networks, higher polynomial degrees, more trees in ensemble), or training longer. After reducing regularization and increasing capacity, you might then see overfitting (large train-test gap), at which point you\'d reintroduce regularization at a moderate level. The goal is finding the sweet spot: enough model capacity to capture patterns (low bias) with sufficient regularization to prevent fitting noise (low variance). This is typically found through cross-validation across different regularization strengths, choosing the value that minimizes validation error.'
+        answer: 'If your model is underfitting (high bias), you should decrease regularization or remove it entirely. Regularization penalizes model complexity, intentionally constraining the model to prevent overfitting. When underfitting, the problem is the opposite—your model is too simple and can\'t capture the underlying patterns in the data. Adding more constraints through regularization makes this worse, further limiting the model\'s capacity to fit the training data. Reducing regularization allows the model more freedom to learn complex patterns and fit the training data better.\n\nConcretely, if using L1 or L2 regularization, reduce the regularization parameter $\\lambda$ (sometimes called alpha). Smaller $\\lambda$ means less penalty on large weights, allowing the model to use its full capacity. If using dropout in neural networks, reduce the dropout rate or remove dropout from some layers. If applying early stopping, train for more epochs to let the model fully learn available patterns. The extreme case is $\\lambda=0$ or dropout rate=0, meaning no regularization at all, which is appropriate when underfitting is severe.\n\nThe diagnostic pattern is: if you see poor performance on both training and validation sets with a small gap between them, you have high bias (underfitting). The solution is to increase model capacity, which includes reducing regularization but also adding features, using more complex model architectures (deeper networks, higher polynomial degrees, more trees in ensemble), or training longer. After reducing regularization and increasing capacity, you might then see overfitting (large train-test gap), at which point you\'d reintroduce regularization at a moderate level. The goal is finding the sweet spot: enough model capacity to capture patterns (low bias) with sufficient regularization to prevent fitting noise (low variance). This is typically found through cross-validation across different regularization strengths, choosing the value that minimizes validation error.'
       }
     ],
     quizQuestions: [
@@ -2380,7 +2380,7 @@ print(f"\\nNested CV R² Score: {nested_scores.mean():.3f} (+/- {nested_scores.s
 
       <p><strong>Why harmonic mean?</strong> Suppose precision = 1.0 (perfect) and recall = 0.01 (terrible). The arithmetic mean would be 0.505 (appearing decent), but the harmonic mean (F1) is 0.0198 (correctly reflecting the terrible recall). The harmonic mean is more conservative and appropriate when you need both metrics to be good.</p>
 
-      <p><strong>Generalizations:</strong> The F1 score is a special case of the Fβ score: Fβ = (1 + β²) × (Precision × Recall) / (β² × Precision + Recall). With β = 1, you get F1 (equal weight). β = 2 (F2 score) weighs recall twice as much as precision—useful when recall is more important. β = 0.5 weighs precision higher. In practice, F1 is the most common choice for imbalanced classification.</p>
+      <p><strong>Generalizations:</strong> The F1 score is a special case of the F$\\beta$ score: $F_\\beta = (1 + \\beta^2) \\times \\frac{\\text{Precision} \\times \\text{Recall}}{\\beta^2 \\times \\text{Precision} + \\text{Recall}}$. With $\\beta = 1$, you get F1 (equal weight). $\\beta = 2$ (F2 score) weighs recall twice as much as precision—useful when recall is more important. $\\beta = 0.5$ weighs precision higher. In practice, F1 is the most common choice for imbalanced classification.</p>
 
       <p><strong>Limitations:</strong> F1 requires choosing a classification threshold. It also doesn't account for true negatives at all—it focuses purely on positive class performance. For severely imbalanced data, this is actually a feature, not a bug.</p>
 
@@ -2406,8 +2406,8 @@ print(f"\\nNested CV R² Score: {nested_scores.mean():.3f} (+/- {nested_scores.s
       <p>Regression tasks predict continuous numerical values. Metrics measure the difference (error or residual) between predicted and actual values.</p>
 
       <h4>Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)</h4>
-      <p><strong>MSE = (1/n) Σ(yᵢ - ŷᵢ)²</strong></p>
-      <p><strong>RMSE = √MSE</strong></p>
+      <p><strong>$\\text{MSE} = \\frac{1}{n} \\sum (y_i - \\hat{y}_i)^2$</strong></p>
+      <p><strong>$\\text{RMSE} = \\sqrt{\\text{MSE}}$</strong></p>
 
       <p>MSE is the average of squared errors. Squaring errors ensures they're positive and gives quadratic penalty—an error of 10 contributes 100 to the sum while ten errors of 1 contribute only 10 total. This makes MSE very sensitive to large errors and outliers. RMSE takes the square root to return to the original units of the target variable, making it more interpretable.</p>
 
@@ -2416,7 +2416,7 @@ print(f"\\nNested CV R² Score: {nested_scores.mean():.3f} (+/- {nested_scores.s
       <p><strong>When to use RMSE:</strong> Standard choice for regression, especially when large errors are particularly bad. Predicting house prices, stock values, or engineering quantities where being off by $100k is much worse than being off by $10k. RMSE is interpretable ("on average, predictions are off by $X") and widely used, making it easy to communicate and compare to baselines. Avoid when data has outliers that you don't want to dominate the metric.</p>
 
       <h4>Mean Absolute Error (MAE): Robust to Outliers</h4>
-      <p><strong>MAE = (1/n) Σ|yᵢ - ŷᵢ|</strong></p>
+      <p><strong>$\\text{MAE} = \\frac{1}{n} \\sum |y_i - \\hat{y}_i|$</strong></p>
       <p>MAE is the average of absolute errors. Unlike MSE, it treats all errors linearly—an error of 10 contributes 10 to the sum, same as ten errors of 1. This makes MAE much more robust to outliers and easier to interpret: "on average, predictions are off by X units."</p>
 
       <p><strong>RMSE vs MAE:</strong> RMSE will always be ≥ MAE, with equality only when all errors are identical. A large gap between RMSE and MAE indicates some predictions have very large errors (outliers or occasional large mistakes). For example, RMSE = $50k and MAE = $20k suggests most predictions are off by ~$20k but a few are off by much more, pulling RMSE up. If RMSE ≈ MAE, errors are relatively uniform.</p>
@@ -2424,8 +2424,8 @@ print(f"\\nNested CV R² Score: {nested_scores.mean():.3f} (+/- {nested_scores.s
       <p><strong>When to use MAE:</strong> When outliers in your data are due to measurement errors or rare anomalies that shouldn't dominate your metric. Predicting delivery times (occasional delays shouldn't dominate), demand forecasting with occasional spikes, or any domain where you want to measure typical error rather than worst-case error. MAE is also preferred when your loss function is truly linear (economic cost proportional to error magnitude, not squared).</p>
 
       <h4>R² Score (Coefficient of Determination): Variance Explained</h4>
-      <p><strong>R² = 1 - (SS_res / SS_tot)</strong></p>
-      <p>Where SS_res = Σ(yᵢ - ŷᵢ)² (residual sum of squares) and SS_tot = Σ(yᵢ - ȳ)² (total sum of squares, variance around the mean).</p>
+      <p><strong>$R^2 = 1 - \\frac{SS_{res}}{SS_{tot}}$</strong></p>
+      <p>Where $SS_{res} = \\sum (y_i - \\hat{y}_i)^2$ (residual sum of squares) and $SS_{tot} = \\sum (y_i - \\bar{y})^2$ (total sum of squares, variance around the mean).</p>
 
       <p>R² measures the proportion of variance in the target variable explained by the model. R² = 1 means perfect predictions (SS_res = 0). R² = 0 means your model performs no better than simply predicting the mean for every sample. R² < 0 means your model performs worse than the mean baseline—it's making predictions that systematically increase error.</p>
 
@@ -2445,7 +2445,7 @@ print(f"\\nNested CV R² Score: {nested_scores.mean():.3f} (+/- {nested_scores.s
         <li><strong>Imbalanced classification:</strong> F1 score, PR-AUC, or class-weighted metrics. Focus on positive class performance and avoid accuracy.</li>
         <li><strong>High false positive cost:</strong> Precision (spam filtering, content moderation, medical treatment decisions).</li>
         <li><strong>High false negative cost:</strong> Recall (cancer detection, fraud detection, safety monitoring).</li>
-        <li><strong>Need balance with imbalance:</strong> F1 score or Fβ score with appropriate β.</li>
+        <li><strong>Need balance with imbalance:</strong> F1 score or F$\\beta$ score with appropriate $\\beta$.</li>
         <li><strong>Ranking or probability quality:</strong> ROC-AUC (if balanced), log loss/cross-entropy for well-calibrated probabilities.</li>
         <li><strong>Multi-class classification:</strong> Macro-averaged F1 (average F1 per class) if classes are important equally, weighted F1 if class sizes vary.</li>
         <li><strong>Regression (general):</strong> RMSE and R² together. RMSE for absolute error in target units, R² for relative performance.</li>

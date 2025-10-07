@@ -13,7 +13,7 @@ export const classicalMLTopics: Record<string, Topic> = {
       <h3>Mathematical Foundation</h3>
       
       <p><strong>Simple Linear Regression</strong> (one feature):</p>
-      <p>y = β₀ + β₁x + ε</p>
+      <p>$y = \\beta_0 + \\beta_1 x + \\varepsilon$</p>
       <ul>
         <li><strong>y:</strong> Dependent variable (target, response) — what we're predicting</li>
         <li><strong>x:</strong> Independent variable (feature, predictor) — what we use to predict</li>
@@ -25,8 +25,8 @@ export const classicalMLTopics: Record<string, Topic> = {
       <p>The goal is to find the line that "best fits" the data by choosing optimal β₀ and β₁ values. Geometrically, this is finding the straight line through a 2D scatter plot that comes closest to all data points.</p>
 
       <p><strong>Multiple Linear Regression</strong> (many features):</p>
-      <p>y = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ + ε</p>
-      <p>Or in matrix form: <strong>y = Xβ + ε</strong></p>
+      <p>$y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + ... + \\beta_n x_n + \\varepsilon$</p>
+      <p>Or in matrix form: <strong>$y = X\\beta + \\varepsilon$</strong></p>
       
       <p>With multiple features, we're fitting a hyperplane in n-dimensional space. Each coefficient β᷈ represents the partial effect of feature xᵢ on the target while holding all other features constant. This is crucial: β₁ tells us how y changes with x₁ <em>after accounting for</em> x₂, x₃, etc.</p>
 
@@ -34,25 +34,25 @@ export const classicalMLTopics: Record<string, Topic> = {
       
       <p>To find optimal coefficients, linear regression minimizes the <strong>Mean Squared Error (MSE)</strong>, which measures average squared difference between predictions and actual values:</p>
       
-      <p><strong>MSE = (1/n) Σᵢ₌₁ⁿ (yᵢ - ŷᵢ)² = (1/n) Σᵢ₌₁ⁿ (yᵢ - (β₀ + β₁x₁ᵢ + ... + βₙxₙᵢ))²</strong></p>
+      <p><strong>$\\text{MSE} = \\frac{1}{n} \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2 = \\frac{1}{n} \\sum_{i=1}^{n} (y_i - (\\beta_0 + \\beta_1 x_{1i} + ... + \\beta_n x_{ni}))^2$</strong></p>
       
       <p>Why squared error? Squaring makes errors positive (so positive and negative errors don't cancel), penalizes large errors more heavily than small ones (quadratic penalty), and makes the math tractable (differentiable everywhere, convex optimization landscape). The method of minimizing sum of squared residuals is called <strong>Ordinary Least Squares (OLS)</strong>.</p>
       
-      <p><strong>Residuals</strong> are the differences between observed and predicted values: rᵢ = yᵢ - ŷᵢ. OLS finds coefficients where Σrᵢ² is minimized. Each data point "pulls" the line toward itself with force proportional to its squared distance from the line.</p>
+      <p><strong>Residuals</strong> are the differences between observed and predicted values: $r_i = y_i - \\hat{y}_i$. OLS finds coefficients where $\\sum r_i^2$ is minimized. Each data point "pulls" the line toward itself with force proportional to its squared distance from the line.</p>
 
       <h3>Finding Optimal Coefficients: Two Approaches</h3>
       
       <p><strong>1. Normal Equation (Closed-Form Solution):</strong></p>
-      <p><strong>β = (XᵀX)⁻¹Xᵀy</strong></p>
-      
-      <p>This analytical formula directly computes optimal coefficients without iteration. It's exact, always finds the global optimum (MSE is convex), and requires no hyperparameter tuning. However, computing (XᵀX)⁻¹ has O(n³) complexity in the number of features, making it slow for high-dimensional data (>1000 features). Also requires XᵀX to be invertible; if features are perfectly collinear or you have more features than samples (p > n), the matrix is singular. Modern libraries use pseudo-inverse to handle this.</p>
+      <p><strong>$\\beta = (X^T X)^{-1} X^T y$</strong></p>
+
+      <p>This analytical formula directly computes optimal coefficients without iteration. It's exact, always finds the global optimum (MSE is convex), and requires no hyperparameter tuning. However, computing $(X^T X)^{-1}$ has $O(n^3)$ complexity in the number of features, making it slow for high-dimensional data (>1000 features). Also requires $X^T X$ to be invertible; if features are perfectly collinear or you have more features than samples (p > n), the matrix is singular. Modern libraries use pseudo-inverse to handle this.</p>
       
       <p><strong>2. Gradient Descent (Iterative Optimization):</strong></p>
       <p>Iteratively update coefficients in the direction that decreases MSE:</p>
       <ul>
         <li>Initialize β randomly</li>
-        <li>Compute gradient ∇MSE = -2/n Xᵀ(y - Xβ)</li>
-        <li>Update β := β - α∇MSE (α is learning rate)</li>
+        <li>Compute gradient $\\nabla \\text{MSE} = -\\frac{2}{n} X^T(y - X\\beta)$</li>
+        <li>Update $\\beta := \\beta - \\alpha \\nabla \\text{MSE}$ ($\\alpha$ is learning rate)</li>
         <li>Repeat until convergence</li>
       </ul>
       
@@ -80,14 +80,14 @@ export const classicalMLTopics: Record<string, Topic> = {
       
       <p><strong>Why it's problematic:</strong> When features are correlated, the model can't distinguish their individual effects. There are infinitely many coefficient combinations that fit the data similarly well. Small data changes cause large coefficient swings, even sign flips. Standard errors inflate, making it hard to determine significance. Coefficients become unreliable for interpretation.</p>
       
-      <p><strong>Detection:</strong> Calculate VIF for each feature: VIF = 1/(1 - R²ᵢ), where R²ᵢ is R² from regressing feature i on all other features. VIF = 1 means no correlation, VIF > 5-10 indicates problematic multicollinearity. Also check correlation matrix for |r| > 0.8-0.9.</p>
+      <p><strong>Detection:</strong> Calculate VIF for each feature: $\\text{VIF} = \\frac{1}{1 - R_i^2}$, where $R_i^2$ is R² from regressing feature i on all other features. VIF = 1 means no correlation, VIF > 5-10 indicates problematic multicollinearity. Also check correlation matrix for $|r| > 0.8$-$0.9$.</p>
       
       <p><strong>Solutions:</strong> Remove one of each correlated pair, combine correlated features (e.g., "total living space"), use PCA to create uncorrelated components, or apply Ridge regularization (L2 penalty handles multicollinearity by shrinking coefficients).</p>
 
       <h3>Polynomial Regression: Extending Linearity</h3>
       
       <p>Polynomial regression extends linear regression to model non-linear relationships by adding polynomial features:</p>
-      <p>y = β₀ + β₁x + β₂x² + β₃x³ + ... + βₐxᵈ</p>
+      <p>$y = \\beta_0 + \\beta_1 x + \\beta_2 x^2 + \\beta_3 x^3 + ... + \\beta_d x^d$</p>
       
       <p>Despite modeling non-linear relationships, this is still "linear" in the parameters β, so we can use OLS. The model is linear in the coefficients but non-linear in the features. Create new features (x², x³, etc.) and apply standard linear regression.</p>
       
@@ -99,13 +99,13 @@ export const classicalMLTopics: Record<string, Topic> = {
       
       <p><strong>Feature Scaling/Standardization:</strong> Linear regression coefficients depend on feature scales. Standardizing (mean=0, std=1) makes coefficients comparable and helps gradient descent converge faster. Not required for prediction accuracy with normal equation, but highly recommended for gradient descent and regularization methods.</p>
       
-      <p><strong>Interaction Terms:</strong> Capture combined effects of features: y = β₀ + β₁x₁ + β₂x₂ + β₃(x₁×x₂). The interaction term β₃(x₁×x₂) models how the effect of x₁ depends on the value of x₂. Example: advertising spend and product quality might have synergistic effects on sales.</p>
+      <p><strong>Interaction Terms:</strong> Capture combined effects of features: $y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + \\beta_3(x_1 \\times x_2)$. The interaction term $\\beta_3(x_1 \\times x_2)$ models how the effect of $x_1$ depends on the value of $x_2$. Example: advertising spend and product quality might have synergistic effects on sales.</p>
 
       <h3>Evaluation Metrics</h3>
       
       <p><strong>R² (Coefficient of Determination):</strong> Proportion of variance explained by the model. R² = 1 - (SSres / SStot), ranges from -∞ to 1. R²=1 is perfect, R²=0 means no better than predicting the mean, negative R² means worse than the baseline. Limitation: always increases with more features, even if they're random.</p>
       
-      <p><strong>Adjusted R²:</strong> Penalizes model complexity, only increases if new features genuinely improve fit: Adjusted R² = 1 - [(1-R²)(n-1)/(n-p-1)]. Use this for comparing models with different numbers of features.</p>
+      <p><strong>Adjusted R²:</strong> Penalizes model complexity, only increases if new features genuinely improve fit: $\\text{Adjusted } R^2 = 1 - \\frac{(1-R^2)(n-1)}{n-p-1}$. Use this for comparing models with different numbers of features.</p>
       
       <p><strong>RMSE, MAE:</strong> Directly measure prediction error in target units. RMSE penalizes large errors more (squared), MAE treats all errors equally. Use MAE for robustness to outliers, RMSE when large errors are particularly costly.</p>
 
@@ -351,10 +351,10 @@ predictions = model.predict(X_test)`,
 
       <h3>From Linear to Logistic: The Sigmoid Function</h3>
       
-      <p>Linear regression outputs unbounded continuous values: y = β₀ + β₁x₁ + β₂x₂ + ... This is problematic for classification where we need probabilities (bounded between 0 and 1). Logistic regression solves this by applying the <strong>sigmoid (logistic) function</strong> to the linear combination:</p>
-      
-      <p><strong>σ(z) = 1 / (1 + e^(-z))</strong></p>
-      <p>Where z = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ</p>
+      <p>Linear regression outputs unbounded continuous values: $y = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + ...$ This is problematic for classification where we need probabilities (bounded between 0 and 1). Logistic regression solves this by applying the <strong>sigmoid (logistic) function</strong> to the linear combination:</p>
+
+      <p><strong>$\\sigma(z) = \\frac{1}{1 + e^{-z}}$</strong></p>
+      <p>Where $z = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + ... + \\beta_n x_n$</p>
       
       <p>The sigmoid creates a smooth S-shaped curve that:</p>
       <ul>
@@ -372,24 +372,24 @@ predictions = model.predict(X_test)`,
       
       <p>Logistic regression is called "logistic" because it models the <strong>logit</strong> (log-odds) as a linear function of features. The <strong>odds</strong> of an event are the ratio of probability of success to probability of failure:</p>
       
-      <p><strong>Odds = P(y=1) / P(y=0) = P(y=1) / (1 - P(y=1))</strong></p>
-      
+      <p><strong>$\\text{Odds} = \\frac{P(y=1)}{P(y=0)} = \\frac{P(y=1)}{1 - P(y=1)}$</strong></p>
+
       <p>The <strong>log-odds</strong> (logit) is the natural logarithm of the odds:</p>
-      <p><strong>logit(p) = log(p / (1-p)) = β₀ + β₁x₁ + β₂x₂ + ... + βₙxₙ</strong></p>
+      <p><strong>$\\text{logit}(p) = \\log\\left(\\frac{p}{1-p}\\right) = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + ... + \\beta_n x_n$</strong></p>
+
+      <p>This transformation converts probabilities (bounded, non-linear) into log-odds (unbounded, linear), allowing us to use linear modeling techniques. The relationship is invertible: given log-odds z, we recover probability via the sigmoid $p = \\sigma(z) = \\frac{1}{1 + e^{-z}}$.</p>
       
-      <p>This transformation converts probabilities (bounded, non-linear) into log-odds (unbounded, linear), allowing us to use linear modeling techniques. The relationship is invertible: given log-odds z, we recover probability via the sigmoid p = σ(z) = 1/(1 + e^(-z)).</p>
-      
-      <p><strong>Interpreting Coefficients:</strong> A coefficient βⱼ represents the change in log-odds for a one-unit increase in xⱼ, holding other features constant. Equivalently, e^(βⱼ) is the odds ratio: how much the odds multiply when xⱼ increases by 1. For example, β₁ = 0.5 means a one-unit increase in x₁ multiplies the odds by e^(0.5) ≈ 1.65 (65% increase in odds).</p>
+      <p><strong>Interpreting Coefficients:</strong> A coefficient $\\beta_j$ represents the change in log-odds for a one-unit increase in $x_j$, holding other features constant. Equivalently, $e^{\\beta_j}$ is the odds ratio: how much the odds multiply when $x_j$ increases by 1. For example, $\\beta_1 = 0.5$ means a one-unit increase in $x_1$ multiplies the odds by $e^{0.5} \\approx 1.65$ (65% increase in odds).</p>
 
       <h3>Cost Function: Binary Cross-Entropy (Log Loss)</h3>
       
       <p>Logistic regression minimizes <strong>log loss</strong> (binary cross-entropy):</p>
-      <p><strong>L = -(1/n) Σᵢ [yᵢ log(pᵢ) + (1-yᵢ) log(1-pᵢ)]</strong></p>
-      
-      <p>Where yᵢ ∈ {0,1} is the true label and pᵢ is the predicted probability for sample i. For a single sample:</p>
+      <p><strong>$L = -\\frac{1}{n} \\sum_i [y_i \\log(p_i) + (1-y_i) \\log(1-p_i)]$</strong></p>
+
+      <p>Where $y_i \\in \\{0,1\\}$ is the true label and $p_i$ is the predicted probability for sample i. For a single sample:</p>
       <ul>
-        <li>If y=1 (positive class): L = -log(p). This is 0 when p=1 (correct, confident), ∞ when p=0 (wrong, confident)</li>
-        <li>If y=0 (negative class): L = -log(1-p). This is 0 when p=0 (correct, confident), ∞ when p=1 (wrong, confident)</li>
+        <li>If $y=1$ (positive class): $L = -\\log(p)$. This is 0 when $p=1$ (correct, confident), $\\infty$ when $p=0$ (wrong, confident)</li>
+        <li>If $y=0$ (negative class): $L = -\\log(1-p)$. This is 0 when $p=0$ (correct, confident), $\\infty$ when $p=1$ (wrong, confident)</li>
       </ul>
       
       <p>This asymmetric penalty heavily punishes confident incorrect predictions. Being 99% confident and wrong incurs much more loss than being 55% confident and wrong, encouraging calibrated probability estimates.</p>
@@ -400,14 +400,14 @@ predictions = model.predict(X_test)`,
       
       <p>Unlike linear regression which has a closed-form solution, logistic regression requires iterative optimization. The gradient of log loss with respect to the linear combination z is remarkably simple:</p>
       
-      <p><strong>∂L/∂βⱼ = (1/n) Σᵢ (pᵢ - yᵢ)xᵢⱼ</strong></p>
-      
-      <p>This is the same form as linear regression! The gradient is the average of errors (pᵢ - yᵢ) weighted by features. We update weights using gradient descent:</p>
+      <p><strong>$\\frac{\\partial L}{\\partial \\beta_j} = \\frac{1}{n} \\sum_i (p_i - y_i)x_{ij}$</strong></p>
+
+      <p>This is the same form as linear regression! The gradient is the average of errors $(p_i - y_i)$ weighted by features. We update weights using gradient descent:</p>
       <ul>
-        <li>Initialize β randomly or to zeros</li>
-        <li>Compute predictions: p = σ(Xβ)</li>
-        <li>Compute gradient: ∇L = (1/n)Xᵀ(p - y)</li>
-        <li>Update: β := β - α∇L (α is learning rate)</li>
+        <li>Initialize $\\beta$ randomly or to zeros</li>
+        <li>Compute predictions: $p = \\sigma(X\\beta)$</li>
+        <li>Compute gradient: $\\nabla L = \\frac{1}{n}X^T(p - y)$</li>
+        <li>Update: $\\beta := \\beta - \\alpha \\nabla L$ ($\\alpha$ is learning rate)</li>
         <li>Repeat until convergence</li>
       </ul>
       
@@ -415,10 +415,10 @@ predictions = model.predict(X_test)`,
 
       <h3>Decision Boundary</h3>
       
-      <p>The <strong>decision boundary</strong> is where P(y=1|X) = 0.5, which occurs when z = β₀ + β₁x₁ + β₂x₂ + ... = 0. This defines a hyperplane in feature space:</p>
+      <p>The <strong>decision boundary</strong> is where $P(y=1|X) = 0.5$, which occurs when $z = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + ... = 0$. This defines a hyperplane in feature space:</p>
       <ul>
-        <li>For 2D (two features): z = β₀ + β₁x₁ + β₂x₂ = 0 is a line</li>
-        <li>For 3D: z = β₀ + β₁x₁ + β₂x₂ + β₃x₃ = 0 is a plane</li>
+        <li>For 2D (two features): $z = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 = 0$ is a line</li>
+        <li>For 3D: $z = \\beta_0 + \\beta_1 x_1 + \\beta_2 x_2 + \\beta_3 x_3 = 0$ is a plane</li>
         <li>For n-D: a hyperplane dividing the space</li>
       </ul>
       
@@ -665,21 +665,21 @@ print(f"Intercept: {model.intercept_}")`,
       <p><strong>Classification Criteria:</strong></p>
       
       <p><strong>1. Gini Impurity</strong> (default in scikit-learn):</p>
-      <p>Gini = 1 - Σᵢ pᵢ²</p>
+      <p>$\\text{Gini} = 1 - \\sum_i p_i^2$</p>
       <ul>
         <li>Probability of misclassifying a randomly chosen element</li>
         <li>Range: 0 (pure node, all samples same class) to 0.5 (binary, 50-50 split)</li>
-        <li>For binary classification: Gini = 1 - (p² + (1-p)²) = 2p(1-p)</li>
+        <li>For binary classification: $\\text{Gini} = 1 - (p^2 + (1-p)^2) = 2p(1-p)$</li>
         <li>Fast to compute (no logarithms)</li>
         <li>Tends to isolate the most frequent class into pure nodes</li>
       </ul>
       
       <p><strong>2. Entropy (Information Gain)</strong>:</p>
-      <p>Entropy = -Σᵢ pᵢ log₂(pᵢ)</p>
+      <p>$\\text{Entropy} = -\\sum_i p_i \\log_2(p_i)$</p>
       <ul>
         <li>Measures information or uncertainty in bits</li>
-        <li>Range: 0 (pure) to log₂(K) for K classes (binary: 0 to 1 bit)</li>
-        <li>Information Gain = Entropy(parent) - Weighted Average Entropy(children)</li>
+        <li>Range: 0 (pure) to $\\log_2(K)$ for K classes (binary: 0 to 1 bit)</li>
+        <li>Information Gain = $\\text{Entropy}(\\text{parent}) - \\text{Weighted Average Entropy}(\\text{children})$</li>
         <li>More computationally expensive than Gini</li>
         <li>More sensitive to changes in probabilities</li>
         <li>Theoretical foundation in information theory</li>
@@ -690,7 +690,7 @@ print(f"Intercept: {model.intercept_}")`,
       <p><strong>Regression Criteria:</strong></p>
       
       <p><strong>1. Mean Squared Error (MSE)</strong>:</p>
-      <p>MSE = (1/n) Σ(yᵢ - ȳ)²</p>
+      <p>$\\text{MSE} = \\frac{1}{n} \\sum (y_i - \\bar{y})^2$</p>
       <ul>
         <li>Measures variance within a node</li>
         <li>Splits minimize weighted sum of child MSEs</li>
