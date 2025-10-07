@@ -460,6 +460,7 @@ function App() {
           amount={xpReward.amount}
           reason={xpReward.reason}
           onComplete={() => setXpReward(null)}
+          selectedTheme={gamificationData.selectedTheme}
         />
       )}
 
@@ -482,6 +483,7 @@ function App() {
         level={levelUpData.level}
         show={levelUpData.show}
         onClose={() => setLevelUpData({ show: false, level: 0 })}
+        selectedTheme={gamificationData.selectedTheme}
       />
 
       <div className="flex">
@@ -556,6 +558,7 @@ function App() {
                   currentGems={gamificationData.gems}
                   purchasedItems={gamificationData.purchasedItems}
                   onPurchase={handlePurchaseItem}
+                  selectedTheme={gamificationData.selectedTheme}
                 />
               ) : showingSettings ? (
                 <ProfileSettings

@@ -58,7 +58,7 @@ export default function ReviewQueue({ reviewItems, onSelectTopic, getTopicTitle 
       <button
         key={item.topicId}
         onClick={() => onSelectTopic(item.topicId, item.categoryId)}
-        className={`w-full p-4 rounded-lg border-2 transition-all hover:scale-[1.02] hover:shadow-md
+        className={`w-full p-4 rounded-lg border-2 transition-all hover:shadow-md
           ${config.bgColor} border-transparent hover:border-current ${config.color}
         `}
       >

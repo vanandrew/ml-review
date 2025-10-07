@@ -34,7 +34,7 @@ export const advancedTopics: Record<string, Topic> = {
       <p>GAN training is a minimax game between two networks with opposing objectives:</p>
 
       <h5>Visual Overview</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 ┌─────────────────────────────────────────────────────────┐
 │                    GAN Training Loop                     │
 ├─────────────────────────────────────────────────────────┤
@@ -511,7 +511,7 @@ for epoch in range(num_epochs):
 
       <h3>GANs vs Other Generative Models</h3>
 
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <table >
         <tr>
           <th>Aspect</th>
           <th>GANs</th>
@@ -893,7 +893,7 @@ for digit in range(10):
       <h3>VAE Architecture Components</h3>
 
       <h4>Visual Architecture Overview</h4>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 ┌────────────────────────────────────────────────────────────────────────┐
 │                       Variational Autoencoder                        │
 ├────────────────────────────────────────────────────────────────────────┤
@@ -1129,7 +1129,7 @@ for epoch in range(num_epochs):
 
       <h3>VAE vs Standard Autoencoder</h3>
 
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <table >
         <tr>
           <th>Aspect</th>
           <th>Standard Autoencoder</th>
@@ -1253,7 +1253,7 @@ for epoch in range(num_epochs):
 
       <h3>VAE vs GAN: Complementary Approaches</h3>
 
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <table >
         <tr>
           <th>Aspect</th>
           <th>VAE</th>
@@ -1748,7 +1748,7 @@ with torch.no_grad():
       <h4>Bellman Equations: Recursive Structure</h4>
 
       <h5>Visual: Bellman Backup Diagram</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 Bellman Backup: How value propagates backward
 
 Current State s:
@@ -1769,7 +1769,7 @@ V(s) = ∑ π(a|s) ∑ P(s'|s,a)[R(s,a,s') + γ·V(s')]
       </pre>
 
       <h5>Example: Simple GridWorld</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 GridWorld (4x4):
 ┌───┬───┬───┬───┐
 │ S │ -1│ -1│ -1│  S = Start
@@ -1946,7 +1946,7 @@ Optimal Policy (↑↓←→):
       </ul>
 
       <h5>Comparison: SARSA vs Q-Learning</h5>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <table >
         <tr>
           <th>Aspect</th>
           <th>SARSA (On-Policy)</th>
@@ -2688,7 +2688,7 @@ for episode in range(1000):
       <h3>Combining Compression Techniques</h3>
 
       <h4>Visual: Compression Pipeline</h4>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 Stage-by-Stage Compression (Example: ResNet-50)
 
 ┌────────────────────────────────────────────────────────┐
@@ -3133,7 +3133,7 @@ print(f"Output difference: {(original_layer(x) - compressed_layer(x)).abs().mean
       </ol>
 
       <h5>Visual: Federated Learning Communication Round</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
                     Round t: Global Model w_t
                               │
                               │ 1. Distribute
@@ -3460,7 +3460,7 @@ for round t = 1 to T:
       <h3>Federated Learning Variants</h3>
 
       <h4>Cross-Device vs Cross-Silo: Comparison</h4>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <table >
         <tr>
           <th>Aspect</th>
           <th>Cross-Device FL</th>
@@ -3951,7 +3951,7 @@ for client in dp_clients:
       <p>Few-shot learning problems are typically formulated as <strong>N-way K-shot</strong> classification tasks. This means we must distinguish between N classes, having only K labeled examples per class. The learning happens in two stages:</p>
 
       <h5>Visual Example: 5-Way 1-Shot Task</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 ┌────────────────────────────────────────────────────────────────┐
 │           SUPPORT SET (Training - K=1 example per class)        │
 ├────────────────────────────────────────────────────────────────┤
@@ -4010,7 +4010,7 @@ Key Insight: Must generalize from just 5 total examples!
       <p style="text-align: center;">ŷ = argmin_k d(f_θ(x), c_k)</p>
 
       <h5>Visual: Embedding Space with Prototypes</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 Learned Embedding Space (2D projection for visualization):
 
         │
@@ -4080,7 +4080,7 @@ Key: Same-class examples cluster together,
       <p>MAML (Model-Agnostic Meta-Learning) is the most influential meta-learning algorithm. It learns initial parameters θ such that after a few gradient steps on a new task with minimal data, the model achieves good performance. This involves two nested optimization loops:</p>
 
       <h6>Visual: MAML Two-Level Optimization</h6>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 MAML: Learning to Learn Fast
 
 ┌────────────────────────────────────────────────────────┐
@@ -4193,7 +4193,7 @@ Key Insight: Gradient descent THROUGH gradient descent!
 
       <h3>Approach Comparison: Metric Learning vs Meta-Learning</h3>
 
-      <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">
+      <table >
         <tr>
           <th>Aspect</th>
           <th>Metric Learning (e.g., Prototypical)</th>
@@ -4618,7 +4618,7 @@ print(f"Test accuracy: {accuracy.item():.4f}")`,
       <h3>Fusion Strategies: When and How to Combine</h3>
 
       <h4>Visual Comparison of Fusion Strategies</h4>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 ┌─────────────────────────────────────────────────────────────────────┐
 │                       EARLY FUSION                                │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -4682,7 +4682,7 @@ print(f"Test accuracy: {accuracy.item():.4f}")`,
       <p>For example, encode images with Vision Transformer and text with Language Transformer separately, then add cross-attention layers where image tokens attend to text tokens and vice versa. This allows both modality-specific processing and rich cross-modal interaction.</p>
 
       <h5>Visual: Cross-Attention Mechanism</h5>
-      <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+      <pre class="code-block">
 Cross-Modal Attention: How Image and Text Interact
 
 Image Tokens: [I1, I2, I3, ..., In]  (n=196 for 14x14 patches)

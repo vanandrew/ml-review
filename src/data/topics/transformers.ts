@@ -16,7 +16,7 @@ export const transformersTopics: Record<string, Topic> = {
       <ul>
         <li><strong>Sequential bottleneck:</strong> Each time step depends on the previous one, preventing parallel computation and limiting training speed</li>
         <li><strong>Limited context:</strong> Even with attention, RNNs struggle with very long sequences due to the sequential information flow</li>
-        <li><strong>Path length:</strong> Information between distant positions must traverse many steps, with path length O(n) making gradient flow difficult</li>
+        <li><strong>Path length:</strong> Information between distant positions must traverse many steps, with path length $O(n)$ making gradient flow difficult</li>
         <li><strong>Memory constraints:</strong> Maintaining hidden states for long sequences consumes significant memory</li>
         <li><strong>Hardware underutilization:</strong> Sequential computation cannot fully leverage modern GPU parallelism</li>
       </ul>
@@ -26,10 +26,10 @@ export const transformersTopics: Record<string, Topic> = {
       <h3>Core Principles and Innovations</h3>
 
       <h4>1. No Recurrence: Full Parallelization</h4>
-      <p>Transformers process all positions simultaneously rather than sequentially. Every token in a sequence is encoded or decoded in parallel during training, dramatically reducing wall-clock time. This enables processing of entire sequences in O(1) sequential steps rather than O(n).</p>
+      <p>Transformers process all positions simultaneously rather than sequentially. Every token in a sequence is encoded or decoded in parallel during training, dramatically reducing wall-clock time. This enables processing of entire sequences in $O(1)$ sequential steps rather than $O(n)$.</p>
 
       <h4>2. Self-Attention: Direct Connections</h4>
-      <p>Every position directly attends to every other position through self-attention, creating O(1) path length between any two tokens regardless of distance. This enables modeling of arbitrary long-range dependencies without the vanishing gradient problems that plague RNNs.</p>
+      <p>Every position directly attends to every other position through self-attention, creating $O(1)$ path length between any two tokens regardless of distance. This enables modeling of arbitrary long-range dependencies without the vanishing gradient problems that plague RNNs.</p>
 
       <h4>3. Positional Encoding: Injecting Sequence Order</h4>
       <p>Since attention is inherently permutation-invariant, Transformers explicitly add positional information through encoding functions. This provides sequence order awareness without requiring sequential processing.</p>
@@ -43,7 +43,7 @@ export const transformersTopics: Record<string, Topic> = {
       <h4>Multi-Head Self-Attention Sub-layer</h4>
       <p>Computes attention among all input positions, allowing each token to gather information from the entire sequence:</p>
       <ul>
-        <li><strong>Input:</strong> Sequence of embeddings X ∈ ℝ^{n×d}</li>
+        <li><strong>Input:</strong> Sequence of embeddings $X \\in \\mathbb{R}^{n \\times d}$</li>
         <li><strong>Operation:</strong> MultiHead(X, X, X) where the sequence attends to itself</li>
         <li><strong>Output:</strong> Contextualized representations incorporating information from all positions</li>
         <li><strong>Bidirectional:</strong> Each position can attend to all positions (past and future)</li>
@@ -52,8 +52,8 @@ export const transformersTopics: Record<string, Topic> = {
       <h4>Position-wise Feedforward Network</h4>
       <p>Applies the same feedforward network independently to each position:</p>
       <ul>
-        <li><strong>Architecture:</strong> Two linear transformations with ReLU activation: FFN(x) = max(0, xW₁ + b₁)W₂ + b₂</li>
-        <li><strong>Dimensions:</strong> Typically d_model=512 expands to d_ff=2048, then back to 512</li>
+        <li><strong>Architecture:</strong> Two linear transformations with ReLU activation: $\\text{FFN}(x) = \\max(0, xW_1 + b_1)W_2 + b_2$</li>
+        <li><strong>Dimensions:</strong> Typically $d_{\\text{model}}=512$ expands to $d_{\\text{ff}}=2048$, then back to $512$</li>
         <li><strong>Purpose:</strong> Adds non-linear transformations and allows positions to process information independently after gathering context</li>
         <li><strong>Parameters:</strong> Not shared across layers but shared across positions within a layer</li>
       </ul>
@@ -61,7 +61,7 @@ export const transformersTopics: Record<string, Topic> = {
       <h4>Residual Connections and Layer Normalization</h4>
       <p>Each sub-layer is wrapped with residual connections and layer normalization:</p>
       <ul>
-        <li><strong>Pattern:</strong> LayerNorm(x + Sublayer(x))</li>
+        <li><strong>Pattern:</strong> $\\text{LayerNorm}(x + \\text{Sublayer}(x))$</li>
         <li><strong>Residual benefits:</strong> Enables gradient flow through deep networks, provides identity mapping path, allows learning of incremental refinements</li>
         <li><strong>Layer normalization:</strong> Normalizes activations across features (not batch), stabilizes training, accelerates convergence</li>
       </ul>
@@ -72,7 +72,7 @@ export const transformersTopics: Record<string, Topic> = {
       <h4>Masked Multi-Head Self-Attention</h4>
       <p>Attends to all previous positions in the output sequence but prevents attending to future positions:</p>
       <ul>
-        <li><strong>Masking mechanism:</strong> Set attention scores for future positions to -∞ before softmax</li>
+        <li><strong>Masking mechanism:</strong> Set attention scores for future positions to $-\\infty$ before softmax</li>
         <li><strong>Causal property:</strong> Ensures position i can only depend on positions 1 to i-1</li>
         <li><strong>Training-inference consistency:</strong> Same information constraints during both training and generation</li>
         <li><strong>Autoregressive generation:</strong> Enables left-to-right sequence generation</li>
@@ -101,11 +101,11 @@ Token Embeddings: [768-dim vectors]
     +
 Positional Encodings: [768-dim vectors]
     ↓
-Encoder Layer 1: Self-Attention → Add & Norm → FFN → Add & Norm
+Encoder Layer 1: Self-Attention $\\to$ Add & Norm $\\to$ FFN $\\to$ Add & Norm
     ↓
 Encoder Layer 2-N: (same structure, different weights)
     ↓
-Final Encoder Output: Contextualized representations [seq_len × 768]
+Final Encoder Output: Contextualized representations [seq_len $\\times$ 768]
 </pre>
 
       <p><strong>Decoding Phase (for generation):</strong></p>
@@ -121,7 +121,7 @@ Decoder Layer 1:
     ↓
 Decoder Layer 2-N: (same structure)
     ↓
-Linear + Softmax → Probabilities over vocabulary
+Linear + Softmax $\\to$ Probabilities over vocabulary
     ↓
 Sample next token: "s'est"
     ↓
@@ -130,7 +130,7 @@ Repeat autoregressively until [EOS]
 
       <h4>Encoding Phase</h4>
       <ul>
-        <li><strong>Step 1:</strong> Input embeddings + positional encoding → Initial representations</li>
+        <li><strong>Step 1:</strong> Input embeddings + positional encoding $\\to$ Initial representations</li>
         <li><strong>Step 2:</strong> Pass through N encoder layers, each refining representations through self-attention and feedforward</li>
         <li><strong>Step 3:</strong> Final encoder output = rich bidirectional contextualized representations</li>
         <li><strong>Parallel processing:</strong> All positions processed simultaneously</li>
@@ -138,9 +138,9 @@ Repeat autoregressively until [EOS]
 
       <h4>Decoding Phase</h4>
       <ul>
-        <li><strong>Step 1:</strong> Output embeddings (shifted right) + positional encoding → Initial decoder representations</li>
-        <li><strong>Step 2:</strong> Pass through N decoder layers: masked self-attention → cross-attention → feedforward</li>
-        <li><strong>Step 3:</strong> Final linear + softmax → probability distribution over vocabulary</li>
+        <li><strong>Step 1:</strong> Output embeddings (shifted right) + positional encoding $\\to$ Initial decoder representations</li>
+        <li><strong>Step 2:</strong> Pass through N decoder layers: masked self-attention $\\to$ cross-attention $\\to$ feedforward</li>
+        <li><strong>Step 3:</strong> Final linear + softmax $\\to$ probability distribution over vocabulary</li>
         <li><strong>Autoregressive generation:</strong> Generate one token at a time, feeding previous outputs as inputs</li>
       </ul>
 
@@ -157,14 +157,14 @@ Repeat autoregressively until [EOS]
 
       <h4>Parallelization and Speed</h4>
       <ul>
-        <li><strong>Training:</strong> 10-100× faster than RNNs on modern GPUs due to full parallelization</li>
+        <li><strong>Training:</strong> $10\\text{-}100\\times$ faster than RNNs on modern GPUs due to full parallelization</li>
         <li><strong>Utilization:</strong> Better hardware utilization through matrix operations</li>
         <li><strong>Scalability:</strong> Enables training on much larger datasets and model sizes</li>
       </ul>
 
       <h4>Long-Range Dependencies</h4>
       <ul>
-        <li><strong>Path length:</strong> O(1) between any positions vs O(n) in RNNs</li>
+        <li><strong>Path length:</strong> $O(1)$ between any positions vs $O(n)$ in RNNs</li>
         <li><strong>No vanishing gradients:</strong> Direct gradient paths between all positions</li>
         <li><strong>Effective context:</strong> Can model dependencies across entire sequence (hundreds or thousands of tokens)</li>
       </ul>
@@ -185,14 +185,14 @@ Repeat autoregressively until [EOS]
 
       <h3>Computational Complexity Analysis</h3>
 
-      <h4>Self-Attention: O(n² · d)</h4>
+      <h4>Self-Attention: $O(n^2 \\cdot d)$</h4>
       <ul>
         <li><strong>Quadratic in sequence length:</strong> All pairs of positions interact</li>
         <li><strong>Linear in model dimension:</strong> Scales with embedding size</li>
         <li><strong>Bottleneck:</strong> Long sequences (n > 1000) become expensive</li>
       </ul>
 
-      <h4>RNN: O(n · d²)</h4>
+      <h4>RNN: $O(n \\cdot d^2)$</h4>
       <ul>
         <li><strong>Linear in sequence length:</strong> Sequential processing</li>
         <li><strong>Quadratic in model dimension:</strong> Matrix multiplications at each step</li>
@@ -200,7 +200,7 @@ Repeat autoregressively until [EOS]
       </ul>
 
       <h4>Trade-offs</h4>
-      <p>For typical settings (n ≈ 100, d ≈ 512), Transformers are much faster despite quadratic complexity because parallelization outweighs the O(n²) factor. For very long sequences (n > 2000), specialized variants like sparse attention or memory-efficient attention become necessary.</p>
+      <p>For typical settings ($n \\approx 100$, $d \\approx 512$), Transformers are much faster despite quadratic complexity because parallelization outweighs the $O(n^2)$ factor. For very long sequences ($n > 2000$), specialized variants like sparse attention or memory-efficient attention become necessary.</p>
 
       <h3>Training Techniques and Optimizations</h3>
 
@@ -284,7 +284,7 @@ print(f"Output shape: {output.shape}")`,
 
 Parallelization is perhaps the most significant advantage. RNNs must process sequences sequentially, where each hidden state depends on the previous one, preventing parallel computation during training. Transformers eliminate this constraint by using self-attention to directly connect all positions, allowing all tokens to be processed simultaneously. This parallel processing capability dramatically reduces training time and enables efficient utilization of modern GPU architectures.
 
-Long-range dependency modeling is substantially improved in Transformers. RNNs suffer from vanishing gradients that make it difficult to learn dependencies spanning many time steps, typically limiting effective context to 5-10 positions. Transformers provide direct connections between any two positions through self-attention, enabling modeling of dependencies across entire sequences with path lengths of O(1) rather than O(n).
+Long-range dependency modeling is substantially improved in Transformers. RNNs suffer from vanishing gradients that make it difficult to learn dependencies spanning many time steps, typically limiting effective context to 5-10 positions. Transformers provide direct connections between any two positions through self-attention, enabling modeling of dependencies across entire sequences with path lengths of $O(1)$ rather than $O(n)$.
 
 Computational efficiency manifests in multiple ways: (1) Parallel training reduces wall-clock time significantly, (2) More efficient use of hardware accelerators through matrix operations, (3) Better scaling properties as sequence length increases, and (4) Reduced memory requirements for very long sequences due to elimination of sequential hidden state chains.
 
@@ -300,7 +300,7 @@ However, Transformers also have trade-offs: (1) Quadratic complexity in sequence
 
 The core issue arises because self-attention computes relationships between tokens based purely on content similarity, with no inherent understanding of token positions. A sentence like "The cat sat on the mat" would be processed identically to "Mat the on sat cat the" without positional information, clearly problematic for language understanding where word order carries crucial meaning.
 
-Transformers address this by adding positional encodings directly to input embeddings before the first attention layer. The original Transformer paper used sinusoidal positional encoding with sine and cosine functions of different frequencies: PE(pos, 2i) = sin(pos/10000^(2i/d_model)) and PE(pos, 2i+1) = cos(pos/10000^(2i/d_model)), where pos is the position, i is the dimension index, and d_model is the model dimension.
+Transformers address this by adding positional encodings directly to input embeddings before the first attention layer. The original Transformer paper used sinusoidal positional encoding with sine and cosine functions of different frequencies: $\\text{PE}(\\text{pos}, 2i) = \\sin(\\text{pos}/10000^{2i/d_{\\text{model}}})$ and $\\text{PE}(\\text{pos}, 2i+1) = \\cos(\\text{pos}/10000^{2i/d_{\\text{model}}})$, where $\\text{pos}$ is the position, $i$ is the dimension index, and $d_{\\text{model}}$ is the model dimension.
 
 This sinusoidal scheme has several elegant properties: (1) Each position receives a unique encoding pattern, (2) The model can potentially learn to attend to relative positions through trigonometric identities, (3) The encoding can extrapolate to sequence lengths longer than those seen during training, (4) Different dimensions capture position information at different scales, and (5) The encoding is deterministic and doesn't require learning additional parameters.
 
@@ -338,7 +338,7 @@ Without masking, standard self-attention would allow each position to attend to 
 
 The masking mechanism implements this constraint by modifying the attention computation to set attention scores to negative infinity (or a very large negative number) for positions that should not be accessible. When softmax is applied, these masked positions receive attention weights of effectively zero, preventing information flow from future positions.
 
-Mathematically, the mask is applied before the softmax operation: Attention(Q, K, V) = softmax((QK^T + M) / √d_k)V, where M is the mask matrix with 0s for allowed connections and -∞ for forbidden connections. This ensures that position i can only attend to positions j where j ≤ i.
+Mathematically, the mask is applied before the softmax operation: $\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T + M}{\\sqrt{d_k}}\\right)V$, where $M$ is the mask matrix with 0s for allowed connections and $-\\infty$ for forbidden connections. This ensures that position $i$ can only attend to positions $j$ where $j \\leq i$.
 
 Training-inference consistency is crucial for model performance. During training with teacher forcing, the model has access to the entire target sequence but must learn to make predictions as if generating autoregressively. Masked self-attention ensures the model experiences the same information constraints during training as it will during inference, preventing a distribution mismatch.
 
@@ -382,14 +382,14 @@ Masked self-attention thus serves as the crucial mechanism that enables Transfor
       <p><strong>Intuition:</strong> Think of self-attention as a database lookup. The query is your search request, keys are indices that help match relevant content, and values are the actual data you retrieve. Each position generates all three roles simultaneously.</p>
 
       <h4>The Attention Computation: Scaled Dot-Product</h4>
-      <p><strong>Formula:</strong> Attention(Q, K, V) = softmax(QK^T / √d_k)V</p>
+      <p><strong>Formula:</strong> $$\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$</p>
 
       <p><strong>Step-by-step breakdown:</strong></p>
       <ol>
-        <li><strong>QK^T:</strong> Compute dot products between all queries and all keys, creating an n×n similarity matrix. High dot product means query i and key j are well-aligned.</li>
-        <li><strong>/ √d_k:</strong> Scale by square root of key dimension. Without scaling, dot products grow large as dimensionality increases, pushing softmax into regions with extremely small gradients. This normalization keeps values in a reasonable range.</li>
-        <li><strong>softmax:</strong> Convert similarity scores into probability distribution over positions. Each row sums to 1, representing how much attention position i pays to all positions j.</li>
-        <li><strong>× V:</strong> Weighted sum of value vectors. Each position's output is a combination of all value vectors, weighted by attention scores.</li>
+        <li><strong>$QK^T$:</strong> Compute dot products between all queries and all keys, creating an $n \\times n$ similarity matrix. High dot product means query $i$ and key $j$ are well-aligned.</li>
+        <li><strong>$/ \\sqrt{d_k}$:</strong> Scale by square root of key dimension. Without scaling, dot products grow large as dimensionality increases, pushing softmax into regions with extremely small gradients. This normalization keeps values in a reasonable range.</li>
+        <li><strong>softmax:</strong> Convert similarity scores into probability distribution over positions. Each row sums to 1, representing how much attention position $i$ pays to all positions $j$.</li>
+        <li><strong>$\\times V$:</strong> Weighted sum of value vectors. Each position's output is a combination of all value vectors, weighted by attention scores.</li>
       </ol>
 
       <h4>Concrete Numerical Example</h4>
@@ -416,7 +416,7 @@ QK^T = [[2, 1, 2],    # "cat" attends to each token
         [1, 2, 1],    # "sat" attends to each token
         [1, 1, 0]]    # "mat" attends to each token
 
-Step 3: Scale by √d_k = √4 = 2
+Step 3: Scale by $\\sqrt{d_k} = \\sqrt{4} = 2$
 Scaled = [[1.0, 0.5, 1.0],
           [0.5, 1.0, 0.5],
           [0.5, 0.5, 0.0]]
@@ -437,12 +437,12 @@ Similarly for "sat" and "mat". Each output is a contextualized representation
 combining information from all tokens based on attention weights.
 </pre>
 
-      <p><strong>Why scaling matters:</strong> For dimension d_k=64, random dot products have variance d_k. Without scaling, as d_k increases, softmax becomes peaked around maximum values with tiny gradients elsewhere. Scaling by √d_k normalizes variance to 1, maintaining gradient flow.</p>
+      <p><strong>Why scaling matters:</strong> For dimension $d_k=64$, random dot products have variance $d_k$. Without scaling, as $d_k$ increases, softmax becomes peaked around maximum values with tiny gradients elsewhere. Scaling by $\\sqrt{d_k}$ normalizes variance to 1, maintaining gradient flow.</p>
 
       <h4>Mathematical Properties</h4>
       <ul>
         <li><strong>Permutation equivariance:</strong> Attention output for position i doesn't depend on the order of positions, only on their content and distances in embedding space. This is why positional encoding is necessary.</li>
-        <li><strong>Complexity:</strong> O(n²d) where n is sequence length, d is model dimension. Quadratic in sequence length but linear in dimension. Matrix multiplication QK^T is O(n²d).</li>
+        <li><strong>Complexity:</strong> $O(n^2d)$ where $n$ is sequence length, $d$ is model dimension. Quadratic in sequence length but linear in dimension. Matrix multiplication $QK^T$ is $O(n^2d)$.</li>
         <li><strong>Parallelizability:</strong> All positions computed simultaneously through matrix operations, fully utilizing GPU parallelism.</li>
         <li><strong>Differentiability:</strong> Entire operation is differentiable, enabling end-to-end training with backpropagation.</li>
       </ul>
@@ -451,15 +451,15 @@ combining information from all tokens based on attention weights.
       <p>Single attention mechanisms might miss important patterns by focusing on one type of relationship. Multi-head attention addresses this by running multiple attention operations in parallel, each with its own learned parameters.</p>
 
       <h4>The Multi-Head Mechanism</h4>
-      <p><strong>Formula:</strong> MultiHead(Q, K, V) = Concat(head₁, head₂, ..., head_h)W^O</p>
-      <p>where head_i = Attention(QW^Q_i, KW^K_i, VW^V_i)</p>
+      <p><strong>Formula:</strong> $$\\text{MultiHead}(Q, K, V) = \\text{Concat}(\\text{head}_1, \\text{head}_2, \\ldots, \\text{head}_h)W^O$$</p>
+      <p>where $\\text{head}_i = \\text{Attention}(QW^Q_i, KW^K_i, VW^V_i)$</p>
 
       <p><strong>Architecture details:</strong></p>
       <ul>
-        <li><strong>Projection matrices:</strong> Each head has independent projection matrices W^Q_i, W^K_i, W^V_i that project the input into different subspaces</li>
-        <li><strong>Reduced dimension:</strong> If model dimension is d_model=512 and we use h=8 heads, each head operates in d_k = d_model/h = 64 dimensions</li>
-        <li><strong>Parallel computation:</strong> All heads computed simultaneously, concatenated, then projected through W^O</li>
-        <li><strong>Total parameters:</strong> Same as single full-dimensional attention: h heads × (3 × d_k × d_model) + d_model² ≈ 4d_model²</li>
+        <li><strong>Projection matrices:</strong> Each head has independent projection matrices $W^Q_i$, $W^K_i$, $W^V_i$ that project the input into different subspaces</li>
+        <li><strong>Reduced dimension:</strong> If model dimension is $d_{\\text{model}}=512$ and we use $h=8$ heads, each head operates in $d_k = d_{\\text{model}}/h = 64$ dimensions</li>
+        <li><strong>Parallel computation:</strong> All heads computed simultaneously, concatenated, then projected through $W^O$</li>
+        <li><strong>Total parameters:</strong> Same as single full-dimensional attention: $h$ heads $\\times (3 \\times d_k \\times d_{\\text{model}}) + d_{\\text{model}}^2 \\approx 4d_{\\text{model}}^2$</li>
       </ul>
 
       <h4>Why Multiple Heads? Representation Diversity</h4>
@@ -472,7 +472,7 @@ combining information from all tokens based on attention weights.
         <li><strong>Task-specific patterns:</strong> For translation, some heads align source-target words; for sentiment, some heads identify sentiment-bearing words</li>
       </ul>
 
-      <p><strong>Empirical observations:</strong> Studies of BERT and GPT reveal that different heads specialize: some track coreference ("he" → "John"), some track syntax trees, some focus on next-word prediction patterns. This specialization emerges through training without explicit supervision.</p>
+      <p><strong>Empirical observations:</strong> Studies of BERT and GPT reveal that different heads specialize: some track coreference ("he" $\\to$ "John"), some track syntax trees, some focus on next-word prediction patterns. This specialization emerges through training without explicit supervision.</p>
 
       <h4>Benefits Over Single-Head</h4>
       <ul>
@@ -487,7 +487,7 @@ combining information from all tokens based on attention weights.
       <h4>Masked (Causal) Self-Attention</h4>
       <p>Prevents positions from attending to subsequent positions, maintaining autoregressive property:</p>
       <ul>
-        <li><strong>Implementation:</strong> Set attention scores to -∞ for future positions before softmax</li>
+        <li><strong>Implementation:</strong> Set attention scores to $-\\infty$ for future positions before softmax</li>
         <li><strong>Use case:</strong> Language modeling and decoder stacks where causality must be preserved</li>
         <li><strong>Effect:</strong> Position i can only attend to positions 1...i, not i+1...n</li>
       </ul>
@@ -495,7 +495,7 @@ combining information from all tokens based on attention weights.
       <h4>Cross-Attention (Encoder-Decoder Attention)</h4>
       <p>Queries come from one sequence, keys and values from another:</p>
       <ul>
-        <li><strong>Formula:</strong> CrossAttention(Q_dec, K_enc, V_enc)</li>
+        <li><strong>Formula:</strong> $\\text{CrossAttention}(Q_{\\text{dec}}, K_{\\text{enc}}, V_{\\text{enc}})$</li>
         <li><strong>Use case:</strong> Translation, summarization—decoder attends to encoder representations</li>
         <li><strong>Information flow:</strong> Enables decoder to access full input information dynamically</li>
       </ul>
@@ -503,7 +503,7 @@ combining information from all tokens based on attention weights.
       <h4>Local (Windowed) Attention</h4>
       <p>Restricts attention to nearby positions within a fixed window:</p>
       <ul>
-        <li><strong>Complexity reduction:</strong> O(n·w·d) where w is window size, vs O(n²d) for full attention</li>
+        <li><strong>Complexity reduction:</strong> $O(n \\cdot w \\cdot d)$ where $w$ is window size, vs $O(n^2d)$ for full attention</li>
         <li><strong>Use case:</strong> Very long sequences where quadratic complexity is prohibitive</li>
         <li><strong>Trade-off:</strong> Faster but may miss long-range dependencies</li>
       </ul>
@@ -520,17 +520,17 @@ combining information from all tokens based on attention weights.
 
       <h4>Memory Requirements</h4>
       <ul>
-        <li><strong>Attention matrix:</strong> O(n²) per head, or O(h·n²) total for all heads</li>
-        <li><strong>Bottleneck for long sequences:</strong> For n=2048, h=16: 16 × 2048² ≈ 67M values per layer</li>
+        <li><strong>Attention matrix:</strong> $O(n^2)$ per head, or $O(h \\cdot n^2)$ total for all heads</li>
+        <li><strong>Bottleneck for long sequences:</strong> For $n=2048$, $h=16$: $16 \\times 2048^2 \\approx 67M$ values per layer</li>
         <li><strong>Memory-efficient implementations:</strong> Recompute attention during backward pass instead of storing</li>
       </ul>
 
       <h4>Computational Complexity</h4>
       <ul>
-        <li><strong>Self-attention:</strong> O(n²d) dominated by QK^T matrix multiplication</li>
-        <li><strong>Feedforward:</strong> O(nd²) but with d_ff typically 4d, so O(4nd²)</li>
-        <li><strong>Break-even point:</strong> When n < d/4, attention is cheaper; when n > d/4, feedforward dominates</li>
-        <li><strong>Typical scenarios:</strong> For sentences (n≈50, d≈512), attention is manageable. For documents (n≈2000), attention becomes expensive</li>
+        <li><strong>Self-attention:</strong> $O(n^2d)$ dominated by $QK^T$ matrix multiplication</li>
+        <li><strong>Feedforward:</strong> $O(nd^2)$ but with $d_{\\text{ff}}$ typically $4d$, so $O(4nd^2)$</li>
+        <li><strong>Break-even point:</strong> When $n < d/4$, attention is cheaper; when $n > d/4$, feedforward dominates</li>
+        <li><strong>Typical scenarios:</strong> For sentences ($n\\approx50$, $d\\approx512$), attention is manageable. For documents ($n\\approx2000$), attention becomes expensive</li>
       </ul>
 
       <h3>Implementation Insights</h3>
@@ -539,7 +539,7 @@ combining information from all tokens based on attention weights.
       <ul>
         <li><strong>Batched matrix multiplication:</strong> Compute all heads simultaneously through efficient batched operations</li>
         <li><strong>Fused kernels:</strong> Combine softmax with scaling and masking for speed</li>
-        <li><strong>Flash Attention:</strong> Recent optimization that reduces memory from O(n²) to O(n) for attention computation</li>
+        <li><strong>Flash Attention:</strong> Recent optimization that reduces memory from $O(n^2)$ to $O(n)$ for attention computation</li>
       </ul>
 
       <h4>Training Tips</h4>
@@ -680,20 +680,20 @@ This design provides several advantages: (1) Flexibility - the same input can pl
 In self-attention, all three vectors are derived from the same input sequence through learned linear projections: Q = XW_Q, K = XW_K, V = XW_V, where X is the input and W matrices are learned parameters. This enables the model to learn task-specific transformations for each role while maintaining the flexible query-key-value framework.`
       },
       {
-        question: 'Why do we scale the dot product by √d_k in attention?',
-        answer: `Scaling the dot product by √d_k in attention is crucial for maintaining stable training dynamics and preventing the softmax function from producing overly peaked probability distributions that would harm gradient flow and model performance.
+        question: 'Why do we scale the dot product by $\\sqrt{d_k}$ in attention?',
+        answer: `Scaling the dot product by $\\sqrt{d_k}$ in attention is crucial for maintaining stable training dynamics and preventing the softmax function from producing overly peaked probability distributions that would harm gradient flow and model performance.
 
-The fundamental issue arises from the variance of dot products increasing with dimensionality. When computing attention scores as q·k where both q and k are d_k-dimensional vectors with elements drawn from distributions with variance σ², the variance of their dot product grows proportionally to d_k·σ². As d_k increases (typical values are 64-128 per attention head), dot products can become very large in magnitude.
+The fundamental issue arises from the variance of dot products increasing with dimensionality. When computing attention scores as $q \\cdot k$ where both $q$ and $k$ are $d_k$-dimensional vectors with elements drawn from distributions with variance $\\sigma^2$, the variance of their dot product grows proportionally to $d_k \\cdot \\sigma^2$. As $d_k$ increases (typical values are 64-128 per attention head), dot products can become very large in magnitude.
 
 Large dot product values create problems in the softmax computation. When input values to softmax are large, the function produces extremely peaked distributions where one element approaches 1 and others approach 0. This "sharpening" effect reduces the effective gradient signal during backpropagation because the gradients of softmax become very small when the distribution is highly concentrated.
 
 Mathematically, if attention scores before softmax are [10, 9, 8], the softmax outputs approximately [0.67, 0.24, 0.09]. But if scores are [100, 90, 80], softmax produces approximately [1.0, 0.0, 0.0], eliminating the attention to other positions entirely and reducing gradient flow.
 
-The scaling factor √d_k is chosen to normalize the variance of dot products back to approximately 1, regardless of the key dimension. If q and k have unit variance, then q·k/√d_k also has approximately unit variance, keeping attention scores in a reasonable range that doesn't saturate the softmax function.
+The scaling factor $\\sqrt{d_k}$ is chosen to normalize the variance of dot products back to approximately 1, regardless of the key dimension. If $q$ and $k$ have unit variance, then $q \\cdot k / \\sqrt{d_k}$ also has approximately unit variance, keeping attention scores in a reasonable range that doesn't saturate the softmax function.
 
 This scaling provides several benefits: (1) Training stability - prevents extreme attention distributions that can destabilize learning, (2) Better gradient flow - maintains meaningful gradients through the attention mechanism, (3) Dimension independence - allows using the same learning rates and optimization strategies across different model sizes, and (4) Attention diversity - enables the model to attend to multiple positions rather than focusing too sharply on single positions.
 
-Empirical evidence supports this choice: experiments show that removing the scaling factor leads to slower convergence and worse final performance, particularly for larger models with higher dimensional keys. The √d_k scaling has become a standard component of attention mechanisms across all major Transformer implementations.`
+Empirical evidence supports this choice: experiments show that removing the scaling factor leads to slower convergence and worse final performance, particularly for larger models with higher dimensional keys. The $\\sqrt{d_k}$ scaling has become a standard component of attention mechanisms across all major Transformer implementations.`
       },
       {
         question: 'What are the advantages of using multiple attention heads?',
@@ -715,31 +715,31 @@ Empirical benefits are well-documented: ablation studies consistently show that 
       },
       {
         question: 'What is the computational complexity of self-attention and why?',
-        answer: `Self-attention has O(n²d) computational complexity where n is the sequence length and d is the model dimension, arising from the need to compute pairwise relationships between all positions in the sequence. Understanding this complexity is crucial for designing efficient Transformer architectures and understanding their scalability limitations.
+        answer: `Self-attention has $O(n^2d)$ computational complexity where $n$ is the sequence length and $d$ is the model dimension, arising from the need to compute pairwise relationships between all positions in the sequence. Understanding this complexity is crucial for designing efficient Transformer architectures and understanding their scalability limitations.
 
-The quadratic term O(n²) comes from computing attention scores between every pair of positions. For a sequence of length n, there are n² possible pairs, and each pair requires computing the similarity between their query and key vectors. This all-pairs computation is fundamental to self-attention's ability to model arbitrary long-range dependencies but creates a scalability bottleneck for long sequences.
+The quadratic term $O(n^2)$ comes from computing attention scores between every pair of positions. For a sequence of length $n$, there are $n^2$ possible pairs, and each pair requires computing the similarity between their query and key vectors. This all-pairs computation is fundamental to self-attention's ability to model arbitrary long-range dependencies but creates a scalability bottleneck for long sequences.
 
-The linear term O(d) reflects the cost of computing each pairwise similarity. Query and key vectors are d-dimensional, so computing their dot product requires d operations. Additionally, the subsequent aggregation of value vectors (also d-dimensional) based on attention weights contributes to the linear complexity in the model dimension.
+The linear term $O(d)$ reflects the cost of computing each pairwise similarity. Query and key vectors are $d$-dimensional, so computing their dot product requires $d$ operations. Additionally, the subsequent aggregation of value vectors (also $d$-dimensional) based on attention weights contributes to the linear complexity in the model dimension.
 
-Breaking down the computation steps: (1) Computing Q, K, V projections: O(n·d²) for matrix multiplications, (2) Computing attention scores QK^T: O(n²·d) for all pairwise dot products, (3) Applying softmax: O(n²) for normalizing each row, (4) Computing weighted values: O(n²·d) for aggregating value vectors. The dominant terms are the O(n²·d) operations.
+Breaking down the computation steps: (1) Computing Q, K, V projections: $O(n \\cdot d^2)$ for matrix multiplications, (2) Computing attention scores $QK^T$: $O(n^2 \\cdot d)$ for all pairwise dot products, (3) Applying softmax: $O(n^2)$ for normalizing each row, (4) Computing weighted values: $O(n^2 \\cdot d)$ for aggregating value vectors. The dominant terms are the $O(n^2 \\cdot d)$ operations.
 
-Memory complexity also scales as O(n²) for storing the attention matrix, which becomes prohibitive for very long sequences. For sequences of 10,000 tokens, the attention matrix alone requires storing 100 million values, before considering gradients needed for backpropagation.
+Memory complexity also scales as $O(n^2)$ for storing the attention matrix, which becomes prohibitive for very long sequences. For sequences of 10,000 tokens, the attention matrix alone requires storing 100 million values, before considering gradients needed for backpropagation.
 
 This complexity creates practical limitations: most Transformer models are limited to sequences of 512-4096 tokens due to memory and computational constraints. Processing longer sequences requires specialized techniques or architectural modifications.
 
-Comparison with RNNs reveals interesting trade-offs: RNNs have O(n·d²) complexity (linear in sequence length but quadratic in hidden dimension), while Transformers have O(n²·d) complexity (quadratic in sequence length but linear in model dimension). For typical scenarios where d >> n, RNNs can be more efficient, but Transformers' parallelizability often compensates in practice.
+Comparison with RNNs reveals interesting trade-offs: RNNs have $O(n \\cdot d^2)$ complexity (linear in sequence length but quadratic in hidden dimension), while Transformers have $O(n^2 \\cdot d)$ complexity (quadratic in sequence length but linear in model dimension). For typical scenarios where $d >> n$, RNNs can be more efficient, but Transformers' parallelizability often compensates in practice.
 
-Numerous solutions address this complexity: sparse attention patterns reduce the effective number of pairs computed, linear attention approximations achieve O(n) complexity, hierarchical attention applies attention at multiple granularities, and sliding window attention limits attention to local neighborhoods. These innovations aim to preserve self-attention's modeling benefits while improving scalability.`
+Numerous solutions address this complexity: sparse attention patterns reduce the effective number of pairs computed, linear attention approximations achieve $O(n)$ complexity, hierarchical attention applies attention at multiple granularities, and sliding window attention limits attention to local neighborhoods. These innovations aim to preserve self-attention's modeling benefits while improving scalability.`
       },
       {
         question: 'How does masked attention differ from regular attention?',
         answer: `Masked attention is a variant of self-attention that prevents certain positions from attending to others by setting their attention scores to negative infinity before applying softmax, effectively making their attention weights zero. This mechanism is essential for maintaining causal constraints in autoregressive generation and implementing various attention patterns.
 
-The key difference lies in the attention score computation. Regular self-attention computes scores between all position pairs: scores = QK^T/√d_k, then applies softmax directly. Masked attention modifies this by adding a mask matrix: scores = (QK^T + M)/√d_k, where M contains 0 for allowed connections and -∞ (or a very large negative number) for forbidden connections.
+The key difference lies in the attention score computation. Regular self-attention computes scores between all position pairs: scores = $QK^T/\\sqrt{d_k}$, then applies softmax directly. Masked attention modifies this by adding a mask matrix: scores = $(QK^T + M)/\\sqrt{d_k}$, where $M$ contains 0 for allowed connections and $-\\infty$ (or a very large negative number) for forbidden connections.
 
-Causal masking is the most common application, used in decoder self-attention to prevent positions from attending to future positions. The mask matrix M is upper triangular with -∞ above the diagonal, ensuring position i can only attend to positions j where j ≤ i. This maintains the autoregressive property essential for text generation.
+Causal masking is the most common application, used in decoder self-attention to prevent positions from attending to future positions. The mask matrix $M$ is upper triangular with $-\\infty$ above the diagonal, ensuring position $i$ can only attend to positions $j$ where $j \\leq i$. This maintains the autoregressive property essential for text generation.
 
-The masking mechanism preserves the mathematical properties of attention while enforcing structural constraints. When -∞ values are passed through softmax, they become 0, effectively removing those connections from the weighted sum. This allows flexible control over attention patterns without changing the fundamental attention computation.
+The masking mechanism preserves the mathematical properties of attention while enforcing structural constraints. When $-\\infty$ values are passed through softmax, they become 0, effectively removing those connections from the weighted sum. This allows flexible control over attention patterns without changing the fundamental attention computation.
 
 Different mask types serve various purposes: (1) Causal masks for autoregressive generation, (2) Padding masks to ignore padded tokens in variable-length sequences, (3) Attention masks to prevent attending to specific tokens (like special tokens), and (4) Structural masks to enforce linguistic or syntactic constraints.
 
@@ -780,9 +780,9 @@ This specialization emerges naturally through training rather than being explici
       {
         id: 'attn1',
         question: 'What is the computational complexity of self-attention with sequence length n?',
-        options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(n³)'],
+        options: ['$O(n)$', '$O(n \\log n)$', '$O(n^2)$', '$O(n^3)$'],
         correctAnswer: 2,
-        explanation: 'Self-attention has O(n²) complexity because each position must attend to every other position, resulting in n² attention scores.'
+        explanation: 'Self-attention has $O(n^2)$ complexity because each position must attend to every other position, resulting in $n^2$ attention scores.'
       },
       {
         id: 'attn2',
@@ -817,19 +817,19 @@ This specialization emerges naturally through training rather than being explici
         <li><strong>Need explicit encoding:</strong> Must add position information</li>
       </ul>
 
-      <p><strong>Mathematical perspective:</strong> For any permutation π, Attention(Q_π, K_π, V_π) = (Attention(Q, K, V))_π. The operation preserves permutation structure, making position information invisible to the model.</p>
+      <p><strong>Mathematical perspective:</strong> For any permutation $\\pi$, $\\text{Attention}(Q_\\pi, K_\\pi, V_\\pi) = (\\text{Attention}(Q, K, V))_\\pi$. The operation preserves permutation structure, making position information invisible to the model.</p>
 
       <h3>Absolute Positional Encoding: The Sinusoidal Approach</h3>
       <p>The original Transformer paper introduced elegant sinusoidal positional encodings that inject absolute position information while possessing useful mathematical properties.</p>
 
       <h4>The Sinusoidal Formula</h4>
-      <p>For position pos and dimension i:</p>
+      <p>For position $\\text{pos}$ and dimension $i$:</p>
       <ul>
-        <li><strong>PE(pos, 2i) = sin(pos / 10000^(2i/d_model))</strong></li>
-        <li><strong>PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))</strong></li>
+        <li>$$\\text{PE}(\\text{pos}, 2i) = \\sin\\left(\\frac{\\text{pos}}{10000^{2i/d_{\\text{model}}}}\\right)$$</li>
+        <li>$$\\text{PE}(\\text{pos}, 2i+1) = \\cos\\left(\\frac{\\text{pos}}{10000^{2i/d_{\\text{model}}}}\\right)$$</li>
       </ul>
 
-      <p>Even dimensions use sine, odd dimensions use cosine. Each dimension has a different frequency, from sin(pos) at dimension 0 to sin(pos/10000) at the highest dimension.</p>
+      <p>Even dimensions use sine, odd dimensions use cosine. Each dimension has a different frequency, from $\\sin(\\text{pos})$ at dimension 0 to $\\sin(\\text{pos}/10000)$ at the highest dimension.</p>
 
       <h4>Intuition Behind Sinusoidal Encodings</h4>
       <ul>
@@ -854,8 +854,8 @@ This specialization emerges naturally through training rather than being explici
 
       <h4>Implementation Details</h4>
       <ul>
-        <li><strong>Addition to embeddings:</strong> PE added directly to word embeddings: x = WordEmbed(token) + PE(pos)</li>
-        <li><strong>Same dimension:</strong> PE has same d_model dimensionality as embeddings for direct addition</li>
+        <li><strong>Addition to embeddings:</strong> PE added directly to word embeddings: $x = \\text{WordEmbed}(\\text{token}) + \\text{PE}(\\text{pos})$</li>
+        <li><strong>Same dimension:</strong> PE has same $d_{\\text{model}}$ dimensionality as embeddings for direct addition</li>
         <li><strong>Precomputed:</strong> Can precompute PE matrix for maximum expected sequence length</li>
         <li><strong>No trainable parameters:</strong> Fixed sinusoidal patterns, though some implementations do train them</li>
       </ul>
@@ -886,7 +886,7 @@ This specialization emerges naturally through training rather than being explici
       <ul>
         <li><strong>Fixed maximum length:</strong> Cannot generalize beyond max_seq_len seen during training</li>
         <li><strong>Data dependency:</strong> Requires sufficient training data to learn good representations</li>
-        <li><strong>Parameters:</strong> Adds max_seq_len × d_model parameters (e.g., 512 × 768 = 393K for BERT)</li>
+        <li><strong>Parameters:</strong> Adds $\\text{max\\_seq\\_len} \\times d_{\\text{model}}$ parameters (e.g., $512 \\times 768 = 393K$ for BERT)</li>
       </ul>
 
       <h3>Relative Positional Encoding: Focus on Distances</h3>
@@ -905,7 +905,7 @@ This specialization emerges naturally through training rather than being explici
       <h4>T5 Relative Position Biases</h4>
       <p>T5 model introduced simple yet effective relative positional encoding:</p>
       <ul>
-        <li><strong>Attention modification:</strong> Attention(Q, K, V) = softmax((QK^T + R) / √d_k)V</li>
+        <li><strong>Attention modification:</strong> $\\text{Attention}(Q, K, V) = \\text{softmax}((QK^T + R) / \\sqrt{d_k})V$</li>
         <li><strong>Relative bias R:</strong> Learnable scalar bias for each relative position distance</li>
         <li><strong>Bucketing:</strong> Discretize distances into buckets (e.g., 0, 1, 2-3, 4-7, 8-15, ...) to limit parameters</li>
         <li><strong>Per-head biases:</strong> Each attention head learns its own position biases</li>
@@ -919,8 +919,8 @@ This specialization emerges naturally through training rather than being explici
       <ul>
         <li><strong>Rotation matrices:</strong> Rotate query and key vectors</li>
         <li><strong>Core idea:</strong> Apply rotation matrix to Q and K based on position before computing attention</li>
-        <li><strong>Mathematics:</strong> Rotation by angle θ = pos·ω where ω depends on dimension, creating position-dependent rotations</li>
-        <li><strong>Relative encoding:</strong> Dot product captures relative positions. Dot product Q_i·K_j naturally captures relative position i-j through rotation geometry</li>
+        <li><strong>Mathematics:</strong> Rotation by angle $\\theta = \\text{pos} \\cdot \\omega$ where $\\omega$ depends on dimension, creating position-dependent rotations</li>
+        <li><strong>Relative encoding:</strong> Dot product captures relative positions. Dot product $Q_i \\cdot K_j$ naturally captures relative position $i-j$ through rotation geometry</li>
         <li><strong>Better extrapolation:</strong> Works well beyond training length. No addition to embeddings, works seamlessly with any model depth</li>
         <li><strong>Efficiency:</strong> No additional parameters</li>
         <li><strong>Practical success:</strong> Enables models like LLaMA to handle sequences much longer than training length</li>
@@ -929,11 +929,11 @@ This specialization emerges naturally through training rather than being explici
       <h4>Attention with Linear Biases (ALiBi)</h4>
       <p>Simpler alternative that adds static, non-learned biases to attention scores:</p>
       <ul>
-        <li><strong>Formula:</strong> Attention scores = QK^T / √d_k - m·distance where m is head-specific slope</li>
+        <li><strong>Formula:</strong> Attention scores = $QK^T / \\sqrt{d_k} - m \\cdot \\text{distance}$ where $m$ is head-specific slope</li>
         <li><strong>Effect:</strong> Penalizes attention to distant tokens linearly based on distance</li>
-        <li><strong>No parameters:</strong> Only hyperparameter is set of slopes (e.g., geometric sequence 2^(-8/h) for head h)</li>
+        <li><strong>No parameters:</strong> Only hyperparameter is set of slopes (e.g., geometric sequence $2^{-8/h}$ for head $h$)</li>
         <li><strong>Training efficiency:</strong> Faster than learned positional embeddings</li>
-        <li><strong>Extrapolation:</strong> Strong length generalization, models handle sequences 2-5× training length</li>
+        <li><strong>Extrapolation:</strong> Strong length generalization, models handle sequences $2{-}5\\times$ training length</li>
       </ul>
 
       <h3>Comparison and Trade-offs</h3>
@@ -956,7 +956,7 @@ This specialization emerges naturally through training rather than being explici
         <tr>
           <td>Parameters</td>
           <td>0 (fixed function)</td>
-          <td>max_len × d_model</td>
+          <td>$\\text{max\\_len} \\times d_{\\text{model}}$</td>
         </tr>
         <tr>
           <td>Generalization</td>
@@ -1018,10 +1018,10 @@ START: What's your use case?
 │
 ├─ Need to handle sequences LONGER than training length?
 │  │
-│  ├─ By a lot (2-5× longer)?
+│  ├─ By a lot ($2{-}5\\times$ longer)?
 │  │  └─→ Use: ALiBi or RoPE (best extrapolation)
 │  │
-│  └─ By a little (1.5-2× longer)?
+│  └─ By a little ($1.5{-}2\\times$ longer)?
 │     └─→ Use: RoPE or interpolated learned embeddings
 │
 ├─ Building modern LLM (100B+ params)?
@@ -1297,7 +1297,7 @@ print(f"Relative position embeddings: {rel_embeddings.shape}")`,
       <ul>
         <li><strong>Spatial inductive biases:</strong> Convolutions naturally capture local spatial relationships, translation invariance, hierarchical feature extraction</li>
         <li><strong>Parameter efficiency:</strong> Weight sharing across spatial locations, far fewer parameters than fully connected layers</li>
-        <li><strong>Proven success:</strong> AlexNet (2012) → ResNet (2015) → EfficientNet (2019) progressively improved ImageNet performance</li>
+        <li><strong>Proven success:</strong> AlexNet (2012) $\\to$ ResNet (2015) $\\to$ EfficientNet (2019) progressively improved ImageNet performance</li>
         <li><strong>Image-specific design:</strong> Architectures explicitly designed for 2D spatial data</li>
       </ul>
 
@@ -1320,56 +1320,56 @@ print(f"Relative position embeddings: {rel_embeddings.shape}")`,
 
       <h5>Patch Extraction</h5>
       <ul>
-        <li><strong>Input image:</strong> H × W × C (e.g., 224 × 224 × 3 RGB image)</li>
-        <li><strong>Patch size:</strong> P × P (typically 16 × 16 or 32 × 32)</li>
-        <li><strong>Number of patches:</strong> N = (H × W) / (P × P) = (224/16)² = 196 patches for 224×224 image with 16×16 patches</li>
-        <li><strong>Flatten each patch:</strong> P × P × C → D-dimensional vector via learned linear projection</li>
-        <li><strong>Result:</strong> Sequence of N patch embeddings, each of dimension D</li>
+        <li><strong>Input image:</strong> $H \\times W \\times C$ (e.g., $224 \\times 224 \\times 3$ RGB image)</li>
+        <li><strong>Patch size:</strong> $P \\times P$ (typically $16 \\times 16$ or $32 \\times 32$)</li>
+        <li><strong>Number of patches:</strong> $N = (H \\times W) / (P \\times P) = (224/16)^2 = 196$ patches for $224\\times224$ image with $16\\times16$ patches</li>
+        <li><strong>Flatten each patch:</strong> $P \\times P \\times C \\to D$-dimensional vector via learned linear projection</li>
+        <li><strong>Result:</strong> Sequence of $N$ patch embeddings, each of dimension $D$</li>
       </ul>
 
       <h5>Concrete Calculation Example</h5>
       <pre>
-Given: 224×224 RGB image, patch size 16×16, embed_dim 768
+Given: $224\\times224$ RGB image, patch size $16\\times16$, embed_dim 768
 
 Step 1: Calculate number of patches per dimension
-  - Patches per row: 224 / 16 = 14
-  - Patches per column: 224 / 16 = 14
-  - Total patches: 14 × 14 = 196
+  - Patches per row: $224 / 16 = 14$
+  - Patches per column: $224 / 16 = 14$
+  - Total patches: $14 \\times 14 = 196$
 
 Step 2: Flatten each patch
-  - Each patch: 16×16×3 = 768 values
-  - Linear projection: 768 input dims → 768 embed dims
-  - Parameters in projection: 768 × 768 = 589,824
+  - Each patch: $16\\times16\\times3 = 768$ values
+  - Linear projection: $768$ input dims $\\to$ $768$ embed dims
+  - Parameters in projection: $768 \\times 768 = 589{,}824$
 
 Step 3: Final sequence
-  - Patch embeddings: [196, 768]
-  - Add [CLS] token: [1, 768]
-  - Add positional embeddings: [197, 768]
-  - Result: [197, 768] sequence fed to Transformer
+  - Patch embeddings: $[196, 768]$
+  - Add [CLS] token: $[1, 768]$
+  - Add positional embeddings: $[197, 768]$
+  - Result: $[197, 768]$ sequence fed to Transformer
 
-For comparison with 8×8 patches:
-  - Patches: (224/8)² = 28² = 784 patches
-  - Each patch: 8×8×3 = 192 values
-  - Sequence length: 785 (4× longer, 4× more compute)
+For comparison with $8\\times8$ patches:
+  - Patches: $(224/8)^2 = 28^2 = 784$ patches
+  - Each patch: $8\\times8\\times3 = 192$ values
+  - Sequence length: $785$ ($4\\times$ longer, $4\\times$ more compute)
 </pre>
 
       <h4>When NOT to Use ViT</h4>
       <ul>
-        <li><strong>Small datasets (<10K images):</strong> ViT severely underperforms CNNs without pre-training. Use ResNet or EfficientNet instead.</li>
+        <li><strong>Small datasets ($<10K$ images):</strong> ViT severely underperforms CNNs without pre-training. Use ResNet or EfficientNet instead.</li>
         <li><strong>Limited compute budget:</strong> Training ViT from scratch is expensive. Consider pre-trained CNNs or smaller hybrid models.</li>
         <li><strong>Real-time mobile inference:</strong> ViT's quadratic attention is slower than CNN convolutions on edge devices. Use MobileNet or EfficientNet.</li>
-        <li><strong>Very high resolution images (>1024×1024):</strong> Quadratic complexity in number of patches becomes prohibitive. Use hierarchical approaches like Swin Transformer.</li>
+        <li><strong>Very high resolution images ($>1024\\times1024$):</strong> Quadratic complexity in number of patches becomes prohibitive. Use hierarchical approaches like Swin Transformer.</li>
         <li><strong>Strong locality requirements:</strong> Some tasks benefit from CNN's inductive bias (e.g., texture classification). Hybrid CNN-ViT can be better.</li>
         <li><strong>Production with strict latency SLAs:</strong> CNNs have more predictable inference times. ViT attention patterns can vary significantly.</li>
       </ul>
 
       <h5>Mathematical Formulation</h5>
-      <p><strong>Patch embedding:</strong> For image x ∈ ℝ^(H×W×C), split into patches x_p ∈ ℝ^(N×(P²·C))</p>
-      <p><strong>Linear projection:</strong> z₀ = [x_class; x_p¹E; x_p²E; ...; x_pᴺE] + E_pos</p>
+      <p><strong>Patch embedding:</strong> For image $x \\in \\mathbb{R}^{H\\times W\\times C}$, split into patches $x_p \\in \\mathbb{R}^{N\\times(P^2\\cdot C)}$</p>
+      <p><strong>Linear projection:</strong> $z_0 = [x_{\\text{class}}; x_p^1E; x_p^2E; \\ldots; x_p^NE] + E_{\\text{pos}}$</p>
       <ul>
-        <li><strong>E ∈ ℝ^((P²·C)×D):</strong> Learned patch embedding matrix</li>
-        <li><strong>x_class:</strong> Learnable [CLS] token prepended to sequence (for classification)</li>
-        <li><strong>E_pos ∈ ℝ^((N+1)×D):</strong> Positional embeddings (learned or sinusoidal)</li>
+        <li><strong>$E \\in \\mathbb{R}^{(P^2\\cdot C)\\times D}$:</strong> Learned patch embedding matrix</li>
+        <li><strong>$x_{\\text{class}}$:</strong> Learnable [CLS] token prepended to sequence (for classification)</li>
+        <li><strong>$E_{\\text{pos}} \\in \\mathbb{R}^{(N+1)\\times D}$:</strong> Positional embeddings (learned or sinusoidal)</li>
       </ul>
 
       <h4>Step 2: Standard Transformer Encoder</h4>
@@ -1383,8 +1383,8 @@ z_l = MLP(LN(z'_l)) + z'_l               # Feedforward + residual
       <ul>
         <li><strong>LN:</strong> Layer Normalization (pre-norm configuration)</li>
         <li><strong>MSA:</strong> Multi-head Self-Attention with h heads</li>
-        <li><strong>MLP:</strong> Two-layer feedforward network with GELU activation: MLP(x) = GELU(xW₁ + b₁)W₂ + b₂</li>
-        <li><strong>Hidden dimension:</strong> Typically D_ff = 4D (e.g., 768 → 3072 → 768)</li>
+        <li><strong>MLP:</strong> Two-layer feedforward network with GELU activation: $\\text{MLP}(x) = \\text{GELU}(xW_1 + b_1)W_2 + b_2$</li>
+        <li><strong>Hidden dimension:</strong> Typically $D_{\\text{ff}} = 4D$ (e.g., $768 \\to 3072 \\to 768$)</li>
       </ul>
 
       <h5>No Modifications for Vision</h5>
@@ -1392,8 +1392,8 @@ z_l = MLP(LN(z'_l)) + z'_l               # Feedforward + residual
 
       <h4>Step 3: Classification Head</h4>
       <ul>
-        <li><strong>Extract [CLS] token:</strong> Use representation of first token z_L^0 (analogous to BERT's [CLS])</li>
-        <li><strong>Classification:</strong> y = softmax(z_L^0 W_head + b_head) where W_head ∈ ℝ^(D×K), K = number of classes</li>
+        <li><strong>Extract [CLS] token:</strong> Use representation of first token $z_L^0$ (analogous to BERT's [CLS])</li>
+        <li><strong>Classification:</strong> $y = \\text{softmax}(z_L^0 W_{\\text{head}} + b_{\\text{head}})$ where $W_{\\text{head}} \\in \\mathbb{R}^{D\\times K}$, $K$ = number of classes</li>
         <li><strong>Alternative:</strong> Some implementations use global average pooling over all patch tokens instead of [CLS]</li>
       </ul>
 
@@ -1434,16 +1434,16 @@ z_l = MLP(LN(z'_l)) + z'_l               # Feedforward + residual
         </tr>
       </table>
 
-      <p><strong>Naming convention:</strong> ViT-{Size}/{Patch size}. E.g., ViT-Base/16 uses Base configuration with 16×16 patches.</p>
+      <p><strong>Naming convention:</strong> ViT-{Size}/{Patch size}. E.g., ViT-Base/16 uses Base configuration with $16\\times16$ patches.</p>
 
       <h3>Key Insights and Design Decisions</h3>
 
       <h4>Patch Size Trade-offs</h4>
       <ul>
-        <li><strong>Smaller patches (P=14 or 16):</strong> More patches → longer sequence → more computation, but finer-grained spatial information</li>
-        <li><strong>Larger patches (P=32):</strong> Fewer patches → faster, but coarser spatial resolution</li>
+        <li><strong>Smaller patches (P=14 or 16):</strong> More patches $\\to$ longer sequence $\\to$ more computation, but finer-grained spatial information</li>
+        <li><strong>Larger patches (P=32):</strong> Fewer patches $\\to$ faster, but coarser spatial resolution</li>
         <li><strong>Typical choice:</strong> P=16 balances efficiency and performance</li>
-        <li><strong>Sequence length:</strong> 224×224 image: 196 patches (P=16), 784 patches (P=8), 49 patches (P=32)</li>
+        <li><strong>Sequence length:</strong> $224\\times224$ image: $196$ patches (P=16), $784$ patches (P=8), $49$ patches (P=32)</li>
       </ul>
 
       <h4>Positional Encoding for 2D</h4>
@@ -1493,7 +1493,7 @@ z_l = MLP(LN(z'_l)) + z'_l               # Feedforward + residual
 
       <h5>Transfer Learning Details</h5>
       <ul>
-        <li><strong>Resolution adaptation:</strong> Pre-train at 224×224, fine-tune at higher resolution (384×384) for better performance</li>
+        <li><strong>Resolution adaptation:</strong> Pre-train at $224\\times224$, fine-tune at higher resolution ($384\\times384$) for better performance</li>
         <li><strong>Position embedding interpolation:</strong> When resolution changes, interpolate positional embeddings to match new patch count</li>
         <li><strong>Fine-tuning speed:</strong> Much faster than pre-training (hours vs days)</li>
       </ul>
@@ -1573,7 +1573,7 @@ z_l = MLP(LN(z'_l)) + z'_l               # Feedforward + residual
       <ul>
         <li><strong>Detection Transformer (DETR):</strong> End-to-end object detection with Transformers</li>
         <li><strong>Set prediction:</strong> Predict set of bounding boxes and classes directly, no anchor boxes or NMS</li>
-        <li><strong>Architecture:</strong> CNN backbone → Transformer encoder-decoder → detection heads</li>
+        <li><strong>Architecture:</strong> CNN backbone $\\to$ Transformer encoder-decoder $\\to$ detection heads</li>
         <li><strong>Impact:</strong> Simplified detection pipeline, removed hand-crafted components</li>
       </ul>
 
@@ -1633,7 +1633,7 @@ z_l = MLP(LN(z'_l)) + z'_l               # Feedforward + residual
       <h3>Limitations and Challenges</h3>
       <ul>
         <li><strong>Data hungry:</strong> Requires large pre-training datasets, underperforms CNNs on small datasets</li>
-        <li><strong>Computational cost:</strong> Quadratic complexity in number of patches O(N²), expensive for high-resolution images</li>
+        <li><strong>Computational cost:</strong> Quadratic complexity in number of patches $O(N^2)$, expensive for high-resolution images</li>
         <li><strong>Memory intensive:</strong> Attention matrix storage scales quadratically</li>
         <li><strong>Less efficient for small tasks:</strong> Overkill for simple classification with limited data</li>
         <li><strong>Pre-training cost:</strong> Training on JFT-300M extremely expensive (months, thousands of TPUs)</li>
@@ -1925,7 +1925,7 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
     interviewQuestions: [
       {
         question: 'How does Vision Transformer handle 2D images when Transformers are designed for 1D sequences?',
-        answer: `ViT splits the image into fixed-size patches (e.g., 16×16 pixels), flattens each patch into a vector, and linearly projects them into embeddings. This converts a 2D image (H×W×C) into a 1D sequence of N patch embeddings, where N = (H×W)/(P²). A learnable [CLS] token is prepended for classification. Position embeddings (typically 1D learned embeddings) are added to preserve spatial information. The resulting sequence is then processed by standard Transformer encoder blocks, identical to those used in NLP.`
+        answer: `ViT splits the image into fixed-size patches (e.g., $16\\times16$ pixels), flattens each patch into a vector, and linearly projects them into embeddings. This converts a 2D image $(H\\times W\\times C)$ into a 1D sequence of $N$ patch embeddings, where $N = (H\\times W)/(P^2)$. A learnable [CLS] token is prepended for classification. Position embeddings (typically 1D learned embeddings) are added to preserve spatial information. The resulting sequence is then processed by standard Transformer encoder blocks, identical to those used in NLP.`
       },
       {
         question: 'Why does ViT require more training data than CNNs to achieve comparable performance?',
@@ -1933,7 +1933,7 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
       },
       {
         question: 'Explain the computational complexity of ViT compared to CNNs.',
-        answer: `ViT's self-attention has O(N²·D) complexity where N is the number of patches and D is embedding dimension. For a 224×224 image with 16×16 patches, N=196, making attention O(38K·D). CNNs have O(K²·C·H·W) per layer where K is kernel size. The key difference: attention is quadratic in sequence length (number of patches), so high-resolution images become expensive. CNNs scale linearly with spatial resolution but need many layers for global receptive fields. Variants like Swin Transformer use windowed attention to achieve O(N·D) complexity, making them more practical for dense prediction tasks.`
+        answer: `ViT's self-attention has $O(N^2\\cdot D)$ complexity where $N$ is the number of patches and $D$ is embedding dimension. For a $224\\times224$ image with $16\\times16$ patches, $N=196$, making attention $O(38K\\cdot D)$. CNNs have $O(K^2\\cdot C\\cdot H\\cdot W)$ per layer where $K$ is kernel size. The key difference: attention is quadratic in sequence length (number of patches), so high-resolution images become expensive. CNNs scale linearly with spatial resolution but need many layers for global receptive fields. Variants like Swin Transformer use windowed attention to achieve $O(N\\cdot D)$ complexity, making them more practical for dense prediction tasks.`
       },
       {
         question: 'What role does the [CLS] token play in Vision Transformer?',
@@ -1941,11 +1941,11 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
       },
       {
         question: 'How does ViT handle images of different resolutions at inference time?',
-        answer: `ViT can handle different resolutions through positional embedding interpolation. If trained at 224×224 (196 patches with P=16) but testing at 384×384 (576 patches), we interpolate the learned positional embeddings from 196 to 576 dimensions using 2D interpolation. This works because patch positions are spatially meaningful. The model can then process longer sequences. Fine-tuning at higher resolution after pre-training at lower resolution is a common strategy—the model benefits from higher resolution details while leveraging pre-trained weights. This flexibility is an advantage over CNNs with fixed-size pooling layers.`
+        answer: `ViT can handle different resolutions through positional embedding interpolation. If trained at $224\\times224$ (196 patches with P=16) but testing at $384\\times384$ (576 patches), we interpolate the learned positional embeddings from 196 to 576 dimensions using 2D interpolation. This works because patch positions are spatially meaningful. The model can then process longer sequences. Fine-tuning at higher resolution after pre-training at lower resolution is a common strategy—the model benefits from higher resolution details while leveraging pre-trained weights. This flexibility is an advantage over CNNs with fixed-size pooling layers.`
       },
       {
         question: 'What are the key differences between ViT and Swin Transformer?',
-        answer: `ViT uses global self-attention where every patch attends to every other patch (flat architecture), while Swin uses hierarchical windowed attention. Swin computes attention within local windows (e.g., 7×7 patches), then shifts windows between layers to enable cross-window connections. This reduces complexity from O(N²) to O(N) in sequence length. Swin also creates hierarchical feature maps by merging patches across stages (like CNN feature pyramids), making it suitable for dense prediction tasks (detection, segmentation). ViT is simpler and more similar to NLP Transformers, but Swin is more efficient and versatile for diverse vision tasks.`
+        answer: `ViT uses global self-attention where every patch attends to every other patch (flat architecture), while Swin uses hierarchical windowed attention. Swin computes attention within local windows (e.g., $7\\times7$ patches), then shifts windows between layers to enable cross-window connections. This reduces complexity from $O(N^2)$ to $O(N)$ in sequence length. Swin also creates hierarchical feature maps by merging patches across stages (like CNN feature pyramids), making it suitable for dense prediction tasks (detection, segmentation). ViT is simpler and more similar to NLP Transformers, but Swin is more efficient and versatile for diverse vision tasks.`
       }
     ],
     quizQuestions: [
@@ -1954,7 +1954,7 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
         question: 'How does Vision Transformer convert an image into a sequence?',
         options: ['Pixel by pixel', 'Row by row', 'Split into patches and embed', 'Use CNN features'],
         correctAnswer: 2,
-        explanation: 'ViT splits the image into fixed-size patches (e.g., 16×16), flattens each patch, and projects them through a learned linear transformation into embeddings, creating a sequence of patch embeddings.'
+        explanation: 'ViT splits the image into fixed-size patches (e.g., $16\\times16$), flattens each patch, and projects them through a learned linear transformation into embeddings, creating a sequence of patch embeddings.'
       },
       {
         id: 'vit2',
@@ -1966,9 +1966,9 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
       {
         id: 'vit3',
         question: 'What is the computational complexity of self-attention in ViT?',
-        options: ['O(N)', 'O(N log N)', 'O(N²)', 'O(N³)'],
+        options: ['$O(N)$', '$O(N \\log N)$', '$O(N^2)$', '$O(N^3)$'],
         correctAnswer: 2,
-        explanation: 'Self-attention in ViT has O(N²) complexity where N is the number of patches, because each patch must attend to every other patch, creating an N×N attention matrix.'
+        explanation: 'Self-attention in ViT has $O(N^2)$ complexity where $N$ is the number of patches, because each patch must attend to every other patch, creating an $N\\times N$ attention matrix.'
       }
     ]
   },
@@ -2006,9 +2006,9 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
       <h4>The Masking Strategy</h4>
       <p><strong>Process:</strong> Randomly select 15% of tokens for masking, then:</p>
       <ul>
-        <li><strong>80% of the time:</strong> Replace with [MASK] token. Example: "The cat sat on the [MASK]" → predict "mat"</li>
-        <li><strong>10% of the time:</strong> Replace with random token. Example: "The cat sat on the apple" → predict "mat"</li>
-        <li><strong>10% of the time:</strong> Keep original token unchanged. Example: "The cat sat on the mat" → predict "mat"</li>
+        <li><strong>80% of the time:</strong> Replace with [MASK] token. Example: "The cat sat on the [MASK]" $\\to$ predict "mat"</li>
+        <li><strong>10% of the time:</strong> Replace with random token. Example: "The cat sat on the apple" $\\to$ predict "mat"</li>
+        <li><strong>10% of the time:</strong> Keep original token unchanged. Example: "The cat sat on the mat" $\\to$ predict "mat"</li>
       </ul>
 
       <h4>Why This Complex Strategy?</h4>
@@ -2126,7 +2126,7 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
 
       <h4>Classification Tasks</h4>
       <ul>
-        <li><strong>Approach:</strong> Add linear layer on top of [CLS] representation: output = softmax(W·[CLS] + b)</li>
+        <li><strong>Approach:</strong> Add linear layer on top of [CLS] representation: $\\text{output} = \\text{softmax}(W \\cdot \\text{[CLS]} + b)$</li>
         <li><strong>Examples:</strong> Sentiment analysis, topic classification, spam detection</li>
         <li><strong>Fine-tuning:</strong> Update all BERT parameters + classification head</li>
         <li><strong>Typical setup:</strong> 2-4 epochs, learning rate 2e-5 to 5e-5, small batch size (16-32)</li>
@@ -2186,10 +2186,10 @@ model.save_pretrained('./vit_cifar10_finetuned')`,
 
       <h4>ALBERT (A Lite BERT)</h4>
       <ul>
-        <li><strong>Factorized embeddings:</strong> Decompose large vocabulary embedding into two smaller matrices (V × H → V × E + E × H where E << H)</li>
+        <li><strong>Factorized embeddings:</strong> Decompose large vocabulary embedding into two smaller matrices ($V \\times H \\to V \\times E + E \\times H$ where $E \\ll H$)</li>
         <li><strong>Cross-layer parameter sharing:</strong> Share parameters across all layers (especially feedforward and attention)</li>
         <li><strong>SOP instead of NSP:</strong> Sentence Order Prediction (predict if sentences are swapped) instead of NSP</li>
-        <li><strong>Result:</strong> 18× fewer parameters than BERT-Large with comparable performance</li>
+        <li><strong>Result:</strong> $18\\times$ fewer parameters than BERT-Large with comparable performance</li>
       </ul>
 
       <h4>DistilBERT</h4>
@@ -2417,8 +2417,8 @@ print(f"Number of layers with attention: {len(attentions)}")`,
       
       <h4>The Language Modeling Objective</h4>
       <p><strong>Goal:</strong> Maximize the probability of the next token given all previous tokens:</p>
-      <p><strong>P(x_t | x_1, x_2, ..., x_{t-1})</strong></p>
-      <p>For a sequence of length n, maximize joint probability: <strong>P(x_1, ..., x_n) = ∏ P(x_t | x_1, ..., x_{t-1})</strong></p>
+      <p>$$P(x_t | x_1, x_2, \\ldots, x_{t-1})$$</p>
+      <p>For a sequence of length $n$, maximize joint probability: $$P(x_1, \\ldots, x_n) = \\prod_{t=1}^{n} P(x_t | x_1, \\ldots, x_{t-1})$$</p>
 
       <h4>Why Autoregressive Generation?</h4>
       <ul>
@@ -2502,8 +2502,8 @@ print(f"Number of layers with attention: {len(attentions)}")`,
       
       <h4>Empirical Observations</h4>
       <ul>
-        <li><strong>Power law relationship:</strong> Loss scales as L ∝ N^(-α) where N is parameters, α ≈ 0.076</li>
-        <li><strong>Compute-optimal scaling:</strong> For compute budget C, optimal allocation: N ∝ C^0.73 and D ∝ C^0.27 (tokens)</li>
+        <li><strong>Power law relationship:</strong> Loss scales as $L \\propto N^{-\\alpha}$ where $N$ is parameters, $\\alpha \\approx 0.076$</li>
+        <li><strong>Compute-optimal scaling:</strong> For compute budget $C$, optimal allocation: $N \\propto C^{0.73}$ and $D \\propto C^{0.27}$ (tokens)</li>
         <li><strong>No saturation:</strong> Performance continues improving with scale, no plateau observed yet</li>
         <li><strong>Sample efficiency:</strong> Larger models need fewer examples for same performance</li>
       </ul>
@@ -2532,16 +2532,16 @@ print(f"Number of layers with attention: {len(attentions)}")`,
       <ul>
         <li><strong>Method:</strong> Maintain k highest-probability sequences at each step</li>
         <li><strong>Pros:</strong> Higher-quality than greedy, explores multiple paths</li>
-        <li><strong>Cons:</strong> Computationally expensive (k× cost), still can be repetitive</li>
+        <li><strong>Cons:</strong> Computationally expensive ($k\\times$ cost), still can be repetitive</li>
         <li><strong>Use case:</strong> Machine translation, summarization where quality matters</li>
       </ul>
 
       <h4>Temperature Sampling</h4>
       <ul>
-        <li><strong>Method:</strong> Scale logits by temperature T before softmax: P(x_t) ∝ exp(logit_t / T)</li>
-        <li><strong>T → 0:</strong> Approaches greedy (deterministic)</li>
-        <li><strong>T = 1:</strong> Sample from original distribution</li>
-        <li><strong>T > 1:</strong> More uniform, more random</li>
+        <li><strong>Method:</strong> Scale logits by temperature $T$ before softmax: $P(x_t) \\propto \\exp(\\text{logit}_t / T)$</li>
+        <li><strong>$T \\to 0$:</strong> Approaches greedy (deterministic)</li>
+        <li><strong>$T = 1$:</strong> Sample from original distribution</li>
+        <li><strong>$T > 1$:</strong> More uniform, more random</li>
         <li><strong>Use case:</strong> Creative writing (T=0.7-0.9), diverse responses</li>
       </ul>
 
@@ -2555,7 +2555,7 @@ print(f"Number of layers with attention: {len(attentions)}")`,
 
       <h4>Top-p (Nucleus) Sampling</h4>
       <ul>
-        <li><strong>Method:</strong> Sample from smallest set of tokens with cumulative probability ≥ p</li>
+        <li><strong>Method:</strong> Sample from smallest set of tokens with cumulative probability $\\geq p$</li>
         <li><strong>Adaptive:</strong> Varies number of tokens based on distribution confidence</li>
         <li><strong>Benefit:</strong> More tokens when uncertain, fewer when confident</li>
         <li><strong>Typical p:</strong> 0.9-0.95 for good balance</li>
@@ -3283,7 +3283,7 @@ print(f"\\nTraining loss: {loss.item():.4f}")`,
       <h5>Adapter Layers</h5>
       <ul>
         <li><strong>Method:</strong> Insert small trainable modules (adapters) between Transformer layers, freeze base model</li>
-        <li><strong>Architecture:</strong> Bottleneck: d_model → d_adapter (e.g., 768 → 64) → d_model</li>
+        <li><strong>Architecture:</strong> Bottleneck: $d_{\\text{model}} \\to d_{\\text{adapter}}$ (e.g., $768 \\to 64$) $\\to d_{\\text{model}}$</li>
         <li><strong>Parameters:</strong> Only ~1-5% of original model (e.g., 1M vs 110M for BERT)</li>
         <li><strong>Pros:</strong> Tiny storage per task, fast training, nearly full fine-tuning performance</li>
         <li><strong>Cons:</strong> Additional inference cost per layer, architectural modification required</li>
@@ -3292,7 +3292,7 @@ print(f"\\nTraining loss: {loss.item():.4f}")`,
       <h5>LoRA (Low-Rank Adaptation)</h5>
       <ul>
         <li><strong>Insight:</strong> Weight updates during fine-tuning have low intrinsic dimensionality</li>
-        <li><strong>Method:</strong> Represent weight updates as low-rank decomposition: ΔW = BA where B is d×r, A is r×k, r << min(d,k)</li>
+        <li><strong>Method:</strong> Represent weight updates as low-rank decomposition: $\\Delta W = BA$ where $B$ is $d\\times r$, $A$ is $r\\times k$, $r \\ll \\min(d,k)$</li>
         <li><strong>Application:</strong> Add LoRA matrices to attention query/key/value projections</li>
         <li><strong>Parameters:</strong> Typically 0.1-1% of original (e.g., 300K vs 110M for BERT)</li>
         <li><strong>Rank:</strong> r=8 or r=16 often sufficient, balancing expressiveness and efficiency</li>
@@ -3303,7 +3303,7 @@ print(f"\\nTraining loss: {loss.item():.4f}")`,
       <h5>Prefix/Prompt Tuning</h5>
       <ul>
         <li><strong>Method:</strong> Prepend learnable continuous vectors (virtual tokens) to input, freeze model</li>
-        <li><strong>Parameters:</strong> Only prefix embeddings (e.g., 20 tokens × 768 dims = 15K parameters)</li>
+        <li><strong>Parameters:</strong> Only prefix embeddings (e.g., $20$ tokens $\\times$ $768$ dims $= 15K$ parameters)</li>
         <li><strong>Training:</strong> Optimize prefix embeddings through backpropagation, model weights fixed</li>
         <li><strong>Pros:</strong> Extremely parameter-efficient, single model serves all tasks</li>
         <li><strong>Cons:</strong> Requires longer sequences (prefix reduces available context), performance gap vs fine-tuning</li>
@@ -3386,7 +3386,7 @@ Fine-tuned BERT-Base (self-hosted):
 GPT-3.5 API:
   Training: $0
   Per request: $0.002 (500 tokens avg)
-  Monthly: 100K × $0.002 = $200
+  Monthly: $100K \\times \\$0.002 = \\$200$
 
 Break-even: ~100K requests/month
 Below: Use API
@@ -3433,7 +3433,7 @@ Review: Would not recommend. → [Model generates]</pre>
       <p><strong>Innovation:</strong> Prompt model to generate intermediate reasoning steps before final answer</p>
       <p><strong>Example:</strong></p>
       <pre>Q: Roger has 5 balls. He buys 2 cans of 3 balls each. How many balls does he have?
-A: Roger started with 5 balls. 2 cans of 3 balls is 2 × 3 = 6 balls. 5 + 6 = 11. Answer: 11 balls.</pre>
+A: Roger started with 5 balls. 2 cans of 3 balls is $2 \\times 3 = 6$ balls. $5 + 6 = 11$. Answer: 11 balls.</pre>
       <ul>
         <li><strong>Dramatic improvements:</strong> 10-30% accuracy gains on reasoning tasks</li>
         <li><strong>Emergent with scale:</strong> Only effective with models >60B parameters</li>
@@ -3789,13 +3789,13 @@ print(f"Percentage: {100 * trainable_params / total_params:.2f}%")`,
       <ul>
         <li><strong>Parameter counts:</strong> From 1B (small LLM) to 100B+ (GPT-3), to estimated 1T+ (GPT-4, speculated)</li>
         <li><strong>Why size matters:</strong> Scaling laws show consistent improvement with parameter count, training data, and compute</li>
-        <li><strong>Comparison:</strong> BERT-Base 110M → GPT-2 1.5B → GPT-3 175B → PaLM 540B (3,000× growth in 4 years)</li>
+        <li><strong>Comparison:</strong> BERT-Base 110M $\\to$ GPT-2 1.5B $\\to$ GPT-3 175B $\\to$ PaLM 540B ($3{,}000\\times$ growth in 4 years)</li>
         <li><strong>Diminishing returns debate:</strong> Improvements continue but costs escalate; efficiency becoming critical</li>
       </ul>
 
       <h4>Training Data: Internet-Scale Corpora</h4>
       <ul>
-        <li><strong>Volume:</strong> Hundreds of billions to trillions of tokens (1 token ≈ 0.75 words)</li>
+        <li><strong>Volume:</strong> Hundreds of billions to trillions of tokens ($1$ token $\\approx 0.75$ words)</li>
         <li><strong>Sources:</strong> Web crawls (Common Crawl), books (Books3, BookCorpus), Wikipedia, GitHub code, scientific papers</li>
         <li><strong>Curation:</strong> Filtering for quality, deduplication, removing toxic content</li>
         <li><strong>Diversity:</strong> Multiple languages, domains, writing styles for robust representations</li>
@@ -4052,9 +4052,9 @@ print(f"Percentage: {100 * trainable_params / total_params:.2f}%")`,
 
       <h4>Memory Requirements</h4>
       <ul>
-        <li><strong>Parameter storage:</strong> 175B parameters × 2 bytes (FP16) = 350GB just for weights</li>
+        <li><strong>Parameter storage:</strong> $175B$ parameters $\\times$ $2$ bytes (FP16) $= 350GB$ just for weights</li>
         <li><strong>Activation memory:</strong> Forward pass stores activations for backward pass, can exceed parameter memory</li>
-        <li><strong>Optimizer states:</strong> Adam stores first/second moments, 2× parameter memory</li>
+        <li><strong>Optimizer states:</strong> Adam stores first/second moments, $2\\times$ parameter memory</li>
         <li><strong>Total training memory:</strong> Can reach 1TB+ for large models, requiring distributed training</li>
       </ul>
 
@@ -4069,7 +4069,7 @@ print(f"Percentage: {100 * trainable_params / total_params:.2f}%")`,
 
       <h4>Context Length Limitations</h4>
       <ul>
-        <li><strong>Quadratic attention:</strong> O(n²) complexity limits practical context to 2K-32K tokens</li>
+        <li><strong>Quadratic attention:</strong> $O(n^2)$ complexity limits practical context to 2K-32K tokens</li>
         <li><strong>Training constraints:</strong> Most models trained on 2K-4K contexts due to memory</li>
         <li><strong>Long-context solutions:</strong> Sparse attention, linear attention, retrieval augmentation</li>
         <li><strong>Recent progress:</strong> Claude 100K, GPT-4 32K, Anthropic's long-context methods</li>
@@ -4138,14 +4138,14 @@ print(f"Percentage: {100 * trainable_params / total_params:.2f}%")`,
       <h4>Mixed Precision Training</h4>
       <ul>
         <li><strong>FP16/BF16:</strong> Use 16-bit floats for most operations, 32-bit for stability</li>
-        <li><strong>Speedup:</strong> 2-3× faster, 2× memory reduction</li>
+        <li><strong>Speedup:</strong> $2{-}3\\times$ faster, $2\\times$ memory reduction</li>
         <li><strong>Loss scaling:</strong> Scale gradients to prevent underflow in FP16</li>
       </ul>
 
       <h4>Quantization for Inference</h4>
       <ul>
         <li><strong>INT8/INT4:</strong> Reduce parameters to 8-bit or 4-bit integers</li>
-        <li><strong>Impact:</strong> 4× memory reduction (FP16 → INT4), 2-4× speedup</li>
+        <li><strong>Impact:</strong> $4\\times$ memory reduction (FP16 $\\to$ INT4), $2{-}4\\times$ speedup</li>
         <li><strong>Accuracy:</strong> Minimal loss with proper calibration (< 1% degradation)</li>
         <li><strong>Tools:</strong> GPTQ, bitsandbytes, GGML</li>
       </ul>

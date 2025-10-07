@@ -7,6 +7,7 @@ interface QuizProps {
   questions: QuizQuestion[];
   onComplete: (score: QuizScore) => void;
   onClose: () => void;
+  onRetake?: () => void;
 }
 
 interface QuizState {
@@ -17,7 +18,7 @@ interface QuizState {
   endTime: Date | null;
 }
 
-export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
+export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizProps) {
   const [quizState, setQuizState] = useState<QuizState>({
     currentQuestion: 0,
     selectedAnswers: {},
@@ -33,6 +34,9 @@ export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
   const hasAnswered = quizState.selectedAnswers[quizState.currentQuestion] !== undefined;
 
   const handleAnswerSelect = (answerIndex: number) => {
+    // Only allow selecting answer if not already answered
+    if (hasAnswered) return;
+    
     setQuizState(prev => ({
       ...prev,
       selectedAnswers: {
@@ -40,7 +44,8 @@ export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
         [prev.currentQuestion]: answerIndex
       }
     }));
-    setShowExplanation(false);
+    // Automatically show explanation after selecting answer
+    setShowExplanation(true);
   };
 
   const handleNext = () => {
@@ -111,6 +116,10 @@ export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
       endTime: null
     });
     setShowExplanation(false);
+    // Call onRetake to regenerate questions if provided
+    if (onRetake) {
+      onRetake();
+    }
   };
 
   if (quizState.showResults) {
@@ -242,7 +251,6 @@ export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
             {currentQ.options.map((option, index) => {
               const isSelected = quizState.selectedAnswers[quizState.currentQuestion] === index;
               const isCorrect = index === currentQ.correctAnswer;
-              const userAnswer = quizState.selectedAnswers[quizState.currentQuestion];
               const showCorrectness = showExplanation && hasAnswered;
 
               let buttonClass = 'w-full p-4 text-left border rounded-lg transition-colors ';
@@ -309,24 +317,13 @@ export default function Quiz({ questions, onComplete, onClose }: QuizProps) {
               Previous
             </button>
 
-            <div className="flex space-x-3">
-              {hasAnswered && !showExplanation && (
-                <button
-                  onClick={() => setShowExplanation(true)}
-                  className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
-                >
-                  Show Explanation
-                </button>
-              )}
-
-              <button
-                onClick={handleNext}
-                disabled={!hasAnswered}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLastQuestion ? 'Finish Quiz' : 'Next'}
-              </button>
-            </div>
+            <button
+              onClick={handleNext}
+              disabled={!hasAnswered}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLastQuestion ? 'Finish Quiz' : 'Next'}
+            </button>
           </div>
         </div>
       </div>

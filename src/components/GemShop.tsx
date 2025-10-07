@@ -6,10 +6,19 @@ interface GemShopProps {
   currentGems: number;
   purchasedItems: string[];
   onPurchase: (itemId: string) => void;
+  selectedTheme?: string;
 }
 
-export default function GemShop({ currentGems, purchasedItems, onPurchase }: GemShopProps) {
+const THEME_GRADIENTS: Record<string, string> = {
+  'default': 'from-purple-500 to-pink-500',
+  'theme-ocean': 'from-blue-400 to-cyan-500',
+  'theme-forest': 'from-green-400 to-emerald-600',
+  'theme-sunset': 'from-orange-400 to-pink-500',
+};
+
+export default function GemShop({ currentGems, purchasedItems, onPurchase, selectedTheme = 'default' }: GemShopProps) {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'utility' | 'cosmetic'>('all');
+  const gradientColors = THEME_GRADIENTS[selectedTheme] || THEME_GRADIENTS['default'];
 
   const filteredItems = GEM_SHOP_ITEMS.filter(item => 
     selectedCategory === 'all' || item.category === selectedCategory
@@ -29,7 +38,7 @@ export default function GemShop({ currentGems, purchasedItems, onPurchase }: Gem
           Gem Shop
         </h2>
         
-        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg font-bold shadow-md">
+        <div className={`flex items-center gap-2 bg-gradient-to-r ${gradientColors} text-white px-4 py-2 rounded-lg font-bold shadow-md`}>
           <Gem className="w-5 h-5" />
           {currentGems} Gems
         </div>

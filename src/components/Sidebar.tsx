@@ -88,19 +88,24 @@ export default function Sidebar({
 
       {/* Gem Display */}
       <div className="px-4 mb-4">
-        <GemDisplay gems={gamificationData.gems} onClick={onShopSelect} />
+        <GemDisplay 
+          gems={gamificationData.gems} 
+          onClick={showingChallengeMode ? undefined : onShopSelect} 
+          selectedTheme={gamificationData.selectedTheme} 
+        />
       </div>
 
       <nav className="flex-1 scrollbar-thin overflow-y-auto">
         {/* Dashboard Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={onDashboardSelect}
+            onClick={() => !showingChallengeMode && onDashboardSelect()}
+            disabled={showingChallengeMode}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingDashboard
                 ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
+            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
@@ -125,12 +130,13 @@ export default function Sidebar({
         {/* Shop Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={onShopSelect}
+            onClick={() => !showingChallengeMode && onShopSelect && onShopSelect()}
+            disabled={showingChallengeMode}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingShop
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-medium'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
+            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <ShoppingCart className="w-4 h-4" />
             <span>Gem Shop</span>
@@ -140,12 +146,13 @@ export default function Sidebar({
         {/* Settings Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={onSettingsSelect}
+            onClick={() => !showingChallengeMode && onSettingsSelect && onSettingsSelect()}
+            disabled={showingChallengeMode}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingSettings
                 ? 'bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
+            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <Settings className="w-4 h-4" />
             <span>Settings</span>
@@ -168,12 +175,13 @@ export default function Sidebar({
             return (
               <div key={category.id}>
                 <button
-                  onClick={() => onCategorySelect(category.id)}
+                  onClick={() => !showingChallengeMode && onCategorySelect(category.id)}
+                  disabled={showingChallengeMode}
                   className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors ${
                     isExpanded
                       ? getColorClasses(category.color)
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
+                  } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <div className="flex items-center space-x-2">
                     <BookOpen className="w-4 h-4" />
@@ -196,12 +204,13 @@ export default function Sidebar({
                     {category.topics.map((topicId) => (
                       <button
                         key={topicId}
-                        onClick={() => onTopicSelect(topicId, category.id)}
+                        onClick={() => !showingChallengeMode && onTopicSelect(topicId, category.id)}
+                        disabled={showingChallengeMode}
                         className={`w-full flex items-center space-x-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
                           selectedTopic === topicId
                             ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                        }`}
+                        } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         {getProgressIcon(topicId)}
                         <span className="truncate">

@@ -9,7 +9,7 @@ export const computerVisionTopics: Record<string, Topic> = {
     content: `
       <h2>Convolutional Neural Networks (CNNs)</h2>
       
-      <div style="background: #f0f8ff; padding: 15px; border-left: 4px solid #2196F3; margin-bottom: 20px;">
+      <div class="info-box info-box-blue">
       <h3>🎯 TL;DR - Key Takeaways</h3>
       <ul>
         <li><strong>Core Idea:</strong> CNNs use filters that slide across images like a magnifying glass, detecting patterns (edges → shapes → objects)</li>
@@ -413,7 +413,7 @@ The **depth dimension** (number of channels) follows different rules: the output
     content: `
       <h2>Pooling Layers</h2>
       
-      <div style="background: #f0f8ff; padding: 15px; border-left: 4px solid #2196F3; margin-bottom: 20px;">
+      <div class="info-box info-box-blue">
       <h3>🎯 TL;DR - Key Takeaways</h3>
       <ul>
         <li><strong>What They Do:</strong> Reduce spatial dimensions (e.g., 32×32 → 16×16) to save computation and provide translation invariance</li>
@@ -1200,7 +1200,7 @@ print("But parameters: 5×5 = 25 vs 3×3 + 3×3 = 18 (28% reduction)")`,
     content: `
       <h2>Transfer Learning</h2>
       
-      <div style="background: #f0f8ff; padding: 15px; border-left: 4px solid #2196F3; margin-bottom: 20px;">
+      <div class="info-box info-box-blue">
       <h3>🎯 TL;DR - Key Takeaways</h3>
       <ul>
         <li><strong>Core Idea:</strong> Use pre-trained models (trained on millions of images) as starting point for your task - works even with 100s of images</li>
@@ -1362,8 +1362,8 @@ print("But parameters: 5×5 = 25 vs 3×3 + 3×3 = 18 (28% reduction)")`,
       <h3>Practical Guidelines: Dataset Size Decision Tree</h3>
       
       <p><strong>📊 Quick Reference Table: Learning Rates by Strategy</strong></p>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; margin-bottom: 20px;">
-        <tr style="background: #f0f0f0;">
+      <table>
+        <tr>
           <th>Strategy</th>
           <th>Backbone LR</th>
           <th>New Head LR</th>
@@ -1802,7 +1802,7 @@ print("Transfer learning training complete!")`,
     content: `
       <h2>Object Detection</h2>
       
-      <div style="background: #f0f8ff; padding: 15px; border-left: 4px solid #2196F3; margin-bottom: 20px;">
+      <div class="info-box">
       <h3>🎯 TL;DR - Key Takeaways</h3>
       <ul>
         <li><strong>Core Task:</strong> Predict bounding boxes + class labels for all objects in an image</li>
@@ -2578,7 +2578,7 @@ The key insight is that object detection requires metrics that simultaneously ev
     content: `
       <h2>Image Segmentation</h2>
       
-      <div style="background: #f0f8ff; padding: 15px; border-left: 4px solid #2196F3; margin-bottom: 20px;">
+      <div class="info-box">
       <h3>🎯 TL;DR - Key Takeaways</h3>
       <ul>
         <li><strong>Three Types:</strong> Semantic (classify pixels), Instance (separate object instances), Panoptic (both combined)</li>
@@ -2597,8 +2597,8 @@ The key insight is that object detection requires metrics that simultaneously ev
       <p>Image segmentation exists on a spectrum of granularity and semantic complexity. Understanding the different formulations is crucial for selecting the appropriate approach for specific applications.</p>
       
       <p><strong>📊 Quick Comparison Table:</strong></p>
-      <table border="1" cellpadding="8" style="border-collapse: collapse; margin-bottom: 20px;">
-        <tr style="background: #f0f0f0;">
+      <table >
+        <tr class="table-header">
           <th>Type</th>
           <th>What It Does</th>
           <th>Example</th>

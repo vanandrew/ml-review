@@ -2864,48 +2864,48 @@ if 'p_value' in report['prediction_drift']:
 
       <p><strong>Framework Comparison Table:</strong></p>
 
-      <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
-        <tr style="background-color: #f0f0f0;">
-          <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Framework</th>
-          <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Best For</th>
-          <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Supported Formats</th>
-          <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Key Strengths</th>
-          <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Limitations</th>
+      <table>
+        <tr>
+          <th>Framework</th>
+          <th>Best For</th>
+          <th>Supported Formats</th>
+          <th>Key Strengths</th>
+          <th>Limitations</th>
         </tr>
         <tr>
-          <td style="border: 1px solid #ddd; padding: 12px;"><strong>TensorFlow Serving</strong></td>
-          <td style="border: 1px solid #ddd; padding: 12px;">TensorFlow models in production</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">TensorFlow SavedModel</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Mature ecosystem, excellent docs, built-in versioning, gRPC + REST</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">TensorFlow-only, less flexible for custom logic</td>
-        </tr>
-        <tr style="background-color: #f9f9f9;">
-          <td style="border: 1px solid #ddd; padding: 12px;"><strong>TorchServe</strong></td>
-          <td style="border: 1px solid #ddd; padding: 12px;">PyTorch models, custom preprocessing</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">PyTorch (.pt, .pth), TorchScript</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Custom handlers, easy extensibility, multi-model serving</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Younger than TF Serving, smaller community</td>
+          <td><strong>TensorFlow Serving</strong></td>
+          <td>TensorFlow models in production</td>
+          <td>TensorFlow SavedModel</td>
+          <td>Mature ecosystem, excellent docs, built-in versioning, gRPC + REST</td>
+          <td>TensorFlow-only, less flexible for custom logic</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #ddd; padding: 12px;"><strong>NVIDIA Triton</strong></td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Multi-framework, GPU-heavy workloads</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">TensorFlow, PyTorch, ONNX, TensorRT, Python</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Framework-agnostic, best GPU optimization, model ensembles</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Complex setup, steeper learning curve</td>
-        </tr>
-        <tr style="background-color: #f9f9f9;">
-          <td style="border: 1px solid #ddd; padding: 12px;"><strong>ONNX Runtime</strong></td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Cross-platform, heterogeneous hardware</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">ONNX (converts from any framework)</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Hardware-agnostic optimization, mobile/edge support</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Conversion overhead, not all ops supported</td>
+          <td><strong>TorchServe</strong></td>
+          <td>PyTorch models, custom preprocessing</td>
+          <td>PyTorch (.pt, .pth), TorchScript</td>
+          <td>Custom handlers, easy extensibility, multi-model serving</td>
+          <td>Younger than TF Serving, smaller community</td>
         </tr>
         <tr>
-          <td style="border: 1px solid #ddd; padding: 12px;"><strong>BentoML</strong></td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Rapid prototyping, Python-first</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">sklearn, XGBoost, PyTorch, TensorFlow, etc.</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Easy to use, Python-native, quick deployment</td>
-          <td style="border: 1px solid #ddd; padding: 12px;">Less optimized than specialized frameworks</td>
+          <td><strong>NVIDIA Triton</strong></td>
+          <td>Multi-framework, GPU-heavy workloads</td>
+          <td>TensorFlow, PyTorch, ONNX, TensorRT, Python</td>
+          <td>Framework-agnostic, best GPU optimization, model ensembles</td>
+          <td>Complex setup, steeper learning curve</td>
+        </tr>
+        <tr>
+          <td><strong>ONNX Runtime</strong></td>
+          <td>Cross-platform, heterogeneous hardware</td>
+          <td>ONNX (converts from any framework)</td>
+          <td>Hardware-agnostic optimization, mobile/edge support</td>
+          <td>Conversion overhead, not all ops supported</td>
+        </tr>
+        <tr>
+          <td><strong>BentoML</strong></td>
+          <td>Rapid prototyping, Python-first</td>
+          <td>sklearn, XGBoost, PyTorch, TensorFlow, etc.</td>
+          <td>Easy to use, Python-native, quick deployment</td>
+          <td>Less optimized than specialized frameworks</td>
         </tr>
       </table>
 

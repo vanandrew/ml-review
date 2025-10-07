@@ -8,7 +8,7 @@ interface AchievementModalProps {
 export default function AchievementModal({ achievement, onClose }: AchievementModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full p-8 animate-bounce">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-md w-full p-8">
         <div className="text-center">
           <div className="text-6xl mb-4">{achievement.icon}</div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">

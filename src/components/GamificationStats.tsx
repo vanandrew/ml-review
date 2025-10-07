@@ -6,15 +6,26 @@ interface GamificationStatsProps {
   gamificationData: GamificationData;
 }
 
+const THEME_GRADIENTS: Record<string, string> = {
+  'default': 'from-purple-500 to-pink-500',
+  'theme-ocean': 'from-blue-400 to-cyan-500',
+  'theme-forest': 'from-green-400 to-emerald-600',
+  'theme-sunset': 'from-orange-400 to-pink-500',
+};
+
 export default function GamificationStats({ gamificationData }: GamificationStatsProps) {
   const level = calculateLevel(gamificationData.totalXP);
   const progress = getXPProgress(gamificationData.totalXP);
+  const gradientColors = THEME_GRADIENTS[gamificationData.selectedTheme] || THEME_GRADIENTS['default'];
 
   return (
-    <div className="p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow-lg">
+    <div className={`p-4 bg-gradient-to-r ${gradientColors} text-white rounded-lg shadow-lg`}>
       {/* Level Display */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
+          {gamificationData.selectedBadge && (
+            <span className="text-xl">{gamificationData.selectedBadge}</span>
+          )}
           <Trophy className="w-5 h-5" />
           <span className="font-semibold">Level {level}</span>
         </div>

@@ -5,10 +5,19 @@ interface LevelUpModalProps {
   level: number;
   show: boolean;
   onClose: () => void;
+  selectedTheme?: string;
 }
 
-export default function LevelUpModal({ level, show, onClose }: LevelUpModalProps) {
+const THEME_GRADIENTS: Record<string, string> = {
+  'default': 'from-purple-500 to-pink-500',
+  'theme-ocean': 'from-blue-400 to-cyan-500',
+  'theme-forest': 'from-green-400 to-emerald-600',
+  'theme-sunset': 'from-orange-400 to-pink-500',
+};
+
+export default function LevelUpModal({ level, show, onClose, selectedTheme = 'default' }: LevelUpModalProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const gradientColors = THEME_GRADIENTS[selectedTheme] || THEME_GRADIENTS['default'];
 
   useEffect(() => {
     if (show) {
@@ -47,7 +56,7 @@ export default function LevelUpModal({ level, show, onClose }: LevelUpModalProps
           isVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
         }`}
       >
-        <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-8 shadow-2xl text-white text-center min-w-[320px] relative overflow-hidden">
+        <div className={`bg-gradient-to-br ${gradientColors} rounded-2xl p-8 shadow-2xl text-white text-center min-w-[320px] relative overflow-hidden`}>
           {/* Decorative sparkles */}
           <div className="absolute top-2 left-2 animate-pulse">
             <Sparkles className="w-6 h-6 text-yellow-300" />
@@ -60,14 +69,14 @@ export default function LevelUpModal({ level, show, onClose }: LevelUpModalProps
           </div>
 
           {/* Trophy icon */}
-          <div className="flex justify-center mb-4 animate-bounce">
+          <div className="flex justify-center mb-4">
             <div className="bg-white/20 rounded-full p-4">
               <Trophy className="w-16 h-16" />
             </div>
           </div>
 
           {/* Title */}
-          <h2 className="text-3xl font-bold mb-2 animate-pulse">
+          <h2 className="text-3xl font-bold mb-2">
             Level Up! 🎉
           </h2>
 

@@ -1,10 +1,17 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Topic, TopicProgress, QuizScore, GamificationData } from '../types';
 import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp } from 'lucide-react';
 import Quiz from './Quiz';
 import BiasVarianceDemo from './BiasVarianceDemo';
 import { getQuizQuestionsForTopic } from '../data/quizQuestions';
 import { selectRandomQuestions } from '../utils/quizUtils';
+
+// Declare KaTeX renderMathInElement type
+declare global {
+  interface Window {
+    renderMathInElement?: (element: HTMLElement, options?: any) => void;
+  }
+}
 
 interface TopicViewProps {
   topic: Topic;
@@ -19,6 +26,7 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
   const [activeTab, setActiveTab] = useState<'theory' | 'code' | 'questions' | 'demo' | 'quiz'>('theory');
   const [showQuiz, setShowQuiz] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
+  const theoryContentRef = useRef<HTMLDivElement>(null);
   
   // Get full question pool for this topic
   const questionPool = useMemo(() => {
@@ -37,6 +45,23 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
     setActiveTab('theory');
     setQuizQuestions(selectRandomQuestions(questionPool, 10));
   }, [topic.id, questionPool]);
+
+  // Trigger KaTeX rendering when content changes or theory tab is shown
+  useEffect(() => {
+    if (activeTab === 'theory' && theoryContentRef.current && window.renderMathInElement) {
+      try {
+        window.renderMathInElement(theoryContentRef.current, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+          ],
+          throwOnError: false
+        });
+      } catch (err) {
+        console.error('KaTeX rendering failed:', err);
+      }
+    }
+  }, [activeTab, topic.content]);
 
   const updateStatus = (status: 'not_started' | 'reviewing' | 'mastered') => {
     const newProgress: TopicProgress = {
@@ -70,6 +95,11 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
     // Generate new random questions each time quiz starts
     setQuizQuestions(selectRandomQuestions(questionPool, 10));
     setShowQuiz(true);
+  };
+
+  const handleQuizRetake = () => {
+    // Generate new random questions when retaking quiz
+    setQuizQuestions(selectRandomQuestions(questionPool, 10));
   };
 
   const tabs = [
@@ -149,7 +179,7 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
       {/* Tab Content */}
       <div className="p-6">
         {activeTab === 'theory' && (
-          <div className="theory-content">
+          <div className="theory-content" ref={theoryContentRef}>
             <div
               dangerouslySetInnerHTML={{ __html: topic.content }}
             />
@@ -257,6 +287,7 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
                 questions={quizQuestions}
                 onComplete={handleQuizComplete}
                 onClose={handleQuizClose}
+                onRetake={handleQuizRetake}
               />
             ) : (
               <div className="text-center py-8">

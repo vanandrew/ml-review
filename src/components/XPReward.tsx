@@ -5,10 +5,19 @@ interface XPRewardProps {
   amount: number;
   reason: string;
   onComplete?: () => void;
+  selectedTheme?: string;
 }
 
-export default function XPReward({ amount, reason, onComplete }: XPRewardProps) {
+const THEME_GRADIENTS: Record<string, string> = {
+  'default': 'from-purple-500 to-pink-500',
+  'theme-ocean': 'from-blue-400 to-cyan-500',
+  'theme-forest': 'from-green-400 to-emerald-600',
+  'theme-sunset': 'from-orange-400 to-pink-500',
+};
+
+export default function XPReward({ amount, reason, onComplete, selectedTheme = 'default' }: XPRewardProps) {
   const [isVisible, setIsVisible] = useState(true);
+  const gradientColors = THEME_GRADIENTS[selectedTheme] || THEME_GRADIENTS['default'];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,7 +32,7 @@ export default function XPReward({ amount, reason, onComplete }: XPRewardProps) 
 
   return (
     <div className="fixed top-20 right-4 z-50 animate-bounce">
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+      <div className={`bg-gradient-to-r ${gradientColors} text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2`}>
         <Sparkles className="w-5 h-5" />
         <div>
           <div className="font-bold text-lg">+{amount} XP</div>

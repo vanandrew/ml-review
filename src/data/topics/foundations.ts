@@ -10,32 +10,32 @@ export const foundationsTopics: Record<string, Topic> = {
       <h2>The Three Paradigms of Machine Learning</h2>
       <p>Machine learning encompasses three fundamental learning paradigms, each distinguished by the type of feedback or learning signal available to the algorithm. Understanding when and how to apply each paradigm is essential for tackling real-world problems effectively.</p>
 
-      <div style="background: #f0f7ff; padding: 15px; border-left: 4px solid #2196F3; margin: 20px 0;">
-        <h4 style="margin-top: 0;">📊 Quick Comparison</h4>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #e3f2fd;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Paradigm</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Data Type</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Feedback</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Best For</th>
+      <div class="info-box info-box-blue">
+        <h4>📊 Quick Comparison</h4>
+        <table>
+          <tr>
+            <th>Paradigm</th>
+            <th>Data Type</th>
+            <th>Feedback</th>
+            <th>Best For</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Supervised</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Labeled (X, Y)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Direct, immediate</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Prediction tasks with clear outputs</td>
+            <td><strong>Supervised</strong></td>
+            <td>Labeled (X, Y)</td>
+            <td>Direct, immediate</td>
+            <td>Prediction tasks with clear outputs</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Unsupervised</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Unlabeled (X only)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">No explicit feedback</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Pattern discovery, exploration</td>
+            <td><strong>Unsupervised</strong></td>
+            <td>Unlabeled (X only)</td>
+            <td>No explicit feedback</td>
+            <td>Pattern discovery, exploration</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Reinforcement</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">State-action pairs</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Delayed rewards</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Sequential decision-making</td>
+            <td><strong>Reinforcement</strong></td>
+            <td>State-action pairs</td>
+            <td>Delayed rewards</td>
+            <td>Sequential decision-making</td>
           </tr>
         </table>
       </div>
@@ -267,9 +267,9 @@ export const foundationsTopics: Record<string, Topic> = {
 
       <h3>Choosing the Right Paradigm</h3>
       
-      <div style="background: #fff3e0; padding: 15px; border-left: 4px solid #ff9800; margin: 20px 0;">
-        <h4 style="margin-top: 0;">🎯 Decision Guide: Which Paradigm Should I Use?</h4>
-        <ul style="margin: 10px 0;">
+      <div class="info-box info-box-orange">
+        <h4>🎯 Decision Guide: Which Paradigm Should I Use?</h4>
+        <ul>
           <li><strong>✓ Choose Supervised Learning</strong> when:
             <ul>
               <li>You have labeled data (X, Y pairs)</li>
@@ -405,22 +405,22 @@ centers = kmeans.cluster_centers_`,
       <h2>Understanding Bias-Variance Tradeoff</h2>
       <p>The bias-variance tradeoff is one of the most fundamental concepts in machine learning, describing the inherent tension between a model's ability to capture complex patterns and its ability to generalize to new data. This tradeoff is central to understanding why models fail and how to improve them.</p>
 
-      <div style="background: #f3e5f5; padding: 15px; border-left: 4px solid #9c27b0; margin: 20px 0;">
-        <h4 style="margin-top: 0;">📈 The Error Decomposition</h4>
-        <p style="text-align: center; font-size: 1.1em; margin: 10px 0;"><strong>Expected Error = Bias² + Variance + Irreducible Error</strong></p>
-        <table style="width: 100%; margin-top: 10px;">
+      <div class="info-box info-box-purple">
+        <h4>📈 The Error Decomposition</h4>
+        <p class="text-center text-lg my-2"><strong>Expected Error = Bias² + Variance + Irreducible Error</strong></p>
+        <table>
           <tr>
-            <td style="width: 33%; padding: 10px; text-align: center;">
+            <td class="text-center">
               <strong>Bias²</strong><br/>
               Systematic error<br/>
               <em>(Model too simple)</em>
             </td>
-            <td style="width: 33%; padding: 10px; text-align: center;">
+            <td class="table-cell-center">
               <strong>Variance</strong><br/>
               Sensitivity to data<br/>
               <em>(Model too complex)</em>
             </td>
-            <td style="width: 33%; padding: 10px; text-align: center;">
+            <td class="table-cell-center">
               <strong>Irreducible</strong><br/>
               Inherent noise<br/>
               <em>(Cannot be reduced)</em>
@@ -672,41 +672,41 @@ for degree in degrees:
       <h2>The Fundamental Practice of Data Splitting</h2>
       <p>Data splitting is one of the most critical practices in machine learning, yet it's often misunderstood or improperly executed. The way you divide your data fundamentally affects your ability to train effective models and honestly assess their performance. Poor splitting strategies can lead to overly optimistic performance estimates that collapse in production, wasted time tuning models on contaminated validation sets, or models that fail to generalize because they've seen test data during development.</p>
 
-      <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin: 20px 0;">
-        <h4 style="margin-top: 0;">📋 Quick Reference: Recommended Split Ratios</h4>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #c8e6c9;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Dataset Size</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Recommended Split</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Notes</th>
+      <div class="info-box info-box-green">
+        <h4>📋 Quick Reference: Recommended Split Ratios</h4>
+        <table>
+          <tr>
+            <th>Dataset Size</th>
+            <th>Recommended Split</th>
+            <th>Notes</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Very Large (>1M)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">98-1-1</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">1% is plenty for validation/test</td>
+            <td>Very Large (>1M)</td>
+            <td>98-1-1</td>
+            <td>1% is plenty for validation/test</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Large (100K-1M)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">80-10-10</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Standard for deep learning</td>
+            <td>Large (100K-1M)</td>
+            <td>80-10-10</td>
+            <td>Standard for deep learning</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Medium (10K-100K)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">70-15-15</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Balanced approach</td>
+            <td>Medium (10K-100K)</td>
+            <td>70-15-15</td>
+            <td>Balanced approach</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Small (<10K)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">60-20-20 + CV</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Use cross-validation</td>
+            <td>Small (<10K)</td>
+            <td>60-20-20 + CV</td>
+            <td>Use cross-validation</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Very Small (<1K)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">80-20 (CV only)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">k-fold CV, small test set</td>
+            <td>Very Small (<1K)</td>
+            <td>80-20 (CV only)</td>
+            <td>k-fold CV, small test set</td>
           </tr>
         </table>
-        <p style="margin-top: 10px; font-size: 0.9em;"><strong>Special Cases:</strong> Time series → chronological splits | Imbalanced → stratified | Grouped data → split by groups</p>
+        <p><strong>Special Cases:</strong> Time series → chronological splits | Imbalanced → stratified | Grouped data → split by groups</p>
       </div>
 
       <h3>Why We Split Data: The Core Problem</h3>
@@ -1377,41 +1377,41 @@ complex_model = RandomForestClassifier(max_depth=None)`,
       
       <p>Without regularization, complex models with many parameters can achieve perfect training accuracy while performing poorly on new data. Regularization provides a principled way to control this by modifying the loss function to include not just prediction error, but also a measure of model complexity. The result is a bias-variance tradeoff: some increase in training error (bias) in exchange for better generalization (reduced variance).</p>
 
-      <div style="background: #e1f5fe; padding: 15px; border-left: 4px solid #03a9f4; margin: 20px 0;">
-        <h4 style="margin-top: 0;">⚡ Regularization Quick Guide</h4>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #b3e5fc;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Technique</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">What It Does</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">When to Use</th>
+      <div class="info-box info-box-cyan">
+        <h4>⚡ Regularization Quick Guide</h4>
+        <table>
+          <tr>
+            <th>Technique</th>
+            <th>What It Does</th>
+            <th>When to Use</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>L2 (Ridge)</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Shrinks all weights, keeps all features</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Default choice, all features relevant</td>
+            <td><strong>L2 (Ridge)</strong></td>
+            <td>Shrinks all weights, keeps all features</td>
+            <td>Default choice, all features relevant</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>L1 (Lasso)</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Drives weights to zero, feature selection</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Many irrelevant features, need sparsity</td>
+            <td><strong>L1 (Lasso)</strong></td>
+            <td>Drives weights to zero, feature selection</td>
+            <td>Many irrelevant features, need sparsity</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Elastic Net</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Combines L1 + L2</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Correlated features, unsure L1 vs L2</td>
+            <td><strong>Elastic Net</strong></td>
+            <td>Combines L1 + L2</td>
+            <td>Correlated features, unsure L1 vs L2</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Dropout</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Randomly drops neurons during training</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Neural networks (p=0.5 for FC layers)</td>
+            <td><strong>Dropout</strong></td>
+            <td>Randomly drops neurons during training</td>
+            <td>Neural networks (p=0.5 for FC layers)</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Early Stopping</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Stops when validation plateaus</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Any iterative algorithm, always use</td>
+            <td><strong>Early Stopping</strong></td>
+            <td>Stops when validation plateaus</td>
+            <td>Any iterative algorithm, always use</td>
           </tr>
         </table>
-        <p style="margin-top: 10px; font-size: 0.9em;"><strong>💡 Pro Tip:</strong> Start with L2 + Early Stopping. Add Dropout for neural networks. Use L1 only if you need feature selection.</p>
+        <p><strong>💡 Pro Tip:</strong> Start with L2 + Early Stopping. Add Dropout for neural networks. Use L1 only if you need feature selection.</p>
       </div>
 
       <h3>L2 Regularization (Ridge Regression / Weight Decay)</h3>
@@ -1786,51 +1786,51 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')`,
       <h2>Cross-Validation: Robust Model Evaluation</h2>
       <p>Cross-validation is a statistical resampling technique that provides more reliable estimates of model performance than a single train-test split. By systematically using different portions of data for training and validation across multiple iterations, cross-validation reduces the variance in performance estimates and makes more efficient use of limited data. It's an essential tool for model selection, hyperparameter tuning, and honest performance reporting.</p>
 
-      <div style="background: #f3e5f5; padding: 15px; border-left: 4px solid #9c27b0; margin: 20px 0;">
-        <h4 style="margin-top: 0;">🎯 Which CV Method Should I Use?</h4>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #e1bee7;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Your Situation</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Recommended Method</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Why</th>
+      <div class="info-box info-box-purple">
+        <h4>🎯 Which CV Method Should I Use?</h4>
+        <table>
+          <tr>
+            <th>Your Situation</th>
+            <th>Recommended Method</th>
+            <th>Why</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Balanced classification</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Standard k-fold</strong> (k=5 or 10)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Simple, efficient, standard choice</td>
+            <td>Balanced classification</td>
+            <td><strong>Standard k-fold</strong> (k=5 or 10)</td>
+            <td>Simple, efficient, standard choice</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Imbalanced classes</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Stratified k-fold</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Maintains class distribution</td>
+            <td>Imbalanced classes</td>
+            <td><strong>Stratified k-fold</strong></td>
+            <td>Maintains class distribution</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Time series data</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>TimeSeriesSplit</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Respects temporal order</td>
+            <td>Time series data</td>
+            <td><strong>TimeSeriesSplit</strong></td>
+            <td>Respects temporal order</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Very small dataset (<100)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>LOOCV</strong> or k=10</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Maximizes training data</td>
+            <td>Very small dataset (<100)</td>
+            <td><strong>LOOCV</strong> or k=10</td>
+            <td>Maximizes training data</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Large dataset (>100K)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>k-fold</strong> (k=3 or 5)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Faster, diminishing returns</td>
+            <td>Large dataset (>100K)</td>
+            <td><strong>k-fold</strong> (k=3 or 5)</td>
+            <td>Faster, diminishing returns</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Grouped/hierarchical data</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>GroupKFold</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Keeps groups together</td>
+            <td>Grouped/hierarchical data</td>
+            <td><strong>GroupKFold</strong></td>
+            <td>Keeps groups together</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Hyperparameter tuning</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Nested CV</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Unbiased performance estimate</td>
+            <td>Hyperparameter tuning</td>
+            <td><strong>Nested CV</strong></td>
+            <td>Unbiased performance estimate</td>
           </tr>
         </table>
-        <p style="margin-top: 10px; font-size: 0.9em;"><strong>⚠️ Never:</strong> Use standard k-fold for time series | Forget to stratify for imbalanced data | Tune on test set</p>
+        <p><strong>⚠️ Never:</strong> Use standard k-fold for time series | Forget to stratify for imbalanced data | Tune on test set</p>
       </div>
 
       <h3>The Problem with Single Train-Test Splits</h3>
@@ -2270,70 +2270,70 @@ print(f"\\nNested CV R² Score: {nested_scores.mean():.3f} (+/- {nested_scores.s
 
       <p>Different problem types (classification vs. regression), different data distributions (balanced vs. imbalanced), and different business contexts (medical diagnosis vs. movie recommendations) demand different metrics. Understanding the nuances of each metric—what it measures, what it ignores, when it's appropriate, and when it misleads—is essential for building models that deliver real value.</p>
 
-      <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin: 20px 0;">
-        <h4 style="margin-top: 0;">📊 Metric Selection Cheat Sheet</h4>
+      <div class="info-box info-box-green">
+        <h4>📊 Metric Selection Cheat Sheet</h4>
         <p><strong>Classification Tasks:</strong></p>
-        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
-          <tr style="background: #c8e6c9;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Scenario</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Primary Metric</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Secondary Metrics</th>
+        <table>
+          <tr>
+            <th>Scenario</th>
+            <th>Primary Metric</th>
+            <th>Secondary Metrics</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Balanced classes</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Accuracy</strong>, F1</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Precision, Recall, ROC-AUC</td>
+            <td>Balanced classes</td>
+            <td><strong>Accuracy</strong>, F1</td>
+            <td>Precision, Recall, ROC-AUC</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Imbalanced (e.g., fraud, rare disease)</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>PR-AUC</strong>, F1</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Precision, Recall separately</td>
+            <td>Imbalanced (e.g., fraud, rare disease)</td>
+            <td><strong>PR-AUC</strong>, F1</td>
+            <td>Precision, Recall separately</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">False positives very costly</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Precision</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">F1, Specificity</td>
+            <td>False positives very costly</td>
+            <td><strong>Precision</strong></td>
+            <td>F1, Specificity</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">False negatives very costly</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Recall</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">F2, Sensitivity</td>
+            <td>False negatives very costly</td>
+            <td><strong>Recall</strong></td>
+            <td>F2, Sensitivity</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Need probability estimates</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Log Loss</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Brier Score, Calibration</td>
+            <td>Need probability estimates</td>
+            <td><strong>Log Loss</strong></td>
+            <td>Brier Score, Calibration</td>
           </tr>
         </table>
         <p><strong>Regression Tasks:</strong></p>
-        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
-          <tr style="background: #c8e6c9;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Scenario</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Primary Metric</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Why</th>
+        <table>
+          <tr>
+            <th>Scenario</th>
+            <th>Primary Metric</th>
+            <th>Why</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">General regression</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>RMSE</strong> + R²</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Standard, interpretable</td>
+            <td>General regression</td>
+            <td><strong>RMSE</strong> + R²</td>
+            <td>Standard, interpretable</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Data with outliers</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>MAE</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Robust to outliers</td>
+            <td>Data with outliers</td>
+            <td><strong>MAE</strong></td>
+            <td>Robust to outliers</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Large errors very bad</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>RMSE</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Penalizes large errors heavily</td>
+            <td>Large errors very bad</td>
+            <td><strong>RMSE</strong></td>
+            <td>Penalizes large errors heavily</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;">Relative performance</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>R²</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Variance explained (unitless)</td>
+            <td>Relative performance</td>
+            <td><strong>R²</strong></td>
+            <td>Variance explained (unitless)</td>
           </tr>
         </table>
-        <p style="margin-top: 10px; font-size: 0.9em;"><strong>⚠️ Warning:</strong> Never use accuracy alone for imbalanced data! | Always track multiple metrics | Align metrics with business objectives</p>
+        <p><strong>⚠️ Warning:</strong> Never use accuracy alone for imbalanced data! | Always track multiple metrics | Align metrics with business objectives</p>
       </div>
 
       <h3>Classification Metrics: Measuring Categorical Predictions</h3>
@@ -2640,48 +2640,48 @@ print("\\nRMSE is more sensitive to outliers due to squaring errors!")`,
 
       <p>Poor hyperparameter choices can lead to underfitting (model too simple, high bias), overfitting (model too complex, high variance), or slow convergence (inefficient training). Good hyperparameter tuning accelerates development, improves generalization, and can often deliver larger performance gains than algorithm selection or feature engineering. However, hyperparameter tuning is expensive—each configuration requires full model training—so efficient search strategies are essential.</p>
 
-      <div style="background: #fff3e0; padding: 15px; border-left: 4px solid #ff9800; margin: 20px 0;">
-        <h4 style="margin-top: 0;">🔍 Tuning Strategy Comparison</h4>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr style="background: #ffe0b2;">
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Strategy</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Pros</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Cons</th>
-            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">When to Use</th>
+      <div class="info-box info-box-orange">
+        <h4>🔍 Tuning Strategy Comparison</h4>
+        <table>
+          <tr>
+            <th>Strategy</th>
+            <th>Pros</th>
+            <th>Cons</th>
+            <th>When to Use</th>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Manual</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Builds intuition<br/>• Flexible</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Slow<br/>• Requires expertise</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Initial exploration, debugging</td>
+            <td><strong>Manual</strong></td>
+            <td>• Builds intuition<br/>• Flexible</td>
+            <td>• Slow<br/>• Requires expertise</td>
+            <td>Initial exploration, debugging</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Grid Search</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Comprehensive<br/>• Simple<br/>• Reproducible</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Exponential cost<br/>• Inefficient</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">≤3 hyperparameters, coarse search</td>
+            <td><strong>Grid Search</strong></td>
+            <td>• Comprehensive<br/>• Simple<br/>• Reproducible</td>
+            <td>• Exponential cost<br/>• Inefficient</td>
+            <td>≤3 hyperparameters, coarse search</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Random Search</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Efficient<br/>• Scales well<br/>• Anytime</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• No guarantees<br/>• Stochastic</td>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Default choice</strong>, >3 hyperparameters</td>
+            <td><strong>Random Search</strong></td>
+            <td>• Efficient<br/>• Scales well<br/>• Anytime</td>
+            <td>• No guarantees<br/>• Stochastic</td>
+            <td><strong>Default choice</strong>, >3 hyperparameters</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Bayesian</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Sample efficient<br/>• Smart search</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Complex<br/>• Overhead</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Expensive evaluations, refinement</td>
+            <td><strong>Bayesian</strong></td>
+            <td>• Sample efficient<br/>• Smart search</td>
+            <td>• Complex<br/>• Overhead</td>
+            <td>Expensive evaluations, refinement</td>
           </tr>
           <tr>
-            <td style="padding: 8px; border: 1px solid #ddd;"><strong>Hyperband/BOHB</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Very efficient<br/>• Early stopping</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">• Most complex<br/>• Needs framework</td>
-            <td style="padding: 8px; border: 1px solid #ddd;">Large-scale, neural networks</td>
+            <td><strong>Hyperband/BOHB</strong></td>
+            <td>• Very efficient<br/>• Early stopping</td>
+            <td>• Most complex<br/>• Needs framework</td>
+            <td>Large-scale, neural networks</td>
           </tr>
         </table>
-        <p style="margin-top: 10px; font-size: 0.9em;"><strong>💡 Recommended Workflow:</strong> (1) Manual exploration → (2) Random search (50-100 trials) → (3) Bayesian optimization for refinement</p>
-        <p style="font-size: 0.9em;"><strong>⚠️ Priority:</strong> For neural nets: learning rate >> architecture >> batch size | For trees: n_estimators, max_depth >> other params</p>
+        <p><strong>💡 Recommended Workflow:</strong> (1) Manual exploration → (2) Random search (50-100 trials) → (3) Bayesian optimization for refinement</p>
+        <p><strong>⚠️ Priority:</strong> For neural nets: learning rate >> architecture >> batch size | For trees: n_estimators, max_depth >> other params</p>
       </div>
 
       <h3>Hyperparameters vs. Parameters: A Critical Distinction</h3>
