@@ -33,7 +33,7 @@ export const computerVisionTopics: Record<string, Topic> = {
       <p>For continuous functions, convolution is defined as:</p>
       <p><strong>(f * g)(t) = ∫ f(τ) · g(t - τ) dτ</strong></p>
       <p>For discrete 2D images, this becomes:</p>
-      <p><strong>(I * K)(i,j) = Σ<sub>m</sub> Σ<sub>n</sub> I(i+m, j+n) · K(m, n)</strong></p>
+      <p><strong>$(I * K)(i,j) = \\sum_m \\sum_n I(i+m, j+n) \\cdot K(m, n)$</strong></p>
       <p>where <strong>I</strong> is the input image, <strong>K</strong> is the kernel (filter), and the summation is over the kernel dimensions. In practice, most deep learning frameworks implement <strong>cross-correlation</strong> rather than true convolution (which would flip the kernel), but the term "convolution" remains standard.</p>
 
       <h3>Why Convolution Works for Images: Three Principles</h3>
@@ -49,7 +49,7 @@ export const computerVisionTopics: Record<string, Topic> = {
 
       <h4>2. Parameter Sharing (Weight Reuse)</h4>
       <p>The same filter weights are applied at <strong>every spatial location</strong>. This embodies the assumption that visual features useful in one part of the image are useful elsewhere - an edge detector that works in the top-left corner should work everywhere.</p>
-      <p><strong>Mathematical view:</strong> Instead of learning unique weight matrices W<sub>(i,j)</sub> for each spatial position, we learn a single shared weight matrix K applied via convolution. This <strong>equivariance</strong> to translation means shifting the input shifts the output predictably.</p>
+      <p><strong>Mathematical view:</strong> Instead of learning unique weight matrices $W_{(i,j)}$ for each spatial position, we learn a single shared weight matrix K applied via convolution. This <strong>equivariance</strong> to translation means shifting the input shifts the output predictably.</p>
 
       <h4>3. Hierarchical Feature Learning</h4>
       <p>CNNs build <strong>compositional representations</strong> through stacked layers:</p>
@@ -440,7 +440,7 @@ The **depth dimension** (number of channels) follows different rules: the output
 
       <h4>Max Pooling: Selecting Strongest Activations</h4>
       <p><strong>Mathematical definition:</strong> For a pooling window R covering positions (i,j), max pooling computes:</p>
-      <p><strong>y = max{x<sub>i,j</sub> | (i,j) ∈ R}</strong></p>
+      <p><strong>$y = \\max\\{x_{i,j} | (i,j) \\in R\\}$</strong></p>
       
       <p><strong>Concrete Example:</strong></p>
       <pre>
@@ -475,7 +475,7 @@ Average takes mean: (1+2+5+6)/4=3.5, etc.
 
       <h4>Average Pooling: Smooth Information Aggregation</h4>
       <p><strong>Mathematical definition:</strong> For a pooling window R with |R| elements:</p>
-      <p><strong>y = (1/|R|) × Σ{x<sub>i,j</sub> | (i,j) ∈ R}</strong></p>
+      <p><strong>$y = \\frac{1}{|R|} \\times \\sum\\{x_{i,j} | (i,j) \\in R\\}$</strong></p>
       <p>Average pooling provides <strong>smooth downsampling</strong> by computing the arithmetic mean over each window. Unlike max pooling's winner-take-all approach, average pooling considers <strong>all activations equally</strong>, preserving information about overall activation patterns.</p>
 
       <p><strong>Key properties:</strong></p>
@@ -499,7 +499,7 @@ Average takes mean: (1+2+5+6)/4=3.5, etc.
       <p><strong>Global Average Pooling (GAP)</strong> and <strong>Global Max Pooling (GMP)</strong> reduce entire feature maps to single values by pooling over all spatial locations. This extreme form of dimensionality reduction has become essential in modern CNN architectures.</p>
 
       <p><strong>Global Average Pooling mathematics:</strong></p>
-      <p>For feature map X of size H×W: <strong>y = (1/HW) × Σ<sub>i=1..H,j=1..W</sub> x<sub>i,j</sub></strong></p>
+      <p>For feature map X of size H×W: <strong>$y = \\frac{1}{HW} \\times \\sum_{i=1..H,j=1..W} x_{i,j}$</strong></p>
 
       <p><strong>Revolutionary advantages of GAP:</strong></p>
       <ul>
@@ -519,7 +519,7 @@ Average takes mean: (1+2+5+6)/4=3.5, etc.
       <p>Randomly samples from pooling window based on activation magnitudes (higher activations more likely). Provides <strong>regularization through randomness</strong> while maintaining approximate max pooling behavior. Used less commonly than dropout for regularization.</p>
 
       <h4>Mixed Pooling</h4>
-      <p>Combines max and average pooling with learnable or random weights: <strong>y = α × max(R) + (1-α) × avg(R)</strong>. Allows the network to balance between sharp feature detection and smooth aggregation.</p>
+      <p>Combines max and average pooling with learnable or random weights: <strong>$y = \\alpha \\times \\max(R) + (1-\\alpha) \\times \\text{avg}(R)$</strong>. Allows the network to balance between sharp feature detection and smooth aggregation.</p>
 
       <h4>Spatial Pyramid Pooling (SPP)</h4>
       <p>Pools at multiple scales (e.g., 1×1, 2×2, 4×4 grids) and concatenates results. Enables <strong>fixed-size output from variable input sizes</strong> while capturing multi-scale spatial information. Critical for object detection where proposal sizes vary.</p>
@@ -2040,7 +2040,7 @@ print("Transfer learning training complete!")`,
 
       <p><strong>Advanced NMS variants:</strong></p>
       <ul>
-        <li><strong>Soft-NMS:</strong> Instead of removing overlapping boxes, decay their confidence scores based on IoU. Allows detections of occluded objects while still suppressing clear duplicates. Score decay: s_i = s_i * (1 - IoU) or s_i = s_i * exp(-IoU²/σ).</li>
+        <li><strong>Soft-NMS:</strong> Instead of removing overlapping boxes, decay their confidence scores based on IoU. Allows detections of occluded objects while still suppressing clear duplicates. Score decay: $s_i = s_i \\times (1 - \\text{IoU})$ or $s_i = s_i \\times \\exp(-\\text{IoU}^2/\\sigma)$.</li>
         <li><strong>Adaptive NMS:</strong> Dynamically adjust IoU threshold based on object density - use lower thresholds in crowded regions.</li>
         <li><strong>Learning-based NMS:</strong> Train a network to predict which boxes to suppress based on features beyond just IoU and confidence.</li>
         <li><strong>Distance-based metrics:</strong> Use bounding box distance metrics beyond IoU, such as GIoU or DIoU, which better capture spatial relationships.</li>
@@ -2051,12 +2051,12 @@ print("Transfer learning training complete!")`,
       <h4>Loss Functions: Multi-Task Learning</h4>
       <p>Object detection requires simultaneously learning classification and localization, necessitating multi-task loss functions that balance these objectives.</p>
       
-      <p><strong>General form:</strong> L_total = L_cls + λ * L_loc + L_obj</p>
+      <p><strong>General form:</strong> $L_{\\text{total}} = L_{\\text{cls}} + \\lambda \\times L_{\\text{loc}} + L_{\\text{obj}}$</p>
 
-      <p><strong>Classification loss (L_cls):</strong></p>
+      <p><strong>Classification loss ($L_{\\text{cls}}$):</strong></p>
       <ul>
-        <li><strong>Cross-entropy:</strong> Standard for multi-class classification: L_cls = -Σ y_i * log(p_i)</li>
-        <li><strong>Focal loss:</strong> Addresses class imbalance by down-weighting easy examples: L_fl = -α(1-p)^γ * log(p). The focusing parameter γ (typically 2) reduces loss for well-classified examples, allowing the model to focus on hard examples.</li>
+        <li><strong>Cross-entropy:</strong> Standard for multi-class classification: $L_{\\text{cls}} = -\\sum y_i \\times \\log(p_i)$</li>
+        <li><strong>Focal loss:</strong> Addresses class imbalance by down-weighting easy examples: $L_{\\text{fl}} = -\\alpha(1-p)^{\\gamma} \\times \\log(p)$. The focusing parameter $\\gamma$ (typically 2) reduces loss for well-classified examples, allowing the model to focus on hard examples.</li>
       </ul>
 
       <p><strong>Localization loss (L_loc):</strong></p>
@@ -2075,7 +2075,7 @@ print("Transfer learning training complete!")`,
         <li>Particularly important in one-stage detectors where most predictions are background</li>
       </ul>
 
-      <p><strong>Balancing multi-task objectives:</strong> The weight λ (typically 1-10) balances localization and classification. Too high emphasizes location precision at the cost of classification accuracy; too low produces confident but mislocalized predictions.</p>
+      <p><strong>Balancing multi-task objectives:</strong> The weight $\\lambda$ (typically 1-10) balances localization and classification. Too high emphasizes location precision at the cost of classification accuracy; too low produces confident but mislocalized predictions.</p>
 
       <h3>Evaluation Metrics</h3>
 
@@ -2939,13 +2939,13 @@ The key insight is that object detection requires metrics that simultaneously ev
       <h3>Loss Functions: Training Objectives for Dense Prediction</h3>
 
       <h4>Cross-Entropy Loss: The Standard Baseline</h4>
-      <p><strong>Pixel-wise cross-entropy:</strong> L = -1/N Σᵢ Σ_c y_ic log(p_ic), where N is number of pixels, c iterates over classes.</p>
+      <p><strong>Pixel-wise cross-entropy:</strong> $L = -\\frac{1}{N} \\sum_i \\sum_c y_{ic} \\log(p_{ic})$, where N is number of pixels, c iterates over classes.</p>
       
       <p><strong>Advantages:</strong> Simple, well-understood, stable optimization, works with standard classification heads.</p>
 
       <p><strong>Disadvantages:</strong> Treats each pixel independently (ignores spatial structure), sensitive to class imbalance, not directly aligned with segmentation metrics (IoU, Dice).</p>
 
-      <p><strong>Weighted cross-entropy:</strong> Assign weights to classes (higher for rare classes) or pixels (higher for boundaries): L = -1/N Σᵢ w_i Σ_c y_ic log(p_ic). Helps with imbalance.</p>
+      <p><strong>Weighted cross-entropy:</strong> Assign weights to classes (higher for rare classes) or pixels (higher for boundaries): $L = -\\frac{1}{N} \\sum_i w_i \\sum_c y_{ic} \\log(p_{ic})$. Helps with imbalance.</p>
 
       <h4>Dice Loss: Addressing Class Imbalance</h4>
       <p><strong>Dice coefficient:</strong> DSC = 2|A ∩ B| / (|A| + |B|), where A is prediction, B is ground truth. Ranges from 0 (no overlap) to 1 (perfect overlap).</p>
@@ -2963,21 +2963,21 @@ Dice = (2 × 1.7) / (1.55 + 2) = 3.4 / 3.55 = 0.958
 Dice Loss = 1 - 0.958 = 0.042 (low is good!)
       </pre>
       
-      <p><strong>Soft Dice loss:</strong> For differentiability, use soft (continuous) version: L_Dice = 1 - 2Σᵢ pᵢgᵢ / (Σᵢ pᵢ² + Σᵢ gᵢ² + ε), where pᵢ are predicted probabilities, gᵢ are ground truth labels, ε prevents division by zero.</p>
+      <p><strong>Soft Dice loss:</strong> For differentiability, use soft (continuous) version: $L_{\\text{Dice}} = 1 - \\frac{2\\sum_i p_i g_i}{\\sum_i p_i^2 + \\sum_i g_i^2 + \\varepsilon}$, where $p_i$ are predicted probabilities, $g_i$ are ground truth labels, $\\varepsilon$ prevents division by zero.</p>
 
       <p><strong>Why it helps:</strong> Dice is a global metric that inherently balances foreground and background by considering their ratio, making it robust to class imbalance. A background-dominated prediction still has low Dice if it misses the small foreground object.</p>
 
-      <p><strong>Multi-class extension:</strong> Compute Dice for each class, average: L = 1 - 1/C Σ_c 2Σᵢ p_ic g_ic / (Σᵢ p_ic² + Σᵢ g_ic²)</p>
+      <p><strong>Multi-class extension:</strong> Compute Dice for each class, average: $L = 1 - \\frac{1}{C} \\sum_c \\frac{2\\sum_i p_{ic} g_{ic}}{\\sum_i p_{ic}^2 + \\sum_i g_{ic}^2}$</p>
 
       <p><strong>Usage:</strong> Extremely popular in medical imaging where foreground objects (tumors, organs) are much smaller than background.</p>
 
       <h4>Focal Loss for Segmentation</h4>
-      <p>Borrowed from object detection, focal loss down-weights easy examples: L_focal = -α(1-p)^γ log(p), where γ (typically 2) controls focusing strength.</p>
-      
+      <p>Borrowed from object detection, focal loss down-weights easy examples: $L_{\\text{focal}} = -\\alpha(1-p)^{\\gamma} \\log(p)$, where $\\gamma$ (typically 2) controls focusing strength.</p>
+
       <p><strong>Application:</strong> Addresses extreme background-foreground imbalance in segmentation by reducing loss from abundant, easily classified background pixels.</p>
 
       <h4>Combined Losses: Best of Both Worlds</h4>
-      <p>Modern practice often combines losses: L = λ₁L_CE + λ₂L_Dice + λ₃L_IoU. This leverages pixel-level supervision (CE) and region-level overlap optimization (Dice/IoU).</p>
+      <p>Modern practice often combines losses: $L = \\lambda_1 L_{\\text{CE}} + \\lambda_2 L_{\\text{Dice}} + \\lambda_3 L_{\\text{IoU}}$. This leverages pixel-level supervision (CE) and region-level overlap optimization (Dice/IoU).</p>
       
       <p><strong>Typical combination:</strong> L = L_CE + L_Dice or L = 0.5L_CE + 0.5L_Dice, giving equal importance to both objectives.</p>
 
@@ -2991,7 +2991,7 @@ Dice Loss = 1 - 0.958 = 0.042 (low is good!)
       <h4>Mean Intersection over Union (mIoU): The Gold Standard</h4>
       <p>IoU for class c: IoU_c = TP_c / (TP_c + FP_c + FN_c) = intersection / union</p>
       
-      <p>mIoU = 1/C Σ_c IoU_c, averaging over all classes (including background or excluding based on convention).</p>
+      <p>$\\text{mIoU} = \\frac{1}{C} \\sum_c \\text{IoU}_c$, averaging over all classes (including background or excluding based on convention).</p>
 
       <p><strong>Why it's better:</strong> Penalizes both false positives and false negatives, not biased toward majority class, aligns with human perception of segmentation quality.</p>
 

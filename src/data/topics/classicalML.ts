@@ -176,7 +176,7 @@ export const classicalMLTopics: Record<string, Topic> = {
       </ul>
       
       <p><strong>Step 2: Calculate slope β₁</strong></p>
-      <p>β₁ = Σ(xᵢ - x̄)(yᵢ - ȳ) / Σ(xᵢ - x̄)²</p>
+      <p>$\\beta_1 = \\frac{\\sum(x_i - \\bar{x})(y_i - \\bar{y})}{\\sum(x_i - \\bar{x})^2}$</p>
       <ul>
         <li>Numerator: (1-2.5)(100-212.5) + (2-2.5)(200-212.5) + (3-2.5)(250-212.5) + (4-2.5)(300-212.5)</li>
         <li>= (-1.5)(-112.5) + (-0.5)(-12.5) + (0.5)(37.5) + (1.5)(87.5)</li>
@@ -430,9 +430,9 @@ predictions = model.predict(X_test)`,
       
       <p><strong>Multinomial Logistic Regression</strong> (softmax regression) extends binary logistic regression to K > 2 classes. Instead of one sigmoid output, we have K outputs using the <strong>softmax function</strong>:</p>
       
-      <p><strong>P(y=k|X) = e^(z_k) / Σⱼ e^(z_j)</strong> for j = 1 to K</p>
-      
-      <p>Where z_k = β₀^(k) + β₁^(k)x₁ + β₂^(k)x₂ + ... Each class has its own weight vector β^(k). Softmax ensures:</p>
+      <p><strong>$P(y=k|X) = \\frac{e^{z_k}}{\\sum_j e^{z_j}}$</strong> for j = 1 to K</p>
+
+      <p>Where $z_k = \\beta_0^{(k)} + \\beta_1^{(k)}x_1 + \\beta_2^{(k)}x_2 + ...$ Each class has its own weight vector $\\beta^{(k)}$. Softmax ensures:</p>
       <ul>
         <li>All probabilities are between 0 and 1</li>
         <li>Probabilities sum to 1 across all classes</li>
@@ -441,9 +441,9 @@ predictions = model.predict(X_test)`,
       </ul>
       
       <p>The loss function becomes <strong>categorical cross-entropy</strong>:</p>
-      <p><strong>L = -(1/n) Σᵢ Σₖ yᵢₖ log(pᵢₖ)</strong></p>
-      
-      <p>Where yᵢₖ is 1 if sample i belongs to class k, 0 otherwise (one-hot encoding). For a sample with true class k, this reduces to -log(pᵢₖ), heavily penalizing low probability for the correct class.</p>
+      <p><strong>$L = -\\frac{1}{n} \\sum_i \\sum_k y_{ik} \\log(p_{ik})$</strong></p>
+
+      <p>Where $y_{ik}$ is 1 if sample i belongs to class k, 0 otherwise (one-hot encoding). For a sample with true class k, this reduces to $-\\log(p_{ik})$, heavily penalizing low probability for the correct class.</p>
       
       <p><strong>Alternative: One-vs-Rest (OvR):</strong> Train K binary classifiers, each distinguishing one class from all others. At prediction, run all classifiers and choose the class with highest probability. Simpler to implement but less principled than softmax (probabilities may not sum to 1).</p>
 
@@ -451,23 +451,23 @@ predictions = model.predict(X_test)`,
       
       <p>Like linear regression, logistic regression benefits from regularization to prevent overfitting, especially with many features or limited data:</p>
       
-      <p><strong>L2 (Ridge):</strong> L = Log Loss + λ Σ βⱼ²</p>
+      <p><strong>L2 (Ridge):</strong> $L = \\text{Log Loss} + \\lambda \\sum \\beta_j^2$</p>
       <ul>
         <li>Shrinks all coefficients toward zero</li>
         <li>Handles multicollinearity</li>
         <li>No feature selection (all features retained)</li>
         <li>Standard choice for most applications</li>
       </ul>
-      
-      <p><strong>L1 (Lasso):</strong> L = Log Loss + λ Σ |βⱼ|</p>
+
+      <p><strong>L1 (Lasso):</strong> $L = \\text{Log Loss} + \\lambda \\sum |\\beta_j|$</p>
       <ul>
         <li>Drives some coefficients to exactly zero</li>
         <li>Performs automatic feature selection</li>
         <li>Creates sparse models (fewer features)</li>
         <li>Useful for high-dimensional data with many irrelevant features</li>
       </ul>
-      
-      <p><strong>Elastic Net:</strong> L = Log Loss + λ₁ Σ |βⱼ| + λ₂ Σ βⱼ²</p>
+
+      <p><strong>Elastic Net:</strong> $L = \\text{Log Loss} + \\lambda_1 \\sum |\\beta_j| + \\lambda_2 \\sum \\beta_j^2$</p>
       <ul>
         <li>Combines L1 and L2 benefits</li>
         <li>More stable than pure L1 with correlated features</li>
@@ -700,7 +700,7 @@ print(f"Intercept: {model.intercept_}")`,
       </ul>
       
       <p><strong>2. Mean Absolute Error (MAE)</strong>:</p>
-      <p>MAE = (1/n) Σ|yᵢ - median(y)|</p>
+      <p>$\\text{MAE} = \\frac{1}{n} \\sum |y_i - \\text{median}(y)|$</p>
       <ul>
         <li>More robust to outliers than MSE</li>
         <li>Uses median instead of mean for predictions</li>
@@ -733,7 +733,7 @@ print(f"Intercept: {model.intercept_}")`,
       
       <p>Decision trees automatically calculate feature importance based on impurity reduction:</p>
       
-      <p><strong>Importance(feature) = Σ (weighted impurity decrease for all splits using that feature)</strong></p>
+      <p><strong>$\\text{Importance(feature)} = \\sum \\text{(weighted impurity decrease for all splits using that feature)}$</strong></p>
       
       <ul>
         <li>Features used higher in the tree (near root) typically have higher importance</li>

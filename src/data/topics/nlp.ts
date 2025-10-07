@@ -31,7 +31,7 @@ export const nlpTopics: Record<string, Topic> = {
         <li><strong>Objective:</strong> Predict center word given context words</li>
         <li><strong>Example:</strong> Context ["the", "cat", "on", "the"] → Target "sat"</li>
         <li><strong>Characteristics:</strong> Faster training, works well for frequent words, better for syntactic tasks</li>
-        <li><strong>Mathematical:</strong> Maximize P(w_t | w_{t-c}, ..., w_{t+c})</li>
+        <li><strong>Mathematical:</strong> Maximize $P(w_t | w_{t-c}, ..., w_{t+c})$</li>
       </ul>
 
       <h4>Skip-gram</h4>
@@ -39,17 +39,17 @@ export const nlpTopics: Record<string, Topic> = {
         <li><strong>Objective:</strong> Predict context words given center word</li>
         <li><strong>Example:</strong> Target "sat" → Context ["the", "cat", "on", "the"]</li>
         <li><strong>Characteristics:</strong> Slower but better for rare words, better for semantic tasks</li>
-        <li><strong>Mathematical:</strong> Maximize P(w_{t-c}, ..., w_{t+c} | w_t)</li>
+        <li><strong>Mathematical:</strong> Maximize $P(w_{t-c}, ..., w_{t+c} | w_t)$</li>
       </ul>
 
       <h4>Negative Sampling: Training Efficiency</h4>
       <p>Standard softmax over entire vocabulary is computationally intractable (requires V dot products per example where V=50,000+). Negative sampling reformulates as binary classification: is this word-context pair "correct" or "noise"?</p>
       
-      <p><strong>Method:</strong> For each positive (word, context) pair, sample k=5-20 negative words from noise distribution P_n(w) ∝ count(w)^{3/4}. This reduces computation from V to k+1 dot products (1000× speedup).</p>
+      <p><strong>Method:</strong> For each positive (word, context) pair, sample k=5-20 negative words from noise distribution $P_n(w) \\propto \\text{count}(w)^{3/4}$. This reduces computation from V to k+1 dot products (1000× speedup).</p>
 
       <h4>Additional Techniques</h4>
       <ul>
-        <li><strong>Subsampling:</strong> Randomly discard frequent words ("the", "a") with probability P(w) = 1 - sqrt(t/f(w)) to balance dataset</li>
+        <li><strong>Subsampling:</strong> Randomly discard frequent words ("the", "a") with probability $P(w) = 1 - \\sqrt{\\frac{t}{f(w)}}$ to balance dataset</li>
         <li><strong>Window size:</strong> Small (2-5) for syntactic, large (5-10+) for semantic relationships</li>
         <li><strong>Learning rate:</strong> Start 0.025, decay to 0.0001</li>
         <li><strong>Epochs:</strong> 5-15 iterations over corpus</li>
@@ -58,11 +58,11 @@ export const nlpTopics: Record<string, Topic> = {
       <h3>GloVe: Global Vectors for Word Representation</h3>
       <p>GloVe (Pennington et al., 2014) takes a different approach: explicitly model global word-word co-occurrence statistics from the entire corpus rather than predicting local context.</p>
 
-      <p><strong>Core insight:</strong> Ratios of co-occurrence probabilities encode meaning. For "ice" vs "steam": P("solid"|"ice")/P("solid"|"steam") is large, P("gas"|"ice")/P("gas"|"steam") is small.</p>
+      <p><strong>Core insight:</strong> Ratios of co-occurrence probabilities encode meaning. For "ice" vs "steam": $\\frac{P(\\text{"solid"}|\\text{"ice"})}{P(\\text{"solid"}|\\text{"steam"})}$ is large, $\\frac{P(\\text{"gas"}|\\text{"ice"})}{P(\\text{"gas"}|\\text{"steam"})}$ is small.</p>
 
-      <p><strong>Objective:</strong> Learn word vectors such that w_i^T w_j + b_i + b_j = log(X_ij), where X_ij is co-occurrence count.</p>
+      <p><strong>Objective:</strong> Learn word vectors such that $w_i^T w_j + b_i + b_j = \\log(X_{ij})$, where $X_{ij}$ is co-occurrence count.</p>
 
-      <p><strong>Loss function:</strong> J = Σ f(X_ij)(w_i^T w_j + b_i + b_j - log X_ij)², with weighting f(x) = (x/x_max)^α preventing very frequent co-occurrences from dominating.</p>
+      <p><strong>Loss function:</strong> $J = \\sum f(X_{ij})(w_i^T w_j + b_i + b_j - \\log X_{ij})^2$, with weighting $f(x) = (x/x_{\\text{max}})^\\alpha$ preventing very frequent co-occurrences from dominating.</p>
 
       <p><strong>GloVe vs Word2Vec:</strong> Global vs local context, requires pre-computing co-occurrence matrix vs sequential processing, comparable performance but slight differences by task.</p>
 
@@ -101,7 +101,7 @@ export const nlpTopics: Record<string, Topic> = {
       <h3>Evaluation: Measuring Embedding Quality</h3>
 
       <h4>Intrinsic Evaluation</h4>
-      <p><strong>1. Word Similarity:</strong> Correlate embedding similarities with human judgments using datasets like WordSim-353, SimLex-999. Compute cosine similarity between embedding pairs, correlate with human ratings using Spearman's ρ.</p>
+      <p><strong>1. Word Similarity:</strong> Correlate embedding similarities with human judgments using datasets like WordSim-353, SimLex-999. Compute cosine similarity between embedding pairs, correlate with human ratings using Spearman's $\\rho$.</p>
 
       <p><strong>2. Word Analogies:</strong> Test compositional semantics through "a:b :: c:?" format. Compute vec(b) - vec(a) + vec(c), find nearest word. Google analogy dataset has 19,544 questions covering semantic ("Athens:Greece :: Baghdad:Iraq") and syntactic ("apparent:apparently :: rapid:rapidly") categories.</p>
 
@@ -452,25 +452,25 @@ The choice between static and contextual embeddings depends on application requi
       <p>RNNs introduce recurrent connections that allow information to persist and propagate through time. The core idea: maintain a hidden state that gets updated at each time step, incorporating both the current input and information from previous time steps.</p>
 
       <h4>Mathematical Formulation</h4>
-      <p><strong>Hidden state update:</strong> h<sub>t</sub> = tanh(W<sub>hh</sub>h<sub>t-1</sub> + W<sub>xh</sub>x<sub>t</sub> + b<sub>h</sub>)</p>
-      <p><strong>Output computation:</strong> y<sub>t</sub> = W<sub>hy</sub>h<sub>t</sub> + b<sub>y</sub></p>
-      
-      <p>Where h<sub>t</sub> is the hidden state (memory) at time t, x<sub>t</sub> is input at time t, y<sub>t</sub> is output at time t, W<sub>hh</sub> transforms previous hidden state, W<sub>xh</sub> transforms current input, W<sub>hy</sub> transforms hidden state to output, and b<sub>h</sub>, b<sub>y</sub> are bias terms. The tanh activation bounds hidden states to [-1, 1].</p>
+      <p><strong>Hidden state update:</strong> $h_t = \\tanh(W_{hh} h_{t-1} + W_{xh} x_t + b_h)$</p>
+      <p><strong>Output computation:</strong> $y_t = W_{hy} h_t + b_y$</p>
 
-      <p><strong>The recurrence:</strong> h<sub>t</sub> depends on h<sub>t-1</sub>, which depends on h<sub>t-2</sub>, creating a chain of dependencies allowing information from early time steps to influence later computations.</p>
+      <p>Where $h_t$ is the hidden state (memory) at time t, $x_t$ is input at time t, $y_t$ is output at time t, $W_{hh}$ transforms previous hidden state, $W_{xh}$ transforms current input, $W_{hy}$ transforms hidden state to output, and $b_h$, $b_y$ are bias terms. The tanh activation bounds hidden states to [-1, 1].</p>
+
+      <p><strong>The recurrence:</strong> $h_t$ depends on $h_{t-1}$, which depends on $h_{t-2}$, creating a chain of dependencies allowing information from early time steps to influence later computations.</p>
 
       <h4>Key Architectural Principles</h4>
       <ul>
-        <li><strong>Parameter sharing:</strong> Same weight matrices (W<sub>hh</sub>, W<sub>xh</sub>, W<sub>hy</sub>) used at every time step, enabling generalization across sequence positions and reducing parameters dramatically</li>
+        <li><strong>Parameter sharing:</strong> Same weight matrices ($W_{hh}$, $W_{xh}$, $W_{hy}$) used at every time step, enabling generalization across sequence positions and reducing parameters dramatically</li>
         <li><strong>Variable length processing:</strong> Same network processes sequences of any length (10 words or 10,000), unlike feedforward networks requiring fixed input size</li>
-        <li><strong>Stateful computation:</strong> Hidden state h<sub>t</sub> accumulates information from entire input history, serving as learned memory representation</li>
+        <li><strong>Stateful computation:</strong> Hidden state $h_t$ accumulates information from entire input history, serving as learned memory representation</li>
         <li><strong>Compositional structure:</strong> Complex patterns built from simpler recurring operations applied repeatedly</li>
       </ul>
 
       <h3>RNN Unfolding: Understanding Computation</h3>
       <p>RNNs are often visualized as "unfolded" through time, showing explicitly how the same network processes each time step. The unfolded view clarifies gradient flow during training and computational dependencies.</p>
 
-      <p>For a 3-word sequence ["the", "cat", "sat"], the unfolded RNN shows: h<sub>1</sub> = tanh(W<sub>hh</sub>h<sub>0</sub> + W<sub>xh</sub>x<sub>1</sub> + b<sub>h</sub>), h<sub>2</sub> = tanh(W<sub>hh</sub>h<sub>1</sub> + W<sub>xh</sub>x<sub>2</sub> + b<sub>h</sub>), h<sub>3</sub> = tanh(W<sub>hh</sub>h<sub>2</sub> + W<sub>xh</sub>x<sub>3</sub> + b<sub>h</sub>), where h<sub>0</sub> is typically initialized to zeros, and the same W matrices are reused at each step.</p>
+      <p>For a 3-word sequence ["the", "cat", "sat"], the unfolded RNN shows: $h_1 = \\tanh(W_{hh} h_0 + W_{xh} x_1 + b_h)$, $h_2 = \\tanh(W_{hh} h_1 + W_{xh} x_2 + b_h)$, $h_3 = \\tanh(W_{hh} h_2 + W_{xh} x_3 + b_h)$, where $h_0$ is typically initialized to zeros, and the same W matrices are reused at each step.</p>
 
       <h3>RNN Variants: Flexible Input-Output Mappings</h3>
       <p>RNNs can be configured for various sequence-to-sequence mappings, providing flexibility for different tasks.</p>
@@ -487,15 +487,15 @@ The choice between static and contextual embeddings depends on application requi
         <li><strong>Structure:</strong> Single input → sequence output</li>
         <li><strong>Mechanism:</strong> Feed input at first time step, use fixed or zero inputs for subsequent steps while hidden state evolves</li>
         <li><strong>Examples:</strong> Image captioning (image → sequence of words), music generation from genre, video generation from description</li>
-        <li><strong>Challenge:</strong> Entire sequence must be generated from initial input information compressed into h<sub>0</sub></li>
+        <li><strong>Challenge:</strong> Entire sequence must be generated from initial input information compressed into $h_0$</li>
       </ul>
 
       <h4>Many-to-One</h4>
       <ul>
         <li><strong>Structure:</strong> Sequence input → single output</li>
-        <li><strong>Mechanism:</strong> Process entire sequence, use only final hidden state h<sub>T</sub> for output</li>
+        <li><strong>Mechanism:</strong> Process entire sequence, use only final hidden state $h_T$ for output</li>
         <li><strong>Examples:</strong> Sentiment analysis (sentence → positive/negative), video classification (frames → action label), document categorization</li>
-        <li><strong>Advantage:</strong> Final hidden state h<sub>T</sub> encodes information from entire input sequence</li>
+        <li><strong>Advantage:</strong> Final hidden state $h_T$ encodes information from entire input sequence</li>
       </ul>
 
       <h4>Many-to-Many (Synchronized)</h4>
@@ -520,20 +520,20 @@ The choice between static and contextual embeddings depends on application requi
       <h4>BPTT Algorithm</h4>
       <p><strong>Step 1 - Unfolding:</strong> Conceptually unroll RNN for T time steps, creating a deep feedforward network with shared weights.</p>
       
-      <p><strong>Step 2 - Forward pass:</strong> Compute hidden states h<sub>1</sub>, h<sub>2</sub>, ..., h<sub>T</sub> and outputs y<sub>1</sub>, y<sub>2</sub>, ..., y<sub>T</sub> sequentially.</p>
-      
-      <p><strong>Step 3 - Loss computation:</strong> Compute total loss L = Σ<sub>t</sub> L<sub>t</sub>(y<sub>t</sub>, target<sub>t</sub>) summed over all time steps.</p>
-      
+      <p><strong>Step 2 - Forward pass:</strong> Compute hidden states $h_1, h_2, ..., h_T$ and outputs $y_1, y_2, ..., y_T$ sequentially.</p>
+
+      <p><strong>Step 3 - Loss computation:</strong> Compute total loss $L = \\sum_t L_t(y_t, \\text{target}_t)$ summed over all time steps.</p>
+
       <p><strong>Step 4 - Backward pass:</strong> Compute gradients by backpropagating through unfolded network from time T back to time 1.</p>
-      
-      <p><strong>Step 5 - Gradient accumulation:</strong> Since W<sub>hh</sub>, W<sub>xh</sub>, W<sub>hy</sub> appear at every time step, their gradients accumulate: ∂L/∂W<sub>hh</sub> = Σ<sub>t</sub> ∂L<sub>t</sub>/∂W<sub>hh</sub>.</p>
+
+      <p><strong>Step 5 - Gradient accumulation:</strong> Since $W_{hh}$, $W_{xh}$, $W_{hy}$ appear at every time step, their gradients accumulate: $\\frac{\\partial L}{\\partial W_{hh}} = \\sum_t \\frac{\\partial L_t}{\\partial W_{hh}}$.</p>
       
       <p><strong>Step 6 - Weight update:</strong> Update shared weights using accumulated gradients.</p>
 
       <h4>Truncated BPTT</h4>
       <p>For very long sequences (1000+ time steps), BPTT becomes computationally expensive and memory-intensive. Truncated BPTT addresses this by breaking sequences into chunks.</p>
 
-      <p><strong>Procedure:</strong> Process sequence in chunks of k time steps (k=20-50 typical). Forward pass computes h<sub>0</sub> → h<sub>1</sub> → ... → h<sub>k</sub> for current chunk. Backward pass only backpropagates through these k steps. Hidden state h<sub>k</sub> carries forward to next chunk (maintains continuity). Gradients only flow k steps backward, not through entire sequence.</p>
+      <p><strong>Procedure:</strong> Process sequence in chunks of k time steps (k=20-50 typical). Forward pass computes $h_0 \\to h_1 \\to ... \\to h_k$ for current chunk. Backward pass only backpropagates through these k steps. Hidden state $h_k$ carries forward to next chunk (maintains continuity). Gradients only flow k steps backward, not through entire sequence.</p>
 
       <p><strong>Trade-offs:</strong> Reduces memory from O(T) to O(k), speeds up training, but sacrifices gradient information beyond k steps, limiting ability to learn very long-term dependencies (beyond k steps).</p>
 
@@ -541,21 +541,21 @@ The choice between static and contextual embeddings depends on application requi
       <p>RNNs face a critical challenge in learning long-term dependencies due to gradient instability during backpropagation through many time steps.</p>
 
       <h4>Vanishing Gradients: The More Common Problem</h4>
-      <p><strong>Mechanism:</strong> During BPTT, gradients flow backward through recurrent connections: ∂h<sub>t</sub>/∂h<sub>t-1</sub> = W<sub>hh</sub><sup>T</sup> diag(tanh'(...)). Backpropagating T steps involves product of T Jacobian matrices. If eigenvalues of W<sub>hh</sub> < 1, gradients shrink exponentially with sequence length.</p>
+      <p><strong>Mechanism:</strong> During BPTT, gradients flow backward through recurrent connections: $\\frac{\\partial h_t}{\\partial h_{t-1}} = W_{hh}^T \\text{diag}(\\tanh'(...))$. Backpropagating T steps involves product of T Jacobian matrices. If eigenvalues of $W_{hh} < 1$, gradients shrink exponentially with sequence length.</p>
 
-      <p><strong>Consequence:</strong> After 10-20 time steps, gradients become negligibly small (~10<sup>-10</sup>). Network cannot learn dependencies spanning more than a few steps. Early time steps receive virtually no gradient signal. Training focuses on short-term patterns, ignoring long-term structure.</p>
+      <p><strong>Consequence:</strong> After 10-20 time steps, gradients become negligibly small ($\\sim 10^{-10}$). Network cannot learn dependencies spanning more than a few steps. Early time steps receive virtually no gradient signal. Training focuses on short-term patterns, ignoring long-term structure.</p>
 
       <p><strong>Example:</strong> In "The cat, which was sitting on the mat and meowing loudly, was hungry", learning that "cat" (subject) agrees with "was" (verb) requires propagating gradients over 10+ words—often impossible with vanilla RNNs.</p>
 
       <h4>Exploding Gradients: Less Common but Catastrophic</h4>
-      <p><strong>Mechanism:</strong> If eigenvalues of W<sub>hh</sub> > 1, gradients grow exponentially during backpropagation.</p>
+      <p><strong>Mechanism:</strong> If eigenvalues of $W_{hh} > 1$, gradients grow exponentially during backpropagation.</p>
 
-      <p><strong>Consequence:</strong> Gradients become extremely large (10<sup>10</sup>+), causing numerical overflow (NaN values), massive parameter updates that destroy previously learned patterns, and training divergence.</p>
+      <p><strong>Consequence:</strong> Gradients become extremely large ($10^{10}+$), causing numerical overflow (NaN values), massive parameter updates that destroy previously learned patterns, and training divergence.</p>
 
-      <p><strong>Solution - Gradient clipping:</strong> If ||∇|| > threshold, scale: ∇ ← (threshold/||∇||) × ∇. Simple, effective, and widely used. Typical threshold: 1-10.</p>
+      <p><strong>Solution - Gradient clipping:</strong> If $||\\nabla|| > \\text{threshold}$, scale: $\\nabla \\leftarrow (\\text{threshold}/||\\nabla||) \\times \\nabla$. Simple, effective, and widely used. Typical threshold: 1-10.</p>
 
       <h4>Why This Happens Mathematically</h4>
-      <p>The gradient ∂L/∂h<sub>t</sub> depends on ∂h<sub>T</sub>/∂h<sub>t</sub> = ∏<sub>i=t+1</sub><sup>T</sup> ∂h<sub>i</sub>/∂h<sub>i-1</sub> = ∏<sub>i=t+1</sub><sup>T</sup> W<sub>hh</sub><sup>T</sup> diag(tanh'(...)). This is a product of (T-t) matrices. If largest eigenvalue λ<sub>max</sub> of W<sub>hh</sub> < 1, product → 0 exponentially. If λ<sub>max</sub> > 1, product → ∞ exponentially. Even with λ<sub>max</sub> = 1, repeated matrix products cause gradient magnitude to change unpredictably.</p>
+      <p>The gradient $\\frac{\\partial L}{\\partial h_t}$ depends on $\\frac{\\partial h_T}{\\partial h_t} = \\prod_{i=t+1}^T \\frac{\\partial h_i}{\\partial h_{i-1}} = \\prod_{i=t+1}^T W_{hh}^T \\text{diag}(\\tanh'(...))$. This is a product of (T-t) matrices. If largest eigenvalue $\\lambda_{\\text{max}}$ of $W_{hh} < 1$, product → 0 exponentially. If $\\lambda_{\\text{max}} > 1$, product → ∞ exponentially. Even with $\\lambda_{\\text{max}} = 1$, repeated matrix products cause gradient magnitude to change unpredictably.</p>
 
       <h3>Solutions and Mitigation Strategies</h3>
 
@@ -569,15 +569,15 @@ The choice between static and contextual embeddings depends on application requi
       <h4>Training Techniques</h4>
       <ul>
         <li><strong>Gradient clipping:</strong> Essential for preventing exploding gradients</li>
-        <li><strong>Careful initialization:</strong> Initialize W<sub>hh</sub> to orthogonal or identity matrix to start with λ<sub>max</sub> ≈ 1</li>
+        <li><strong>Careful initialization:</strong> Initialize $W_{hh}$ to orthogonal or identity matrix to start with $\\lambda_{\\text{max}} \\approx 1$</li>
         <li><strong>ReLU activations:</strong> Replace tanh to avoid derivative < 1 (though introduces other challenges)</li>
         <li><strong>Batch normalization:</strong> Stabilize hidden state distributions</li>
       </ul>
 
       <h3>Bidirectional RNNs: Leveraging Future Context</h3>
-      <p>Standard RNNs process sequences left-to-right, with h<sub>t</sub> depending only on past inputs x<sub>1</sub>, ..., x<sub>t</sub>. For many tasks, future context is also informative.</p>
+      <p>Standard RNNs process sequences left-to-right, with $h_t$ depending only on past inputs $x_1, ..., x_t$. For many tasks, future context is also informative.</p>
 
-      <p><strong>Architecture:</strong> Two independent RNNs: forward RNN processes x<sub>1</sub> → x<sub>T</sub> producing h<sub>t</sub><sup>→</sup>, backward RNN processes x<sub>T</sub> → x<sub>1</sub> producing h<sub>t</sub><sup>←</sup>. Final representation: h<sub>t</sub> = [h<sub>t</sub><sup>→</sup>; h<sub>t</sub><sup>←</sup>] (concatenation of both directions).</p>
+      <p><strong>Architecture:</strong> Two independent RNNs: forward RNN processes $x_1 \\to x_T$ producing $h_t^{\\rightarrow}$, backward RNN processes $x_T \\to x_1$ producing $h_t^{\\leftarrow}$. Final representation: $h_t = [h_t^{\\rightarrow}; h_t^{\\leftarrow}]$ (concatenation of both directions).</p>
 
       <p><strong>Benefits:</strong> Each position sees both past and future context, improving performance on tasks like named entity recognition, part-of-speech tagging, and speech recognition.</p>
 
@@ -937,56 +937,56 @@ Additional LSTM advantages include: (1) Better gradient flow through dedicated c
       <p>LSTM, introduced by Hochreiter and Schmidhuber in 1997, fundamentally reimagined how neural networks handle sequential information. Rather than fighting the vanishing gradient problem through clever initialization or activation functions, LSTM embraces explicit memory management through learnable gates that control information flow.</p>
 
       <h4>The Cell State: Highway for Information</h4>
-      <p>The defining innovation of LSTM is the cell state C<sub>t</sub>, a protected pathway that information can traverse across many time steps with minimal interference. Unlike the hidden state in vanilla RNNs that gets completely recomputed at each step through nonlinear transformations, the cell state updates through controlled addition and element-wise multiplication, preserving gradient flow.</p>
+      <p>The defining innovation of LSTM is the cell state $C_t$, a protected pathway that information can traverse across many time steps with minimal interference. Unlike the hidden state in vanilla RNNs that gets completely recomputed at each step through nonlinear transformations, the cell state updates through controlled addition and element-wise multiplication, preserving gradient flow.</p>
 
       <p>Think of the cell state as a conveyor belt running through the sequence. Information can hop on at relevant time steps, ride unchanged for dozens or hundreds of steps, and hop off when needed. This mechanism provides the "long-term memory" capability that gives LSTM its name.</p>
 
       <h4>The Three Gates: Learnable Memory Control</h4>
 
       <h5>1. Forget Gate: Selective Memory Cleanup</h5>
-      <p><strong>Equation:</strong> f<sub>t</sub> = σ(W<sub>f</sub> · [h<sub>t-1</sub>, x<sub>t</sub>] + b<sub>f</sub>)</p>
+      <p><strong>Equation:</strong> $f_t = \\sigma(W_f \\cdot [h_{t-1}, x_t] + b_f)$</p>
 
-      <p>The forget gate determines what information from the previous cell state C<sub>t-1</sub> should be discarded. It examines both the previous hidden state h<sub>t-1</sub> (what we output last time) and current input x<sub>t</sub>, passing them through a fully connected layer with sigmoid activation to produce values between 0 and 1 for each dimension of the cell state.</p>
+      <p>The forget gate determines what information from the previous cell state $C_{t-1}$ should be discarded. It examines both the previous hidden state $h_{t-1}$ (what we output last time) and current input $x_t$, passing them through a fully connected layer with sigmoid activation to produce values between 0 and 1 for each dimension of the cell state.</p>
 
-      <p><strong>Interpretation:</strong> f<sub>t</sub>[i] = 0 means "completely forget dimension i of the cell state". f<sub>t</sub>[i] = 1 means "completely retain dimension i". Values in between provide partial retention.</p>
+      <p><strong>Interpretation:</strong> $f_t[i] = 0$ means "completely forget dimension i of the cell state". $f_t[i] = 1$ means "completely retain dimension i". Values in between provide partial retention.</p>
 
       <p><strong>Example in language:</strong> When encountering "Alice went to the store. Meanwhile, Bob...", the forget gate learns to reduce the weight on information about Alice when the subject switches to Bob, preventing the model from confusing subject-verb agreement later.</p>
 
       <h5>2. Input Gate: Selective Information Acquisition</h5>
-      <p><strong>Gate equation:</strong> i<sub>t</sub> = σ(W<sub>i</sub> · [h<sub>t-1</sub>, x<sub>t</sub>] + b<sub>i</sub>)</p>
-      <p><strong>Candidate equation:</strong> C̃<sub>t</sub> = tanh(W<sub>C</sub> · [h<sub>t-1</sub>, x<sub>t</sub>] + b<sub>C</sub>)</p>
+      <p><strong>Gate equation:</strong> $i_t = \\sigma(W_i \\cdot [h_{t-1}, x_t] + b_i)$</p>
+      <p><strong>Candidate equation:</strong> $\\tilde{C}_t = \\tanh(W_C \\cdot [h_{t-1}, x_t] + b_C)$</p>
 
-      <p>The input gate works in two stages: first, compute candidate values C̃<sub>t</sub> representing new information that could be stored (using tanh to produce values in [-1, 1]). Second, compute the input gate i<sub>t</sub> that determines how much of each candidate value to actually incorporate into the cell state.</p>
+      <p>The input gate works in two stages: first, compute candidate values $\\tilde{C}_t$ representing new information that could be stored (using tanh to produce values in [-1, 1]). Second, compute the input gate $i_t$ that determines how much of each candidate value to actually incorporate into the cell state.</p>
 
       <p><strong>Why two components?</strong> Separating candidate generation from gating provides flexibility. The candidate can propose arbitrary updates while the gate selectively filters based on relevance, enabling more nuanced memory updates than simply adding new information wholesale.</p>
 
       <p><strong>Example in language:</strong> When processing "The cat", the input gate might strongly activate to store information about the subject (cat), but when processing "and", it might gate out this meaningless connector word.</p>
 
       <h5>3. Cell State Update: Combine Forgetting and Remembering</h5>
-      <p><strong>Equation:</strong> C<sub>t</sub> = f<sub>t</sub> ⊙ C<sub>t-1</sub> + i<sub>t</sub> ⊙ C̃<sub>t</sub></p>
+      <p><strong>Equation:</strong> $C_t = f_t \\odot C_{t-1} + i_t \\odot \\tilde{C}_t$</p>
 
-      <p>This elegant equation combines the forget and input operations: multiply the previous cell state by the forget gate (selective retention), then add the new candidate values scaled by the input gate (selective acquisition). The ⊙ symbol denotes element-wise multiplication.</p>
+      <p>This elegant equation combines the forget and input operations: multiply the previous cell state by the forget gate (selective retention), then add the new candidate values scaled by the input gate (selective acquisition). The $\\odot$ symbol denotes element-wise multiplication.</p>
 
       <p><strong>Key property:</strong> This update uses addition as the primary operation, not multiplication through weight matrices. This preserves gradient flow during backpropagation—gradients can flow backward through the addition operation without decay.</p>
 
       <h5>4. Output Gate: Exposing Relevant Information</h5>
-      <p><strong>Gate equation:</strong> o<sub>t</sub> = σ(W<sub>o</sub> · [h<sub>t-1</sub>, x<sub>t</sub>] + b<sub>o</sub>)</p>
-      <p><strong>Hidden state equation:</strong> h<sub>t</sub> = o<sub>t</sub> ⊙ tanh(C<sub>t</sub>)</p>
+      <p><strong>Gate equation:</strong> $o_t = \\sigma(W_o \\cdot [h_{t-1}, x_t] + b_o)$</p>
+      <p><strong>Hidden state equation:</strong> $h_t = o_t \\odot \\tanh(C_t)$</p>
 
-      <p>The output gate controls what parts of the cell state should be exposed as the hidden state h<sub>t</sub> (which feeds into predictions and the next time step). The cell state first passes through tanh to squash values to [-1, 1], then gets filtered by the output gate.</p>
+      <p>The output gate controls what parts of the cell state should be exposed as the hidden state $h_t$ (which feeds into predictions and the next time step). The cell state first passes through tanh to squash values to [-1, 1], then gets filtered by the output gate.</p>
 
       <p><strong>Why needed?</strong> The cell state might contain information that's useful for long-term memory but not relevant for the current prediction. The output gate allows the LSTM to maintain rich internal state while selectively exposing only what's currently relevant.</p>
 
       <p><strong>Example in language:</strong> While processing a long sentence, the cell state might track multiple subjects, verbs, and objects. When generating the next word, the output gate exposes only the information relevant to immediate prediction, such as the current grammatical context.</p>
 
       <h3>Why LSTM Solves Vanishing Gradients: The Mathematical Story</h3>
-      <p>The gradient of the loss with respect to the cell state T steps back involves: ∂C<sub>T</sub>/∂C<sub>t</sub> = ∏<sub>i=t+1</sub><sup>T</sup> ∂C<sub>i</sub>/∂C<sub>i-1</sub> = ∏<sub>i=t+1</sub><sup>T</sup> f<sub>i</sub>.</p>
+      <p>The gradient of the loss with respect to the cell state T steps back involves: $\\frac{\\partial C_T}{\\partial C_t} = \\prod_{i=t+1}^T \\frac{\\partial C_i}{\\partial C_{i-1}} = \\prod_{i=t+1}^T f_i$.</p>
 
-      <p>Each factor ∂C<sub>i</sub>/∂C<sub>i-1</sub> = f<sub>i</sub> (the forget gate) can be close to 1 if the LSTM learns to keep the forget gate open. Unlike vanilla RNNs where gradients pass through weight matrices and activation derivatives (typically < 1), LSTM gradients can flow through forget gates that approach 1.</p>
+      <p>Each factor $\\frac{\\partial C_i}{\\partial C_{i-1}} = f_i$ (the forget gate) can be close to 1 if the LSTM learns to keep the forget gate open. Unlike vanilla RNNs where gradients pass through weight matrices and activation derivatives (typically < 1), LSTM gradients can flow through forget gates that approach 1.</p>
 
       <p><strong>The "constant error carousel":</strong> When forget gates stay close to 1, gradients remain roughly constant as they flow backward, enabling learning of dependencies spanning hundreds of time steps. The cell state provides a protected highway where gradients can travel without the exponential decay that plagues vanilla RNNs.</p>
 
-      <p><strong>Forget gate bias initialization:</strong> A crucial trick is initializing b<sub>f</sub> to 1 or 2, causing forget gates to start close to 1 (remember everything). This gives the LSTM a "memory first" bias, making it easier to discover long-term dependencies during early training. As training progresses, the network learns to selectively forget when appropriate.</p>
+      <p><strong>Forget gate bias initialization:</strong> A crucial trick is initializing $b_f$ to 1 or 2, causing forget gates to start close to 1 (remember everything). This gives the LSTM a "memory first" bias, making it easier to discover long-term dependencies during early training. As training progresses, the network learns to selectively forget when appropriate.</p>
 
       <h3>GRU: Simplicity Through Unification</h3>
       <p>The Gated Recurrent Unit, introduced by Cho et al. in 2014, reimagines LSTM's design with a question: can we achieve similar performance with fewer parameters and simpler structure? GRU's answer: combine related gates and eliminate the separate cell state.</p>
@@ -994,28 +994,28 @@ Additional LSTM advantages include: (1) Better gradient flow through dedicated c
       <h4>GRU Architecture: Two Gates, One State</h4>
 
       <h5>1. Update Gate: Combined Forget and Input</h5>
-      <p><strong>Equation:</strong> z<sub>t</sub> = σ(W<sub>z</sub> · [h<sub>t-1</sub>, x<sub>t</sub>] + b<sub>z</sub>)</p>
+      <p><strong>Equation:</strong> $z_t = \\sigma(W_z \\cdot [h_{t-1}, x_t] + b_z)$</p>
 
-      <p>The update gate z<sub>t</sub> performs double duty, determining both how much of the previous state to retain and how much new information to incorporate. When z<sub>t</sub> is close to 1, the GRU mostly updates to new information. When close to 0, it mostly retains the previous state.</p>
+      <p>The update gate $z_t$ performs double duty, determining both how much of the previous state to retain and how much new information to incorporate. When $z_t$ is close to 1, the GRU mostly updates to new information. When close to 0, it mostly retains the previous state.</p>
 
       <p><strong>Key insight:</strong> Forgetting old information and adding new information are often complementary—when you need to remember new information, you often need to forget old information to make room. The update gate couples these decisions, reducing parameters while maintaining effectiveness.</p>
 
       <h5>2. Reset Gate: Contextualized Memory Access</h5>
-      <p><strong>Equation:</strong> r<sub>t</sub> = σ(W<sub>r</sub> · [h<sub>t-1</sub>, x<sub>t</sub>] + b<sub>r</sub>)</p>
+      <p><strong>Equation:</strong> $r_t = \\sigma(W_r \\cdot [h_{t-1}, x_t] + b_r)$</p>
 
-      <p>The reset gate determines how much of the previous hidden state to use when computing the candidate new state. When r<sub>t</sub> is close to 0, the GRU ignores previous state and treats the current input as starting fresh. When close to 1, it fully incorporates previous state.</p>
+      <p>The reset gate determines how much of the previous hidden state to use when computing the candidate new state. When $r_t$ is close to 0, the GRU ignores previous state and treats the current input as starting fresh. When close to 1, it fully incorporates previous state.</p>
 
       <p><strong>Purpose:</strong> Enables the model to learn to "reset" its memory at appropriate boundaries, such as sentence endings or topic shifts, without requiring explicit position information.</p>
 
       <h5>3. Candidate Hidden State</h5>
-      <p><strong>Equation:</strong> h̃<sub>t</sub> = tanh(W · [r<sub>t</sub> ⊙ h<sub>t-1</sub>, x<sub>t</sub>] + b)</p>
+      <p><strong>Equation:</strong> $\\tilde{h}_t = \\tanh(W \\cdot [r_t \\odot h_{t-1}, x_t] + b)$</p>
 
       <p>Compute a candidate new hidden state, using the reset gate to potentially ignore previous state. The reset gate multiplies the previous hidden state before it gets concatenated with the current input and transformed.</p>
 
       <h5>4. Final Hidden State: Interpolation</h5>
-      <p><strong>Equation:</strong> h<sub>t</sub> = (1 - z<sub>t</sub>) ⊙ h<sub>t-1</sub> + z<sub>t</sub> ⊙ h̃<sub>t</sub></p>
+      <p><strong>Equation:</strong> $h_t = (1 - z_t) \\odot h_{t-1} + z_t \\odot \\tilde{h}_t$</p>
 
-      <p>The final hidden state is a weighted combination (interpolation) of the previous state h<sub>t-1</sub> and the candidate state h̃<sub>t</sub>, controlled by the update gate. When z<sub>t</sub> = 0, output = previous state (no update). When z<sub>t</sub> = 1, output = candidate (full update).</p>
+      <p>The final hidden state is a weighted combination (interpolation) of the previous state $h_{t-1}$ and the candidate state $\\tilde{h}_t$, controlled by the update gate. When $z_t = 0$, output = previous state (no update). When $z_t = 1$, output = candidate (full update).</p>
 
       <p><strong>Elegance:</strong> This single equation replaces LSTM's separate forget gate, input gate, and cell state update, achieving similar functionality with fewer operations.</p>
 
@@ -1034,15 +1034,15 @@ Additional LSTM advantages include: (1) Better gradient flow through dedicated c
 
       <h4>Memory Management Philosophy</h4>
       <ul>
-        <li><strong>LSTM:</strong> Separate cell state C<sub>t</sub> and hidden state h<sub>t</sub>. Cell state is protected long-term memory, hidden state is working memory for current prediction. Independent control over what to remember (cell state) vs what to expose (hidden state via output gate).</li>
-        <li><strong>GRU:</strong> Single hidden state h<sub>t</sub> serves both purposes. Simpler but less flexible, potentially limiting for tasks requiring complex memory hierarchies.</li>
+        <li><strong>LSTM:</strong> Separate cell state $C_t$ and hidden state $h_t$. Cell state is protected long-term memory, hidden state is working memory for current prediction. Independent control over what to remember (cell state) vs what to expose (hidden state via output gate).</li>
+        <li><strong>GRU:</strong> Single hidden state $h_t$ serves both purposes. Simpler but less flexible, potentially limiting for tasks requiring complex memory hierarchies.</li>
       </ul>
 
       <h4>Gradient Flow</h4>
       <p>Both solve vanishing gradients, but through slightly different mechanisms:</p>
       <ul>
-        <li><strong>LSTM:</strong> Cell state provides protected gradient highway. Gradients flow through forget gates: ∂C<sub>t</sub>/∂C<sub>t-1</sub> = f<sub>t</sub>.</li>
-        <li><strong>GRU:</strong> Gradients flow through update gate: ∂h<sub>t</sub>/∂h<sub>t-1</sub> includes (1-z<sub>t</sub>) term. Similar effect but slightly different dynamics.</li>
+        <li><strong>LSTM:</strong> Cell state provides protected gradient highway. Gradients flow through forget gates: $\\frac{\\partial C_t}{\\partial C_{t-1}} = f_t$.</li>
+        <li><strong>GRU:</strong> Gradients flow through update gate: $\\frac{\\partial h_t}{\\partial h_{t-1}}$ includes $(1-z_t)$ term. Similar effect but slightly different dynamics.</li>
       </ul>
 
       <h3>When to Use LSTM vs GRU: Practical Guidelines</h3>
@@ -1083,9 +1083,9 @@ Additional LSTM advantages include: (1) Better gradient flow through dedicated c
       <h4>Bidirectional LSTMs/GRUs</h4>
       <p>Process sequences in both directions simultaneously:</p>
       <ul>
-        <li><strong>Forward LSTM:</strong> Processes x<sub>1</sub> → x<sub>T</sub>, produces h<sub>t</sub><sup>→</sup></li>
-        <li><strong>Backward LSTM:</strong> Processes x<sub>T</sub> → x<sub>1</sub>, produces h<sub>t</sub><sup>←</sup></li>
-        <li><strong>Final representation:</strong> h<sub>t</sub> = [h<sub>t</sub><sup>→</sup>; h<sub>t</sub><sup>←</sup>] (concatenation)</li>
+        <li><strong>Forward LSTM:</strong> Processes $x_1 \\to x_T$, produces $h_t^{\\rightarrow}$</li>
+        <li><strong>Backward LSTM:</strong> Processes $x_T \\to x_1$, produces $h_t^{\\leftarrow}$</li>
+        <li><strong>Final representation:</strong> $h_t = [h_t^{\\rightarrow}; h_t^{\\leftarrow}]$ (concatenation)</li>
         <li><strong>Applications:</strong> Named entity recognition, part-of-speech tagging, protein structure prediction—any task where the entire sequence is available and future context helps</li>
         <li><strong>Limitations:</strong> Not suitable for online/streaming, doubles computation and memory, requires entire sequence available</li>
       </ul>
@@ -1494,16 +1494,16 @@ Empirical studies consistently show that forget gate bias initialization to 1 im
       <p>Seq2Seq's elegant design separates sequence understanding from sequence generation through two coupled components.</p>
 
       <h4>The Encoder: Compressing Understanding</h4>
-      <p>The encoder processes the input sequence x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>n</sub> (e.g., English words) into a fixed-size context vector that captures the input's meaning.</p>
+      <p>The encoder processes the input sequence $x_1, x_2, ..., x_n$ (e.g., English words) into a fixed-size context vector that captures the input's meaning.</p>
 
-      <p><strong>Architecture:</strong> Typically a multi-layer LSTM or GRU that reads input left-to-right (or bidirectionally). At each step t: h<sub>t</sub> = f<sub>enc</sub>(x<sub>t</sub>, h<sub>t-1</sub>), where f<sub>enc</sub> is the recurrent transition function. The final hidden state h<sub>n</sub> (and cell state c<sub>n</sub> for LSTM) becomes the context vector c = h<sub>n</sub> that supposedly encodes all input information.</p>
+      <p><strong>Architecture:</strong> Typically a multi-layer LSTM or GRU that reads input left-to-right (or bidirectionally). At each step t: $h_t = f_{\\text{enc}}(x_t, h_{t-1})$, where $f_{\\text{enc}}$ is the recurrent transition function. The final hidden state $h_n$ (and cell state $c_n$ for LSTM) becomes the context vector $c = h_n$ that supposedly encodes all input information.</p>
 
       <p><strong>The compression challenge:</strong> The context vector must compress variable-length input (10 words or 100 words) into a fixed-size vector (typically 512-1024 dimensions). This bottleneck is both the model's elegance and its fundamental limitation—all input information must flow through this narrow channel.</p>
 
       <h4>The Decoder: Generating from Context</h4>
-      <p>The decoder generates output sequence y<sub>1</sub>, y<sub>2</sub>, ..., y<sub>m</sub> (e.g., French words) one token at a time, conditioned on the context vector.</p>
+      <p>The decoder generates output sequence $y_1, y_2, ..., y_m$ (e.g., French words) one token at a time, conditioned on the context vector.</p>
 
-      <p><strong>Architecture:</strong> Another LSTM/GRU initialized with the encoder's final state. At each generation step t: s<sub>t</sub> = f<sub>dec</sub>(y<sub>t-1</sub>, s<sub>t-1</sub>), y<sub>t</sub> = softmax(W<sub>out</sub> s<sub>t</sub> + b<sub>out</sub>), where s<sub>t</sub> is the decoder hidden state, y<sub>t-1</sub> is the previous output token (or <SOS> for first step), and the softmax produces a probability distribution over the target vocabulary.</p>
+      <p><strong>Architecture:</strong> Another LSTM/GRU initialized with the encoder's final state. At each generation step t: $s_t = f_{\\text{dec}}(y_{t-1}, s_{t-1})$, $y_t = \\text{softmax}(W_{\\text{out}} s_t + b_{\\text{out}})$, where $s_t$ is the decoder hidden state, $y_{t-1}$ is the previous output token (or <SOS> for first step), and the softmax produces a probability distribution over the target vocabulary.</p>
 
       <p><strong>Autoregressive generation:</strong> Each generated token depends on all previous tokens through the recurrent hidden state, enabling the model to maintain coherence. Generation continues until the model produces a special <EOS> (end-of-sequence) token.</p>
 
@@ -1511,7 +1511,7 @@ Empirical studies consistently show that forget gate bias initialization to 1 im
       <p>Seq2Seq training faces a critical challenge: during training we have ground truth outputs, but during inference we must generate from scratch. How do we bridge this gap?</p>
 
       <h4>Teacher Forcing: Fast but Flawed</h4>
-      <p><strong>Method:</strong> During training, feed the ground truth token y<sub>t-1</sub>* as input to generate y<sub>t</sub>, not the model's previous prediction. This means the decoder always sees correct context, even when it makes mistakes.</p>
+      <p><strong>Method:</strong> During training, feed the ground truth token $y_{t-1}^*$ as input to generate $y_t$, not the model's previous prediction. This means the decoder always sees correct context, even when it makes mistakes.</p>
 
       <p><strong>Example in translation:</strong></p>
       <ul>
@@ -1533,7 +1533,7 @@ Empirical studies consistently show that forget gate bias initialization to 1 im
       <h3>Inference: Decoding Strategies</h3>
 
       <h4>Greedy Decoding: Simple but Myopic</h4>
-      <p><strong>Algorithm:</strong> At each step, select the highest probability token: y<sub>t</sub> = argmax P(w | y<sub>1</sub>, ..., y<sub>t-1</sub>, c). Continue until <EOS> generated or max length reached.</p>
+      <p><strong>Algorithm:</strong> At each step, select the highest probability token: $y_t = \\text{argmax } P(w | y_1, ..., y_{t-1}, c)$. Continue until <EOS> generated or max length reached.</p>
 
       <p><strong>Problem:</strong> Locally optimal ≠ globally optimal. A high-probability token now might lead to low-probability sequences later. Cannot recover from early mistakes. Example: "I am happy" (greedy) vs "I'm glad" (better overall but requires choosing lower-probability "I'm" initially).</p>
 
@@ -1551,7 +1551,7 @@ Empirical studies consistently show that forget gate bias initialization to 1 im
         <li><strong>Step 5:</strong> Return highest scoring complete sequence</li>
       </ul>
 
-      <p><strong>Scoring:</strong> Use log probabilities to avoid numerical underflow: score(y<sub>1</sub>, ..., y<sub>t</sub>) = Σ log P(y<sub>i</sub> | y<sub>1</sub>, ..., y<sub>i-1</sub>, c). Apply length normalization to prevent bias toward short sequences: normalized_score = score / length<sup>α</sup>, where α ∈ [0.6, 0.8] typically.</p>
+      <p><strong>Scoring:</strong> Use log probabilities to avoid numerical underflow: $\\text{score}(y_1, ..., y_t) = \\sum \\log P(y_i | y_1, ..., y_{i-1}, c)$. Apply length normalization to prevent bias toward short sequences: $\\text{normalized\\_score} = \\text{score} / \\text{length}^{\\alpha}$, where $\\alpha \\in [0.6, 0.8]$ typically.</p>
 
       <p><strong>Beam width trade-offs:</strong></p>
       <ul>
@@ -1568,7 +1568,7 @@ Empirical studies consistently show that forget gate bias initialization to 1 im
 
       <p><strong>Empirical observations:</strong> Performance degrades significantly for sequences longer than ~30 tokens. The model "forgets" early parts of long inputs. Source sentence information gets overwritten by later tokens. Translation quality drops sharply beyond training sequence lengths.</p>
 
-      <p><strong>Why it happens:</strong> The recurrent encoder has a finite "memory span"—information from early time steps gets progressively transformed and potentially overwritten as the encoder processes more tokens. The final hidden state h<sub>n</sub>, despite being updated from h<sub>n-1</sub> which depends on h<sub>n-2</sub>, etc., cannot perfectly preserve all information from h<sub>1</sub> after many transformations.</p>
+      <p><strong>Why it happens:</strong> The recurrent encoder has a finite "memory span"—information from early time steps gets progressively transformed and potentially overwritten as the encoder processes more tokens. The final hidden state $h_n$, despite being updated from $h_{n-1}$ which depends on $h_{n-2}$, etc., cannot perfectly preserve all information from $h_1$ after many transformations.</p>
 
       <p><strong>The solution:</strong> Attention mechanisms (discussed in separate topic) that allow the decoder to directly access all encoder hidden states, not just the final context vector.</p>
 
@@ -1577,9 +1577,9 @@ Empirical studies consistently show that forget gate bias initialization to 1 im
       <h4>Bidirectional Encoder</h4>
       <p>Process input sequence in both forward and backward directions:</p>
       <ul>
-        <li><strong>Forward RNN:</strong> x<sub>1</sub> → x<sub>2</sub> → ... → x<sub>n</sub>, produces h<sub>t</sub><sup>→</sup></li>
-        <li><strong>Backward RNN:</strong> x<sub>n</sub> → x<sub>n-1</sub> → ... → x<sub>1</sub>, produces h<sub>t</sub><sup>←</sup></li>
-        <li><strong>Combined representation:</strong> h<sub>t</sub> = [h<sub>t</sub><sup>→</sup>; h<sub>t</sub><sup>←</sup>]</li>
+        <li><strong>Forward RNN:</strong> $x_1 \\to x_2 \\to ... \\to x_n$, produces $h_t^{\\rightarrow}$</li>
+        <li><strong>Backward RNN:</strong> $x_n \\to x_{n-1} \\to ... \\to x_1$, produces $h_t^{\\leftarrow}$</li>
+        <li><strong>Combined representation:</strong> $h_t = [h_t^{\\rightarrow}; h_t^{\\leftarrow}]$</li>
       </ul>
 
       <p><strong>Benefits:</strong> Each position sees both past and future context, better captures meaning, especially useful when word meaning depends on surrounding context, improves encoding quality significantly. Became standard practice for Seq2Seq encoders.</p>
@@ -2053,14 +2053,14 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
       <h3>Attention Mechanism: Step-by-Step</h3>
 
       <h4>Step 1: Compute Attention Scores (Alignment)</h4>
-      <p>For each decoder time step t, measure how well the current decoder state s<sub>t-1</sub> "matches" or "aligns with" each encoder hidden state h<sub>i</sub>.</p>
+      <p>For each decoder time step t, measure how well the current decoder state $s_{t-1}$ "matches" or "aligns with" each encoder hidden state $h_i$.</p>
 
-      <p><strong>Score function:</strong> e<sub>ti</sub> = score(s<sub>t-1</sub>, h<sub>i</sub>)</p>
+      <p><strong>Score function:</strong> $e_{ti} = \\text{score}(s_{t-1}, h_i)$</p>
 
       <p>The score function can take various forms, each with different trade-offs:</p>
 
       <ul>
-        <li><strong>Dot product:</strong> score(s, h) = s<sup>T</sup>h
+        <li><strong>Dot product:</strong> $\\text{score}(s, h) = s^T h$
           <ul>
             <li>Simplest, no parameters</li>
             <li>Fast to compute</li>
@@ -2068,16 +2068,16 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
             <li>Used in scaled dot-product attention (Transformers)</li>
           </ul>
         </li>
-        <li><strong>General (multiplicative):</strong> score(s, h) = s<sup>T</sup>Wh
+        <li><strong>General (multiplicative):</strong> $\\text{score}(s, h) = s^T W h$
           <ul>
             <li>Learns transformation matrix W</li>
             <li>Can align different vector spaces</li>
             <li>Used in Luong attention (2015)</li>
           </ul>
         </li>
-        <li><strong>Additive (concat):</strong> score(s, h) = v<sup>T</sup> tanh(W<sub>1</sub>s + W<sub>2</sub>h)
+        <li><strong>Additive (concat):</strong> $\\text{score}(s, h) = v^T \\tanh(W_1 s + W_2 h)$
           <ul>
-            <li>Most parameters (W<sub>1</sub>, W<sub>2</sub>, v)</li>
+            <li>Most parameters ($W_1$, $W_2$, $v$)</li>
             <li>Most flexible, can learn complex alignment</li>
             <li>Original Bahdanau attention (2014)</li>
             <li>Slightly slower but often more expressive</li>
@@ -2085,31 +2085,31 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
         </li>
       </ul>
 
-      <p><strong>Interpretation:</strong> High score e<sub>ti</sub> means encoder state h<sub>i</sub> is highly relevant for generating decoder output at time t. Low score means h<sub>i</sub> is less relevant for current decoding step.</p>
+      <p><strong>Interpretation:</strong> High score $e_{ti}$ means encoder state $h_i$ is highly relevant for generating decoder output at time t. Low score means $h_i$ is less relevant for current decoding step.</p>
 
       <h4>Step 2: Normalize to Attention Weights</h4>
       <p>Apply softmax to convert scores into a probability distribution:</p>
 
-      <p><strong>α<sub>ti</sub> = exp(e<sub>ti</sub>) / Σ<sub>j</sub> exp(e<sub>tj</sub>)</strong></p>
+      <p><strong>$\\alpha_{ti} = \\frac{\\exp(e_{ti})}{\\sum_j \\exp(e_{tj})}$</strong></p>
 
-      <p>Properties: α<sub>ti</sub> ∈ [0, 1], Σ<sub>i</sub> α<sub>ti</sub> = 1. High weight α<sub>ti</sub> means the decoder should strongly attend to encoder state h<sub>i</sub>. Weights form a probability distribution over input positions.</p>
+      <p>Properties: $\\alpha_{ti} \\in [0, 1]$, $\\sum_i \\alpha_{ti} = 1$. High weight $\\alpha_{ti}$ means the decoder should strongly attend to encoder state $h_i$. Weights form a probability distribution over input positions.</p>
 
       <p><strong>Why softmax?</strong> Converts arbitrary scores into normalized probabilities, provides gradient flow to all positions (even low-weight ones), creates competition among inputs (increasing one weight necessarily decreases others).</p>
 
       <h4>Step 3: Compute Context Vector</h4>
       <p>Create a weighted combination of encoder hidden states:</p>
 
-      <p><strong>c<sub>t</sub> = Σ<sub>i</sub> α<sub>ti</sub> h<sub>i</sub></strong></p>
+      <p><strong>$c_t = \\sum_i \\alpha_{ti} h_i$</strong></p>
 
-      <p>This context vector c<sub>t</sub> is specifically tailored for decoder time step t. It contains information from all encoder states, but weighted by relevance. Positions with high attention weights contribute more. The context vector is different for each decoder step, unlike fixed context in basic Seq2Seq.</p>
+      <p>This context vector $c_t$ is specifically tailored for decoder time step t. It contains information from all encoder states, but weighted by relevance. Positions with high attention weights contribute more. The context vector is different for each decoder step, unlike fixed context in basic Seq2Seq.</p>
 
-      <p><strong>Example:</strong> When generating "chat" in French, if α has high weights on "cat" and low weights elsewhere, c<sub>t</sub> will be dominated by the encoder state for "cat", providing exactly the information needed.</p>
+      <p><strong>Example:</strong> When generating "chat" in French, if $\\alpha$ has high weights on "cat" and low weights elsewhere, $c_t$ will be dominated by the encoder state for "cat", providing exactly the information needed.</p>
 
       <h4>Step 4: Incorporate Context into Decoding</h4>
-      <p>Use the context vector c<sub>t</sub> along with decoder state to generate output:</p>
+      <p>Use the context vector $c_t$ along with decoder state to generate output:</p>
 
-      <p><strong>s<sub>t</sub> = f(s<sub>t-1</sub>, y<sub>t-1</sub>, c<sub>t</sub>)</strong> - Update decoder state</p>
-      <p><strong>ŷ<sub>t</sub> = g(s<sub>t</sub>, c<sub>t</sub>)</strong> - Generate output prediction</p>
+      <p><strong>$s_t = f(s_{t-1}, y_{t-1}, c_t)$</strong> - Update decoder state</p>
+      <p><strong>$\\hat{y}_t = g(s_t, c_t)$</strong> - Generate output prediction</p>
 
       <p>The context vector influences both the decoder state update and the output prediction, ensuring relevant input information is used at every generation step.</p>
 
@@ -2118,9 +2118,9 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
       <h4>Bahdanau Attention (Additive, 2014)</h4>
       <p>The original attention mechanism, used with bidirectional encoder:</p>
       <ul>
-        <li><strong>Timing:</strong> Computes attention before generating current decoder state (uses s<sub>t-1</sub>)</li>
-        <li><strong>Score:</strong> Additive with learned parameters: v<sup>T</sup> tanh(W<sub>1</sub>s<sub>t-1</sub> + W<sub>2</sub>h<sub>i</sub>)</li>
-        <li><strong>Encoder:</strong> Bidirectional RNN, h<sub>i</sub> = [h<sub>i</sub><sup>→</sup>; h<sub>i</sub><sup>←</sup>]</li>
+        <li><strong>Timing:</strong> Computes attention before generating current decoder state (uses $s_{t-1}$)</li>
+        <li><strong>Score:</strong> Additive with learned parameters: $v^T \\tanh(W_1 s_{t-1} + W_2 h_i)$</li>
+        <li><strong>Encoder:</strong> Bidirectional RNN, $h_i = [h_i^{\\rightarrow}; h_i^{\\leftarrow}]$</li>
         <li><strong>Benefits:</strong> Explicitly models alignment as intermediate step, very flexible scoring function</li>
         <li><strong>Use case:</strong> When alignment is crucial (e.g., translation)</li>
       </ul>
@@ -2128,8 +2128,8 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
       <h4>Luong Attention (Multiplicative, 2015)</h4>
       <p>Simplified attention with multiple scoring options:</p>
       <ul>
-        <li><strong>Timing:</strong> Computes attention after generating current decoder state (uses s<sub>t</sub>)</li>
-        <li><strong>Score options:</strong> Dot product (s<sub>t</sub><sup>T</sup>h<sub>i</sub>), general (s<sub>t</sub><sup>T</sup>Wh<sub>i</sub>), concat (like Bahdanau)</li>
+        <li><strong>Timing:</strong> Computes attention after generating current decoder state (uses $s_t$)</li>
+        <li><strong>Score options:</strong> Dot product ($s_t^T h_i$), general ($s_t^T W h_i$), concat (like Bahdanau)</li>
         <li><strong>Simpler architecture:</strong> Fewer steps, often more efficient</li>
         <li><strong>Global vs local:</strong> Can attend to all positions (global) or window (local)</li>
         <li><strong>Use case:</strong> When computational efficiency matters</li>
@@ -2159,11 +2159,11 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
       <p><strong>Empirical gains:</strong> Adding attention to Seq2Seq improved BLEU scores by 5-10 points on translation benchmarks. Length penalty largely disappeared—long sentences improved dramatically. Became standard practice within a year.</p>
 
       <h3>Visualizing Attention: The Alignment Matrix</h3>
-      <p>Attention weights α<sub>ti</sub> can be visualized as a heatmap:</p>
+      <p>Attention weights $\alpha_{ti}$ can be visualized as a heatmap:</p>
       <ul>
         <li><strong>Rows:</strong> Output tokens (decoder time steps)</li>
         <li><strong>Columns:</strong> Input tokens (encoder positions)</li>
-        <li><strong>Cell (t, i):</strong> Attention weight α<sub>ti</sub> - how much output t attends to input i</li>
+        <li><strong>Cell (t, i):</strong> Attention weight $\alpha_{ti}$ - how much output t attends to input i</li>
         <li><strong>Bright cells:</strong> High attention weight, strong focus</li>
         <li><strong>Dark cells:</strong> Low attention weight, little focus</li>
       </ul>
@@ -2173,7 +2173,7 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
       <h3>Multi-Head Attention: Parallel Perspectives</h3>
       <p>Extension that computes attention multiple times in parallel, introduced in Transformers:</p>
 
-      <p><strong>Mechanism:</strong> For h attention heads, project queries, keys, values into h different subspaces: Q<sub>i</sub> = Q × W<sub>i</sub><sup>Q</sup>, K<sub>i</sub> = K × W<sub>i</sub><sup>K</sup>, V<sub>i</sub> = V × W<sub>i</sub><sup>V</sup>. Compute attention independently in each subspace. Concatenate all heads and project back: MultiHead = Concat(head<sub>1</sub>, ..., head<sub>h</sub>) × W<sup>O</sup>.</p>
+      <p><strong>Mechanism:</strong> For h attention heads, project queries, keys, values into h different subspaces: $Q_i = Q \times W_i^Q$, $K_i = K \times W_i^K$, $V_i = V \times W_i^V$. Compute attention independently in each subspace. Concatenate all heads and project back: $\text{MultiHead} = \text{Concat}(\text{head}_1, ..., \text{head}_h) \times W^O$.</p>
 
       <p><strong>Motivation:</strong> Different heads can learn to attend to different aspects: syntactic vs semantic, local vs global, position vs content. Provides model with multiple "representation subspaces" to capture diverse relationships. Empirically improves performance significantly.</p>
 
@@ -2221,7 +2221,7 @@ Modern best practices typically use subword tokenization (BPE or SentencePiece) 
 
       <ul>
         <li><strong>Hard attention:</strong> Sample single position stochastically instead of soft weighted sum. Non-differentiable, requires REINFORCE. Reduces computation but harder to train.</li>
-        <li><strong>Local attention:</strong> Predict alignment position p<sub>t</sub>, attend to window [p<sub>t</sub> - D, p<sub>t</sub> + D]. Reduces complexity for very long sequences.</li>
+        <li><strong>Local attention:</strong> Predict alignment position $p_t$, attend to window $[p_t - D, p_t + D]$. Reduces complexity for very long sequences.</li>
         <li><strong>Hierarchical attention:</strong> Multiple attention levels (word → sentence → document). Captures structure at different granularities.</li>
         <li><strong>Coverage mechanism:</strong> Track cumulative attention to prevent over-attending to same positions. Useful for summarization (avoid repetition).</li>
         <li><strong>Sparse attention patterns:</strong> Pre-defined sparsity (attend to previous k positions, or fixed stride pattern). Reduces quadratic complexity.</li>

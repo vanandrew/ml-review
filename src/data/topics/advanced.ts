@@ -36,12 +36,12 @@ export const advancedTopics: Record<string, Topic> = {
       <h5>Visual Overview</h5>
       <pre class="code-block">
 ┌─────────────────────────────────────────────────────────┐
-│                    GAN Training Loop                     │
+│                    GAN Training Loop                    │
 ├─────────────────────────────────────────────────────────┤
-│                                                          │
+│                                                         │
 │  Noise z ~ N(0,I)                                       │
-│       │                                                  │
-│       ▼                                                  │
+│       │                                                 │
+│       ▼                                                 │
 │  ┌──────────┐         Fake Image                        │
 │  │Generator │────────────────────┐                      │
 │  │    G     │                    │                      │
@@ -51,8 +51,8 @@ export const advancedTopics: Record<string, Topic> = {
 │  from Dataset ────────────►│Discriminator│─────────►    │
 │                            │      D      │  Probability │
 │                            └─────────────┘              │
-│                                   │                      │
-│                                   │                      │
+│                                   │                     │
+│                                   │                     │
 │         ┌─────────────────────────┴──────────┐          │
 │         ▼                                    ▼          │
 │   Update D to                          Update G to      │
@@ -72,8 +72,8 @@ export const advancedTopics: Record<string, Topic> = {
       <h5>Player 2: Discriminator D</h5>
       <ul>
         <li><strong>Input:</strong> Either real sample x ∼ p_data or fake sample G(z)</li>
-        <li><strong>Output:</strong> Probability D(x) ∈ [0,1] that input is real</li>
-        <li><strong>Objective:</strong> Correctly classify real vs fake—D(x) ≈ 1 for real, D(G(z)) ≈ 0 for fake</li>
+        <li><strong>Output:</strong> Probability $D(x) \\in [0,1]$ that input is real</li>
+        <li><strong>Objective:</strong> Correctly classify real vs fake—$D(x) \\approx 1$ for real, $D(G(z)) \\approx 0$ for fake</li>
         <li><strong>Architecture:</strong> Encoder/classifier network (e.g., convolutional layers for images)</li>
         <li><strong>Interpretation:</strong> Art detective identifying forgeries</li>
       </ul>
@@ -81,7 +81,7 @@ export const advancedTopics: Record<string, Topic> = {
       <h4>The Minimax Objective</h4>
       <p><strong>Value function V(G, D):</strong></p>
       <p style="text-align: center; font-size: 1.1em;">
-        min<sub>G</sub> max<sub>D</sub> V(D, G) = 𝔼<sub>x∼p_data</sub>[log D(x)] + 𝔼<sub>z∼p_z</sub>[log(1 - D(G(z)))]
+        $\\min_G \\max_D V(D, G) = \\mathbb{E}_{x\\sim p_{\\text{data}}}[\\log D(x)] + \\mathbb{E}_{z\\sim p_z}[\\log(1 - D(G(z)))]$
       </p>
 
       <h5>Breaking Down the Objective</h5>
@@ -141,10 +141,10 @@ Latent z (100-dim vector)
       <ul>
         <li><strong>Convolutional layers:</strong> Downsample from high to low resolution</li>
         <li><strong>Strided convolutions:</strong> Replace pooling for downsampling</li>
-        <li><strong>LeakyReLU activations:</strong> α=0.2, prevents dead neurons</li>
+        <li><strong>LeakyReLU activations:</strong> $\\alpha=0.2$, prevents dead neurons</li>
         <li><strong>Batch normalization:</strong> After each layer except first</li>
         <li><strong>No fully connected layers:</strong> Until final classification layer</li>
-        <li><strong>Sigmoid output:</strong> Single probability score D(x) ∈ [0,1]</li>
+        <li><strong>Sigmoid output:</strong> Single probability score $D(x) \\in [0,1]$</li>
       </ul>
 
       <h5>Example Discriminator Flow</h5>
@@ -207,7 +207,7 @@ for epoch in range(num_epochs):
 
       <h5>Discriminator Loss</h5>
       <p><strong>Binary cross-entropy for real vs fake classification:</strong></p>
-      <p>L_D = -𝔼<sub>x∼p_data</sub>[log D(x)] - 𝔼<sub>z∼p_z</sub>[log(1 - D(G(z)))]</p>
+      <p>$L_D = -\\mathbb{E}_{x\\sim p_{\\text{data}}}[\\log D(x)] - \\mathbb{E}_{z\\sim p_z}[\\log(1 - D(G(z)))]$</p>
       <ul>
         <li><strong>Maximize D(x) for real samples:</strong> Penalize when D(x) < 1</li>
         <li><strong>Minimize D(G(z)) for fakes:</strong> Penalize when D(G(z)) > 0</li>
@@ -217,15 +217,15 @@ for epoch in range(num_epochs):
       <h5>Generator Loss: Two Formulations</h5>
 
       <h6>1. Original Minimax (Saturating)</h6>
-      <p>L_G = 𝔼<sub>z∼p_z</sub>[log(1 - D(G(z)))]</p>
+      <p>$L_G = \\mathbb{E}_{z\\sim p_z}[\\log(1 - D(G(z)))]$</p>
       <ul>
-        <li><strong>Problem:</strong> When D is confident fake (D(G(z)) ≈ 0), gradient ≈ 0 (vanishing gradient)</li>
+        <li><strong>Problem:</strong> When D is confident fake ($D(G(z)) \\approx 0$), gradient $\\approx 0$ (vanishing gradient)</li>
         <li><strong>Early training:</strong> Generator produces obviously fake samples, discriminator easily rejects them</li>
         <li><strong>Result:</strong> Generator receives little learning signal</li>
       </ul>
 
       <h6>2. Non-Saturating (Standard Practice)</h6>
-      <p>L_G = -𝔼<sub>z∼p_z</sub>[log D(G(z))]</p>
+      <p>$L_G = -\\mathbb{E}_{z\\sim p_z}[\\log D(G(z))]$</p>
       <ul>
         <li><strong>Maximize log D(G(z)):</strong> Stronger gradient when D is confident fake</li>
         <li><strong>Same optimal point:</strong> Still minimizes JS divergence at equilibrium</li>
@@ -266,7 +266,7 @@ for epoch in range(num_epochs):
 
       <h5>Problem</h5>
       <ul>
-        <li><strong>Cause:</strong> When D becomes too strong, D(G(z)) ≈ 0, gradient for G vanishes</li>
+        <li><strong>Cause:</strong> When D becomes too strong, $D(G(z)) \\approx 0$, gradient for G vanishes</li>
         <li><strong>Effect:</strong> Generator stops learning, training stalls</li>
         <li><strong>Occurs:</strong> Early training when G produces obviously fake samples</li>
       </ul>
@@ -322,7 +322,7 @@ for epoch in range(num_epochs):
         <li><strong>Weight clipping (WGAN):</strong> Clip discriminator weights to [-c, c] after each update</li>
         <li><strong>Gradient penalty (WGAN-GP):</strong> Soft constraint via penalty on gradient norm (better than clipping)</li>
         <li><strong>Remove sigmoid:</strong> Discriminator outputs unbounded score (critic), not probability</li>
-        <li><strong>Loss:</strong> L_D = 𝔼[D(x)] - 𝔼[D(G(z))] + λ·GP, L_G = -𝔼[D(G(z))]</li>
+        <li><strong>Loss:</strong> $L_D = \\mathbb{E}[D(x)] - \\mathbb{E}[D(G(z))] + \\lambda \\cdot GP$, $L_G = -\\mathbb{E}[D(G(z))]$</li>
       </ul>
 
       <h5>Advantages</h5>
@@ -386,7 +386,7 @@ for epoch in range(num_epochs):
       <ul>
         <li><strong>Two generators:</strong> G: X→Y and F: Y→X</li>
         <li><strong>Two discriminators:</strong> D_X and D_Y for each domain</li>
-        <li><strong>Cycle-consistency loss:</strong> F(G(x)) ≈ x and G(F(y)) ≈ y (reconstruction after round-trip)</li>
+        <li><strong>Cycle-consistency loss:</strong> $F(G(x)) \\approx x$ and $G(F(y)) \\approx y$ (reconstruction after round-trip)</li>
         <li><strong>Intuition:</strong> Translation must be reversible, preserving content</li>
       </ul>
 
@@ -414,7 +414,7 @@ for epoch in range(num_epochs):
       <h4>Inception Score (IS)</h4>
       <ul>
         <li><strong>Idea:</strong> Good samples should be confident (low entropy per sample) and diverse (high entropy overall)</li>
-        <li><strong>Computation:</strong> Use pre-trained Inception classifier, IS = exp(𝔼<sub>x</sub>[KL(p(y|x) || p(y))])</li>
+        <li><strong>Computation:</strong> Use pre-trained Inception classifier, IS = $\\exp(\\mathbb{E}_x[\\text{KL}(p(y|x) || p(y))])$</li>
         <li><strong>Interpretation:</strong> Higher is better, typical range 2-12 for ImageNet</li>
         <li><strong>Limitations:</strong> Biased toward Inception training data, ignores spatial statistics, can be gamed</li>
       </ul>
@@ -422,7 +422,7 @@ for epoch in range(num_epochs):
       <h4>Fréchet Inception Distance (FID)</h4>
       <ul>
         <li><strong>Idea:</strong> Compare statistics of generated vs real samples in Inception feature space</li>
-        <li><strong>Computation:</strong> Fit Gaussian to features, compute Fréchet distance: FID = ||μ_r - μ_g||² + Tr(Σ_r + Σ_g - 2√(Σ_r Σ_g))</li>
+        <li><strong>Computation:</strong> Fit Gaussian to features, compute Fréchet distance: $\\text{FID} = ||\\mu_r - \\mu_g||^2 + \\text{Tr}(\\Sigma_r + \\Sigma_g - 2\\sqrt{\\Sigma_r \\Sigma_g})$</li>
         <li><strong>Interpretation:</strong> Lower is better, 0 = perfect match, typical <50 for good models</li>
         <li><strong>Advantages:</strong> More robust than IS, correlates better with human judgment, detects mode collapse</li>
         <li><strong>Standard metric:</strong> Most widely used for GAN evaluation</li>
@@ -494,8 +494,8 @@ for epoch in range(num_epochs):
 
       <h4>Optimal Discriminator</h4>
       <p>For fixed G, optimal discriminator is:</p>
-      <p style="text-align: center;">D<sup>*</sup>(x) = p_data(x) / (p_data(x) + p_g(x))</p>
-      <p>At equilibrium where p_g = p_data: D<sup>*</sup>(x) = 1/2 everywhere.</p>
+      <p style="text-align: center;">$D^*(x) = \\frac{p_{\\text{data}}(x)}{p_{\\text{data}}(x) + p_g(x)}$</p>
+      <p>At equilibrium where $p_g = p_{\\text{data}}$: $D^*(x) = 1/2$ everywhere.</p>
 
       <h4>Jensen-Shannon Divergence</h4>
       <p>At optimal D, training G minimizes JS divergence between p_data and p_g:</p>
@@ -591,7 +591,7 @@ for epoch in range(num_epochs):
 
       <h4>Hyperparameter Tuning Guidelines</h4>
       <ul>
-        <li><strong>Learning rate:</strong> Start with lr=0.0002 for both G and D, use Adam with β₁=0.5, β₂=0.999</li>
+        <li><strong>Learning rate:</strong> Start with lr=0.0002 for both G and D, use Adam with $\\beta_1=0.5$, $\\beta_2=0.999$</li>
         <li><strong>Batch size:</strong> Larger is better (32-128), helps stabilize training</li>
         <li><strong>Architecture:</strong> Start with DCGAN, gradually add complexity (self-attention, progressive growing)</li>
         <li><strong>Training ratio:</strong> k=1 (one D update per G update) usually works best</li>
@@ -895,42 +895,43 @@ for digit in range(10):
       <h4>Visual Architecture Overview</h4>
       <pre class="code-block">
 ┌────────────────────────────────────────────────────────────────────────┐
-│                       Variational Autoencoder                        │
+│                                                                        │
+│                        Variational Autoencoder                         │
 ├────────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  Input x (e.g., 28×28 image)                                        │
-│         │                                                          │
-│         ▼                                                          │
-│  ┌──────────────────┐                                            │
-│  │   ENCODER qφ(z|x) │                                            │
-│  │  (Neural Network)│                                            │
-│  └──────────────────┘                                            │
-│         │                                                          │
-│         ├──────────────────────────────────────┐           │
-│         │                                    │           │
-│         ▼                                    ▼           │
-│      μ(x)                                 log σ²(x)      │
-│         │                                    │           │
-│         └───────────┐            ┌────────────┘           │
-│                    │            │                        │
-│                    ▼            ▼                        │
-│              z = μ + σ ⊙ ε   (ε ~ N(0,I))              │
-│                Reparameterization Trick                   │
-│                         │                                 │
-│                         ▼                                 │
-│              Latent Code z (e.g., 20-dim)                │
-│                         │                                 │
-│                         ▼                                 │
-│                  ┌──────────────────┐                    │
-│                  │  DECODER pθ(x|z) │                    │
-│                  │ (Neural Network)│                    │
-│                  └──────────────────┘                    │
-│                         │                                 │
-│                         ▼                                 │
-│                Reconstruction x̂ (28×28)                 │
-│                                                              │
-│  Loss = Reconstruction Loss + KL Divergence              │
-│       = -E[log p(x|z)]      + KL(q(z|x) || p(z))          │
+│                                                                        │
+│  Input x (e.g., 28×28 image)                                           │
+│         │                                                              │
+│         ▼                                                              │
+│  ┌──────────────────┐                                                  │
+│  │   ENCODER qφ(z|x) │                                                 │
+│  │  (Neural Network) │                                                 │
+│  └──────────────────┘                                                  │
+│         │                                                              │
+│         ├──────────────────────────────────────┐                       │
+│         │                                      │                       │
+│         ▼                                      ▼                       │
+│      μ(x)                                   log σ²(x)                  │
+│         │                                      │                       │
+│         └───────────┐            ┌─────────────┘                       │
+│                     │            │                                     │
+│                     ▼            ▼                                     │
+│              z = μ + σ ⊙ ε   (ε ~ N(0,I))                              │
+│                Reparameterization Trick                                │
+│                         │                                              │
+│                         ▼                                              │
+│              Latent Code z (e.g., 20-dim)                              │
+│                         │                                              │
+│                         ▼                                              │
+│                  ┌──────────────────┐                                  │
+│                  │  DECODER pθ(x|z) │                                  │
+│                  │ (Neural Network) │                                  │
+│                  └──────────────────┘                                  │
+│                         │                                              │
+│                         ▼                                              │
+│                Reconstruction x̂ (28×28)                                │
+│                                                                        │
+│  Loss = Reconstruction Loss + KL Divergence                            │
+│       = -E[log p(x|z)]      + KL(q(z|x) || p(z))                       │
 └────────────────────────────────────────────────────────────────────────┘
       </pre>
 
@@ -940,9 +941,9 @@ for digit in range(10):
       <ul>
         <li><strong>Input:</strong> Data point x (e.g., 28×28 image)</li>
         <li><strong>Output:</strong> Parameters of approximate posterior distribution over z</li>
-        <li><strong>Typical assumption:</strong> q_φ(z|x) = N(z; μ_φ(x), σ²_φ(x)) (diagonal Gaussian)</li>
-        <li><strong>Neural network:</strong> Maps x → (μ, log σ²) where μ, σ² are latent_dim-dimensional vectors</li>
-        <li><strong>Variational approximation:</strong> q_φ(z|x) ≈ true posterior p(z|x)</li>
+        <li><strong>Typical assumption:</strong> $q_\\phi(z|x) = N(z; \\mu_\\phi(x), \\sigma^2_\\phi(x))$ (diagonal Gaussian)</li>
+        <li><strong>Neural network:</strong> Maps $x \\to (\\mu, \\log \\sigma^2)$ where $\\mu$, $\\sigma^2$ are latent_dim-dimensional vectors</li>
+        <li><strong>Variational approximation:</strong> $q_\\phi(z|x) \\approx$ true posterior $p(z|x)$</li>
       </ul>
 
       <h5>Architecture Example (Images)</h5>
@@ -960,10 +961,10 @@ Input image x (28×28)
 
       <h5>Sampling with Reparameterization Trick</h5>
       <ul>
-        <li><strong>Challenge:</strong> Sampling z ~ N(μ, σ²) is non-differentiable—can't backpropagate through random operation</li>
-        <li><strong>Solution:</strong> Reparameterize: z = μ + σ ⊙ ε where ε ~ N(0, I)</li>
-        <li><strong>Key insight:</strong> Move randomness to external noise ε independent of parameters φ</li>
-        <li><strong>Gradients:</strong> ∂z/∂μ = 1, ∂z/∂σ = ε (well-defined)</li>
+        <li><strong>Challenge:</strong> Sampling $z \\sim N(\\mu, \\sigma^2)$ is non-differentiable—can't backpropagate through random operation</li>
+        <li><strong>Solution:</strong> Reparameterize: $z = \\mu + \\sigma \\odot \\varepsilon$ where $\\varepsilon \\sim N(0, I)$</li>
+        <li><strong>Key insight:</strong> Move randomness to external noise $\\varepsilon$ independent of parameters $\\phi$</li>
+        <li><strong>Gradients:</strong> $\\frac{\\partial z}{\\partial \\mu} = 1$, $\\frac{\\partial z}{\\partial \\sigma} = \\varepsilon$ (well-defined)</li>
         <li><strong>Enables training:</strong> Backpropagation through stochastic layer</li>
       </ul>
 
@@ -975,7 +976,7 @@ Input image x (28×28)
         <li><strong>Disentanglement:</strong> Ideally, each dimension captures independent factor of variation</li>
       </ul>
 
-      <h4>Decoder: p_θ(x|z) - Generative Network</h4>
+      <h4>Decoder: $p_\\theta(x|z)$ - Generative Network</h4>
 
       <h5>Role and Design</h5>
       <ul>
@@ -1005,12 +1006,15 @@ Latent z (20-dim)
 
       <h6>Variational Lower Bound</h6>
       <p>For any distribution q(z|x):</p>
-      <pre>
-log p(x) = ELBO + KL(q(z|x) || p(z|x))
-         ≥ ELBO  (since KL ≥ 0)
-
-ELBO = 𝔼<sub>q(z|x)</sub>[log p(x|z)] - KL(q(z|x) || p(z))
-      </pre>
+      <p style="text-align: center;">
+        $\\log p(x) = \\text{ELBO} + \\text{KL}(q(z|x) || p(z|x))$
+      </p>
+      <p style="text-align: center;">
+        $\\log p(x) \\geq \\text{ELBO}$ &nbsp;&nbsp;(since $\\text{KL} \\geq 0$)
+      </p>
+      <p style="text-align: center;">
+        $\\text{ELBO} = \\mathbb{E}_{q(z|x)}[\\log p(x|z)] - \\text{KL}(q(z|x) || p(z))$
+      </p>
 
       <h6>Interpretation</h6>
       <ul>
@@ -1023,7 +1027,7 @@ ELBO = 𝔼<sub>q(z|x)</sub>[log p(x|z)] - KL(q(z|x) || p(z))
       <h4>Loss Function Components</h4>
 
       <h5>1. Reconstruction Loss</h5>
-      <p><strong>Formula:</strong> -𝔼<sub>q(z|x)</sub>[log p_θ(x|z)]</p>
+      <p><strong>Formula:</strong> $-\\mathbb{E}_{q(z|x)}[\\log p_\\theta(x|z)]$</p>
 
       <h6>For Different Data Types</h6>
       <ul>
@@ -1037,9 +1041,9 @@ ELBO = 𝔼<sub>q(z|x)</sub>[log p(x|z)] - KL(q(z|x) || p(z))
       <p><strong>Formula:</strong> KL(q_φ(z|x) || p(z))</p>
 
       <h6>For Gaussian Distributions</h6>
-      <p>When q(z|x) = N(μ, σ²I) and p(z) = N(0, I):</p>
+      <p>When $q(z|x) = N(\\mu, \\sigma^2 I)$ and $p(z) = N(0, I)$:</p>
       <p style="text-align: center;">
-        KL = (1/2) Σ<sub>j=1</sub><sup>J</sup> [μ<sub>j</sub>² + σ<sub>j</sub>² - log σ<sub>j</sub>² - 1]
+        $\\text{KL} = \\frac{1}{2} \\sum_{j=1}^J [\\mu_j^2 + \\sigma_j^2 - \\log \\sigma_j^2 - 1]$
       </p>
       <ul>
         <li><strong>Closed form:</strong> No sampling needed, exact computation</li>
@@ -1053,38 +1057,42 @@ ELBO = 𝔼<sub>q(z|x)</sub>[log p(x|z)] - KL(q(z|x) || p(z))
         L_VAE = -ELBO = Reconstruction Loss + KL Divergence
       </p>
       <p style="text-align: center;">
-        L_VAE = -𝔼<sub>q(z|x)</sub>[log p(x|z)] + KL(q(z|x) || p(z))
+        $L_{\\text{VAE}} = -\\mathbb{E}_{q(z|x)}[\\log p(x|z)] + \\text{KL}(q(z|x) || p(z))$
       </p>
 
       <h3>The Reparameterization Trick: Making Sampling Differentiable</h3>
 
       <h4>The Problem</h4>
       <ul>
-        <li><strong>Need to backpropagate through z ~ q(z|x):</strong> Gradient ∇_φ 𝔼<sub>z~q_φ(z|x)</sub>[f(z)]</li>
-        <li><strong>Direct sampling non-differentiable:</strong> Can't compute ∂z/∂φ when z is stochastic</li>
+        <li><strong>Need to backpropagate through z ~ q(z|x):</strong> Gradient $\\nabla_\\phi \\mathbb{E}_{z\\sim q_\\phi(z|x)}[f(z)]$</li>
+        <li><strong>Direct sampling non-differentiable:</strong> Can't compute $\\frac{\\partial z}{\\partial \\phi}$ when z is stochastic</li>
         <li><strong>Naive approach fails:</strong> Taking expectation outside gradient gives high-variance estimates</li>
       </ul>
 
       <h4>The Solution: Reparameterization</h4>
 
       <h5>Transform Sampling</h5>
-      <p><strong>Instead of:</strong> z ~ N(μ_φ(x), σ²_φ(x))</p>
-      <p><strong>Write as:</strong> z = μ_φ(x) + σ_φ(x) ⊙ ε, where ε ~ N(0, I)</p>
+      <p><strong>Instead of:</strong> $z \\sim N(\\mu_\\phi(x), \\sigma^2_\\phi(x))$</p>
+      <p><strong>Write as:</strong> $z = \\mu_\\phi(x) + \\sigma_\\phi(x) \\odot \\varepsilon$, where $\\varepsilon \\sim N(0, I)$</p>
 
       <h5>Benefits</h5>
       <ul>
-        <li><strong>Deterministic function:</strong> z is deterministic given x and ε</li>
-        <li><strong>External randomness:</strong> ε is independent of parameters φ, θ</li>
-        <li><strong>Differentiable:</strong> Clear gradients: ∂z/∂μ = 1, ∂z/∂σ = ε</li>
+        <li><strong>Deterministic function:</strong> z is deterministic given x and $\\varepsilon$</li>
+        <li><strong>External randomness:</strong> $\\varepsilon$ is independent of parameters $\\phi$, $\\theta$</li>
+        <li><strong>Differentiable:</strong> Clear gradients: $\\frac{\\partial z}{\\partial \\mu} = 1$, $\\frac{\\partial z}{\\partial \\sigma} = \\varepsilon$</li>
         <li><strong>Low variance:</strong> Gradient estimator has much lower variance than alternatives</li>
       </ul>
 
       <h5>Gradient Flow</h5>
-      <pre>
-∇_φ 𝔼<sub>ε~N(0,I)</sub>[f(μ_φ(x) + σ_φ(x)⊙ε)]
-= 𝔼<sub>ε~N(0,I)</sub>[∇_φ f(μ_φ(x) + σ_φ(x)⊙ε)]    (exchange gradient and expectation)
-≈ ∇_φ f(μ_φ(x) + σ_φ(x)⊙ε)                  (single sample Monte Carlo)
-      </pre>
+      <p>
+        $\\nabla_\\phi \\mathbb{E}_{\\varepsilon\\sim N(0,I)}[f(\\mu_\\phi(x) + \\sigma_\\phi(x)\\odot\\varepsilon)]$
+      </p>
+      <p>
+        $= \\mathbb{E}_{\\varepsilon\\sim N(0,I)}[\\nabla_\\phi f(\\mu_\\phi(x) + \\sigma_\\phi(x)\\odot\\varepsilon)]$ &nbsp;&nbsp;(exchange gradient and expectation)
+      </p>
+      <p>
+        $\\approx \\nabla_\\phi f(\\mu_\\phi(x) + \\sigma_\\phi(x)\\odot\\varepsilon)$ &nbsp;&nbsp;(single sample Monte Carlo)
+      </p>
 
       <h3>Training Procedure</h3>
 
@@ -1122,7 +1130,7 @@ for epoch in range(num_epochs):
       <h4>Balancing Reconstruction and KL</h4>
       <ul>
         <li><strong>Trade-off:</strong> Reconstruction wants to use latent code fully; KL wants to match prior</li>
-        <li><strong>β-VAE weighting:</strong> loss = recon_loss + β × kl_loss (β > 1 for disentanglement)</li>
+        <li><strong>β-VAE weighting:</strong> loss = recon_loss + $\\beta \\times$ kl_loss ($\\beta > 1$ for disentanglement)</li>
         <li><strong>KL annealing:</strong> Gradually increase KL weight from 0 to 1 during training</li>
         <li><strong>Free bits:</strong> Don't penalize KL below threshold per dimension</li>
       </ul>
@@ -1214,7 +1222,7 @@ for epoch in range(num_epochs):
 
       <h4>β-VAE: Disentangled Representations</h4>
       <ul>
-        <li><strong>Objective:</strong> L = recon_loss + β × KL_loss where β > 1</li>
+        <li><strong>Objective:</strong> $L = \\text{recon\\_loss} + \\beta \\times \\text{KL\\_loss}$ where $\\beta > 1$</li>
         <li><strong>Effect:</strong> Higher β encourages independence between latent dimensions</li>
         <li><strong>Disentanglement:</strong> Each z_j captures separate factor (color, shape, position)</li>
         <li><strong>Trade-off:</strong> Improved disentanglement but reduced reconstruction quality</li>
@@ -1306,7 +1314,7 @@ for epoch in range(num_epochs):
       <h4>Technical Explanation</h4>
       <ul>
         <li><strong>Reconstruction loss:</strong> MSE or BCE penalizes pixel-wise errors, encourages averaging</li>
-        <li><strong>Gaussian assumption:</strong> p(x|z) = N(decoder(z), σ²I) cannot capture sharp edges (multimodal pixel distributions)</li>
+        <li><strong>Gaussian assumption:</strong> $p(x|z) = N(\\text{decoder}(z), \\sigma^2 I)$ cannot capture sharp edges (multimodal pixel distributions)</li>
         <li><strong>KL regularization:</strong> Forces latent space to match simple prior, reducing capacity</li>
         <li><strong>Solution:</strong> More powerful decoders, perceptual losses, or hybrid VAE-GAN models</li>
       </ul>
@@ -1571,7 +1579,7 @@ with torch.no_grad():
     interviewQuestions: [
       {
         question: 'Explain the reparameterization trick and why it\'s necessary.',
-        answer: `The reparameterization trick enables backpropagation through stochastic nodes by expressing random variables as deterministic functions of noise. Instead of sampling z ~ N(μ, σ²), we compute z = μ + σ ⊙ ε where ε ~ N(0,I). This transforms stochastic operation into deterministic computation with external randomness, allowing gradients to flow through μ and σ parameters. Essential for training VAEs because it makes the latent variable sampling differentiable while maintaining the desired probability distribution.`
+        answer: `The reparameterization trick enables backpropagation through stochastic nodes by expressing random variables as deterministic functions of noise. Instead of sampling $z \\sim N(\\mu, \\sigma^2)$, we compute $z = \\mu + \\sigma \\odot \\varepsilon$ where $\\varepsilon \\sim N(0,I)$. This transforms stochastic operation into deterministic computation with external randomness, allowing gradients to flow through $\\mu$ and $\\sigma$ parameters. Essential for training VAEs because it makes the latent variable sampling differentiable while maintaining the desired probability distribution.`
       },
       {
         question: 'What is the role of KL divergence in the VAE loss?',
@@ -1587,7 +1595,7 @@ with torch.no_grad():
       },
       {
         question: 'What is β-VAE and how does it encourage disentanglement?',
-        answer: `β-VAEs modify standard VAE objective by weighting KL term: ELBO = E[log p(x|z)] - β × KL(q(z|x)||p(z)). Higher β values encourage stronger independence between latent dimensions, promoting disentanglement where each dimension captures distinct factors of variation. Trade-off: increased β improves disentanglement but may reduce reconstruction quality. Disentangled representations enable interpretable generation and manipulation by modifying individual latent dimensions corresponding to specific semantic factors.`
+        answer: `β-VAEs modify standard VAE objective by weighting KL term: ELBO = $\\mathbb{E}[\\log p(x|z)] - \\beta \\times \\text{KL}(q(z|x)||p(z))$. Higher $\\beta$ values encourage stronger independence between latent dimensions, promoting disentanglement where each dimension captures distinct factors of variation. Trade-off: increased $\\beta$ improves disentanglement but may reduce reconstruction quality. Disentangled representations enable interpretable generation and manipulation by modifying individual latent dimensions corresponding to specific semantic factors.`
       },
       {
         question: 'Why do VAE-generated images tend to be blurrier than GAN images?',
@@ -1600,7 +1608,7 @@ with torch.no_grad():
         question: 'What does the reparameterization trick enable?',
         options: ['Faster training', 'Backpropagation through sampling', 'Better image quality', 'Smaller models'],
         correctAnswer: 1,
-        explanation: 'The reparameterization trick (z = μ + σ⊙ε) moves randomness to an independent ε, making the sampling operation differentiable so gradients can flow through it.'
+        explanation: 'The reparameterization trick ($z = \\mu + \\sigma\\odot\\varepsilon$) moves randomness to an independent $\\varepsilon$, making the sampling operation differentiable so gradients can flow through it.'
       },
       {
         id: 'vae2',
@@ -1644,10 +1652,10 @@ with torch.no_grad():
       <pre>
       Agent                       Environment
         │                            │
-        │  ──────  State s_t  ─────►│
-        │ ◄─────  Reward r_t  ───── │
+        │  ──────  State s_t  ─────► │
+        │ ◄─────  Reward r_t  ─────  │
         │                            │
-        │  ──────  Action a_t ─────►│
+        │  ──────  Action a_t ─────► │
         │                            │
         │  ◄────  State s_{t+1} ──── │
         │  ◄───  Reward r_{t+1} ──── │
@@ -1708,16 +1716,16 @@ with torch.no_grad():
 
       <h5>Discounted Return</h5>
       <p style="text-align: center; font-size: 1.1em;">
-        G_t = R_{t+1} + γR_{t+2} + γ²R_{t+3} + ... = Σ<sub>k=0</sub><sup>∞</sup> γ<sup>k</sup>R_{t+k+1}
+        $G_t = R_{t+1} + \\gamma R_{t+2} + \\gamma^2 R_{t+3} + ... = \\sum_{k=0}^{\\infty} \\gamma^k R_{t+k+1}$
       </p>
 
-      <h5>Discount Factor γ ∈ [0, 1]</h5>
+      <h5>Discount Factor $\\gamma \\in [0, 1]$</h5>
       <ul>
-        <li><strong>γ = 0:</strong> Myopic agent, only cares about immediate reward</li>
-        <li><strong>γ close to 1:</strong> Far-sighted agent, considers long-term consequences</li>
-        <li><strong>γ = 1:</strong> Undiscounted (only for episodic tasks with guaranteed termination)</li>
+        <li><strong>$\\gamma = 0$:</strong> Myopic agent, only cares about immediate reward</li>
+        <li><strong>$\\gamma$ close to 1:</strong> Far-sighted agent, considers long-term consequences</li>
+        <li><strong>$\\gamma = 1$:</strong> Undiscounted (only for episodic tasks with guaranteed termination)</li>
         <li><strong>Typical values:</strong> 0.9, 0.95, 0.99</li>
-        <li><strong>Mathematical necessity:</strong> γ < 1 ensures infinite sum converges</li>
+        <li><strong>Mathematical necessity:</strong> $\\gamma < 1$ ensures infinite sum converges</li>
         <li><strong>Economic interpretation:</strong> Reward now worth more than reward later (time value)</li>
       </ul>
 
@@ -1726,7 +1734,7 @@ with torch.no_grad():
       <h5>State-Value Function V^π(s)</h5>
       <p><strong>Definition:</strong> Expected return starting from state s, following policy π</p>
       <p style="text-align: center;">
-        V^π(s) = 𝔼_π[G_t | S_t = s] = 𝔼_π[Σ γ<sup>k</sup>R_{t+k+1} | S_t = s]
+        $V^\\pi(s) = \\mathbb{E}_\\pi[G_t | S_t = s] = \\mathbb{E}_\\pi[\\sum \\gamma^k R_{t+k+1} | S_t = s]$
       </p>
       <ul>
         <li><strong>Interpretation:</strong> "How good is it to be in state s under policy π?"</li>
@@ -1737,12 +1745,12 @@ with torch.no_grad():
       <h5>Action-Value Function Q^π(s, a)</h5>
       <p><strong>Definition:</strong> Expected return starting from state s, taking action a, then following π</p>
       <p style="text-align: center;">
-        Q^π(s, a) = 𝔼_π[G_t | S_t = s, A_t = a]
+        $Q^\\pi(s, a) = \\mathbb{E}_\\pi[G_t | S_t = s, A_t = a]$
       </p>
       <ul>
         <li><strong>Interpretation:</strong> "How good is it to take action a in state s, then follow π?"</li>
-        <li><strong>Action selection:</strong> Choose a = argmax_a Q(s, a)</li>
-        <li><strong>Relationship:</strong> V^π(s) = 𝔼_{a~π}[Q^π(s,a)]</li>
+        <li><strong>Action selection:</strong> Choose $a = \\arg\\max_a Q(s, a)$</li>
+        <li><strong>Relationship:</strong> $V^\\pi(s) = \\mathbb{E}_{a\\sim\\pi}[Q^\\pi(s,a)]$</li>
       </ul>
 
       <h4>Bellman Equations: Recursive Structure</h4>
@@ -1809,13 +1817,13 @@ Optimal Policy (↑↓←→):
 
       <h6>For V^π:</h6>
       <p style="text-align: center;">
-        V^π(s) = 𝔼_π[R_{t+1} + γV^π(S_{t+1}) | S_t = s]
+        $V^\\pi(s) = \\mathbb{E}_\\pi[R_{t+1} + \\gamma V^\\pi(S_{t+1}) | S_t = s]$
       </p>
       <p>Current value = immediate reward + discounted future value</p>
 
       <h6>For Q^π:</h6>
       <p style="text-align: center;">
-        Q^π(s, a) = 𝔼[R_{t+1} + γQ^π(S_{t+1}, A_{t+1}) | S_t=s, A_t=a]
+        $Q^\\pi(s, a) = \\mathbb{E}[R_{t+1} + \\gamma Q^\\pi(S_{t+1}, A_{t+1}) | S_t=s, A_t=a]$
       </p>
 
       <h5>Bellman Optimality Equation</h5>
@@ -1823,12 +1831,12 @@ Optimal Policy (↑↓←→):
 
       <h6>Optimal State-Value:</h6>
       <p style="text-align: center;">
-        V*(s) = max_a 𝔼[R_{t+1} + γV*(S_{t+1}) | S_t=s, A_t=a]
+        $V^*(s) = \\max_a \\mathbb{E}[R_{t+1} + \\gamma V^*(S_{t+1}) | S_t=s, A_t=a]$
       </p>
 
       <h6>Optimal Action-Value:</h6>
       <p style="text-align: center;">
-        Q*(s, a) = 𝔼[R_{t+1} + γ max_{a'} Q*(S_{t+1}, a') | S_t=s, A_t=a]
+        $Q^*(s, a) = \\mathbb{E}[R_{t+1} + \\gamma \\max_{a\'} Q^*(S_{t+1}, a\') | S_t=s, A_t=a]$
       </p>
       <ul>
         <li><strong>Key insight:</strong> Optimal policy π* takes action that maximizes Q*(s,a)</li>
@@ -1858,8 +1866,8 @@ Optimal Policy (↑↓←→):
 
       <h5>2. Softmax / Boltzmann Exploration</h5>
       <ul>
-        <li><strong>Mechanism:</strong> Select actions probabilistically based on Q-values: π(a|s) ∝ exp(Q(s,a)/τ)</li>
-        <li><strong>Temperature τ:</strong> Controls randomness (high τ → uniform, low τ → greedy)</li>
+        <li><strong>Mechanism:</strong> Select actions probabilistically based on Q-values: $\\pi(a|s) \\propto \\exp(Q(s,a)/\\tau)$</li>
+        <li><strong>Temperature $\\tau$:</strong> Controls randomness (high $\\tau$ → uniform, low $\\tau$ → greedy)</li>
         <li><strong>Pros:</strong> Better actions explored more often</li>
         <li><strong>Cons:</strong> Sensitive to Q-value scale</li>
       </ul>
@@ -1867,7 +1875,7 @@ Optimal Policy (↑↓←→):
       <h5>3. Upper Confidence Bound (UCB)</h5>
       <ul>
         <li><strong>Principle:</strong> Optimism in face of uncertainty—prefer actions with uncertain values</li>
-        <li><strong>Bonus term:</strong> Select a = argmax_a [Q(s,a) + c√(ln t / N(s,a))]</li>
+        <li><strong>Bonus term:</strong> Select $a = \\arg\\max_a [Q(s,a) + c\\sqrt{\\ln t / N(s,a)}]$</li>
         <li><strong>Exploration bonus:</strong> Higher for less-visited actions</li>
         <li><strong>Theoretical guarantees:</strong> Logarithmic regret bounds</li>
       </ul>
@@ -1885,17 +1893,17 @@ Optimal Policy (↑↓←→):
 
       <h5>Policy Iteration</h5>
       <ol>
-        <li><strong>Policy Evaluation:</strong> Compute V^π for current policy π (solve Bellman expectation)</li>
-        <li><strong>Policy Improvement:</strong> Update policy: π(s) = argmax_a Q^π(s,a)</li>
+        <li><strong>Policy Evaluation:</strong> Compute $V^\\pi$ for current policy $\\pi$ (solve Bellman expectation)</li>
+        <li><strong>Policy Improvement:</strong> Update policy: $\\pi(s) = \\arg\\max_a Q^\\pi(s,a)$</li>
         <li><strong>Repeat:</strong> Until policy converges</li>
-        <li><strong>Guarantee:</strong> Converges to optimal policy π*</li>
+        <li><strong>Guarantee:</strong> Converges to optimal policy $\\pi^*$</li>
       </ol>
 
       <h5>Value Iteration</h5>
       <ul>
-        <li><strong>Direct optimization:</strong> Iterate Bellman optimality: V(s) ← max_a 𝔼[R + γV(s')]</li>
+        <li><strong>Direct optimization:</strong> Iterate Bellman optimality: $V(s) \\leftarrow \\max_a \\mathbb{E}[R + \\gamma V(s')]$</li>
         <li><strong>Single pass:</strong> Combines evaluation and improvement</li>
-        <li><strong>Converges to V*:</strong> Extract optimal policy π*(s) = argmax_a Q*(s,a)</li>
+        <li><strong>Converges to $V^*$:</strong> Extract optimal policy $\\pi^*(s) = \\arg\\max_a Q^*(s,a)$</li>
       </ul>
 
       <h4>Monte Carlo Methods (Model-Free)</h4>
@@ -1911,8 +1919,8 @@ Optimal Policy (↑↓←→):
       <h5>Monte Carlo Control</h5>
       <ol>
         <li><strong>Generate episode:</strong> Follow policy π, record states, actions, rewards</li>
-        <li><strong>For each (s,a) in episode:</strong> Update Q(s,a) toward observed return G_t</li>
-        <li><strong>Improve policy:</strong> π(s) = argmax_a Q(s,a)</li>
+        <li><strong>For each (s,a) in episode:</strong> Update $Q(s,a)$ toward observed return $G_t$</li>
+        <li><strong>Improve policy:</strong> $\\pi(s) = \\arg\\max_a Q(s,a)$</li>
         <li><strong>Repeat:</strong> Generate new episodes, converge to optimal policy</li>
       </ol>
 
@@ -1921,9 +1929,9 @@ Optimal Policy (↑↓←→):
       <h5>Core Idea: Bootstrap</h5>
       <ul>
         <li><strong>Update immediately:</strong> After each step, don't wait for episode end</li>
-        <li><strong>TD target:</strong> R_{t+1} + γV(S_{t+1}) (estimate return using current V estimate)</li>
-        <li><strong>TD error:</strong> δ_t = R_{t+1} + γV(S_{t+1}) - V(S_t)</li>
-        <li><strong>Update:</strong> V(S_t) ← V(S_t) + α δ_t</li>
+        <li><strong>TD target:</strong> $R_{t+1} + \\gamma V(S_{t+1})$ (estimate return using current V estimate)</li>
+        <li><strong>TD error:</strong> $\\delta_t = R_{t+1} + \\gamma V(S_{t+1}) - V(S_t)$</li>
+        <li><strong>Update:</strong> $V(S_t) \\leftarrow V(S_t) + \\alpha \\delta_t$</li>
         <li><strong>Combines MC and DP:</strong> Samples like MC, bootstraps like DP</li>
       </ul>
 
@@ -1931,18 +1939,18 @@ Optimal Policy (↑↓←→):
       <ul>
         <li><strong>Algorithm name:</strong> State-Action-Reward-State-Action</li>
         <li><strong>On-policy:</strong> Learn Q for policy being followed</li>
-        <li><strong>Update:</strong> Q(S_t, A_t) ← Q(S_t, A_t) + α[R_{t+1} + γQ(S_{t+1}, A_{t+1}) - Q(S_t, A_t)]</li>
-        <li><strong>Action selection:</strong> A_{t+1} actually taken from policy (e.g., ε-greedy)</li>
+        <li><strong>Update:</strong> $Q(S_t, A_t) \\leftarrow Q(S_t, A_t) + \\alpha[R_{t+1} + \\gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t)]$</li>
+        <li><strong>Action selection:</strong> $A_{t+1}$ actually taken from policy (e.g., $\\varepsilon$-greedy)</li>
         <li><strong>Conservative:</strong> Learns safe policy accounting for exploration</li>
       </ul>
 
       <h5>Q-Learning (Off-Policy TD Control)</h5>
       <ul>
-        <li><strong>Off-policy:</strong> Learn optimal Q* while following exploratory policy</li>
-        <li><strong>Update:</strong> Q(S_t, A_t) ← Q(S_t, A_t) + α[R_{t+1} + γ max_a Q(S_{t+1}, a) - Q(S_t, A_t)]</li>
-        <li><strong>Key difference:</strong> Uses max_a Q(S_{t+1}, a) regardless of action actually taken</li>
+        <li><strong>Off-policy:</strong> Learn optimal $Q^*$ while following exploratory policy</li>
+        <li><strong>Update:</strong> $Q(S_t, A_t) \\leftarrow Q(S_t, A_t) + \\alpha[R_{t+1} + \\gamma \\max_a Q(S_{t+1}, a) - Q(S_t, A_t)]$</li>
+        <li><strong>Key difference:</strong> Uses $\\max_a Q(S_{t+1}, a)$ regardless of action actually taken</li>
         <li><strong>Aggressive:</strong> Learns optimal policy, assumes greedy actions even if exploring</li>
-        <li><strong>Convergence:</strong> Guaranteed to find optimal Q* under certain conditions</li>
+        <li><strong>Convergence:</strong> Guaranteed to find optimal $Q^*$ under certain conditions</li>
       </ul>
 
       <h5>Comparison: SARSA vs Q-Learning</h5>
@@ -1954,12 +1962,12 @@ Optimal Policy (↑↓←→):
         </tr>
         <tr>
           <td>Update Rule</td>
-          <td>Uses actual next action A_{t+1}</td>
-          <td>Uses max_a Q(s',a)</td>
+          <td>Uses actual next action $A_{t+1}$</td>
+          <td>Uses $\\max_a Q(s',a)$</td>
         </tr>
         <tr>
           <td>Policy Learned</td>
-          <td>Policy being followed (ε-greedy)</td>
+          <td>Policy being followed ($\\varepsilon$-greedy)</td>
           <td>Optimal policy (greedy)</td>
         </tr>
         <tr>
@@ -1988,7 +1996,7 @@ Optimal Policy (↑↓←→):
 
       <h5>Deep Q-Networks (DQN)</h5>
       <ul>
-        <li><strong>Function approximation:</strong> Use neural network to approximate Q(s,a; θ)</li>
+        <li><strong>Function approximation:</strong> Use neural network to approximate $Q(s,a; \\theta)$</li>
         <li><strong>Handles large state spaces:</strong> Images, continuous states</li>
         <li><strong>Challenge:</strong> Correlated data, non-stationary targets cause instability</li>
       </ul>
@@ -1996,16 +2004,16 @@ Optimal Policy (↑↓←→):
       <h6>DQN Innovations</h6>
       <ol>
         <li><strong>Experience Replay:</strong> Store transitions in buffer, sample random minibatches for training (breaks correlation)</li>
-        <li><strong>Target Network:</strong> Separate network Q̂ for targets, updated periodically (stabilizes learning)</li>
-        <li><strong>Loss:</strong> L(θ) = 𝔼[(R + γ max_a' Q̂(s',a'; θ⁻) - Q(s,a; θ))²]</li>
+        <li><strong>Target Network:</strong> Separate network $\\hat{Q}$ for targets, updated periodically (stabilizes learning)</li>
+        <li><strong>Loss:</strong> $L(\\theta) = \\mathbb{E}[(R + \\gamma \\max_{a'} \\hat{Q}(s',a'; \\theta^-) - Q(s,a; \\theta))^2]$</li>
         <li><strong>Breakthrough:</strong> Played Atari games from raw pixels at human level</li>
       </ol>
 
       <h5>Policy Gradient Methods</h5>
       <ul>
-        <li><strong>Direct policy optimization:</strong> Parameterize policy π(a|s; θ), optimize θ directly</li>
-        <li><strong>Objective:</strong> J(θ) = 𝔼_π[G_t], maximize expected return</li>
-        <li><strong>Policy gradient:</strong> ∇_θ J(θ) = 𝔼_π[∇_θ log π(a|s; θ) Q^π(s,a)]</li>
+        <li><strong>Direct policy optimization:</strong> Parameterize policy $\\pi(a|s; \\theta)$, optimize $\\theta$ directly</li>
+        <li><strong>Objective:</strong> $J(\\theta) = \\mathbb{E}_\\pi[G_t]$, maximize expected return</li>
+        <li><strong>Policy gradient:</strong> $\\nabla_\\theta J(\\theta) = \\mathbb{E}_\\pi[\\nabla_\\theta \\log \\pi(a|s; \\theta) Q^\\pi(s,a)]$</li>
         <li><strong>REINFORCE algorithm:</strong> Monte Carlo estimate of gradient</li>
         <li><strong>Advantages:</strong> Handles continuous actions, stochastic policies, better convergence properties</li>
       </ul>
@@ -2013,10 +2021,10 @@ Optimal Policy (↑↓←→):
       <h5>Actor-Critic Methods</h5>
       <ul>
         <li><strong>Hybrid approach:</strong> Combine policy gradient (actor) with value function (critic)</li>
-        <li><strong>Actor:</strong> Policy network π(a|s; θ), updated via policy gradient</li>
-        <li><strong>Critic:</strong> Value network V(s; w), estimates returns (reduces variance)</li>
-        <li><strong>Advantage:</strong> A(s,a) = Q(s,a) - V(s), measures how good action is relative to average</li>
-        <li><strong>Update actor:</strong> ∇_θ J ≈ ∇_θ log π(a|s; θ) A(s,a)</li>
+        <li><strong>Actor:</strong> Policy network $\\pi(a|s; \\theta)$, updated via policy gradient</li>
+        <li><strong>Critic:</strong> Value network $V(s; w)$, estimates returns (reduces variance)</li>
+        <li><strong>Advantage:</strong> $A(s,a) = Q(s,a) - V(s)$, measures how good action is relative to average</li>
+        <li><strong>Update actor:</strong> $\\nabla_\\theta J \\approx \\nabla_\\theta \\log \\pi(a|s; \\theta) A(s,a)$</li>
         <li><strong>Examples:</strong> A3C, PPO, SAC (state-of-the-art algorithms)</li>
       </ul>
 
@@ -2428,12 +2436,12 @@ for episode in range(1000):
       <h5>Affine Quantization</h5>
       <p><strong>Map floating point to integers:</strong></p>
       <p style="text-align: center;">
-        x_quant = round(x / scale) + zero_point
+        $x_{\\text{quant}} = \\text{round}(x / \\text{scale}) + \\text{zero\\_point}$
       </p>
       <ul>
         <li><strong>scale:</strong> Step size between quantized levels (range / 255 for INT8)</li>
         <li><strong>zero_point:</strong> Offset to handle asymmetric ranges</li>
-        <li><strong>Dequantization:</strong> x_float = (x_quant - zero_point) × scale</li>
+        <li><strong>Dequantization:</strong> $x_{\\text{float}} = (x_{\\text{quant}} - \\text{zero\\_point}) \\times \\text{scale}$</li>
       </ul>
 
       <h5>Advantages and Limitations</h5>
@@ -2490,7 +2498,7 @@ for episode in range(1000):
       <h5>Method</h5>
       <ol>
         <li><strong>Train dense network:</strong> Full model to convergence</li>
-        <li><strong>Identify unimportant weights:</strong> Typically by magnitude |w_i|</li>
+        <li><strong>Identify unimportant weights:</strong> Typically by magnitude $|w_i|$</li>
         <li><strong>Set to zero:</strong> Prune bottom p% of weights (e.g., 50%, 90%)</li>
         <li><strong>Fine-tune:</strong> Retrain remaining weights to recover accuracy</li>
         <li><strong>Iterate:</strong> Optionally repeat pruning and fine-tuning</li>
@@ -2506,8 +2514,8 @@ for episode in range(1000):
 
       <h5>Pruning Criteria</h5>
       <ul>
-        <li><strong>Magnitude:</strong> |w_i| < threshold (simple, effective)</li>
-        <li><strong>Gradient-based:</strong> Prune weights with small ∂L/∂w (negligible impact on loss)</li>
+        <li><strong>Magnitude:</strong> $|w_i| <$ threshold (simple, effective)</li>
+        <li><strong>Gradient-based:</strong> Prune weights with small $\\frac{\\partial L}{\\partial w}$ (negligible impact on loss)</li>
         <li><strong>Hessian-based:</strong> Optimal Brain Damage—second-order information</li>
         <li><strong>Movement pruning:</strong> Prune weights moving toward zero during training</li>
       </ul>
@@ -2583,24 +2591,24 @@ for episode in range(1000):
 
       <h5>Distillation Loss</h5>
       <p style="text-align: center; font-size: 1.1em;">
-        L = α × L_hard(y_true, ŷ_student) + (1-α) × L_soft(ŷ_teacher, ŷ_student)
+        $L = \\alpha \\times L_{\\text{hard}}(y_{\\text{true}}, \\hat{y}_{\\text{student}}) + (1-\\alpha) \\times L_{\\text{soft}}(\\hat{y}_{\\text{teacher}}, \\hat{y}_{\\text{student}})$
       </p>
       <ul>
-        <li><strong>L_hard:</strong> Cross-entropy with true labels (standard supervision)</li>
-        <li><strong>L_soft:</strong> KL divergence between teacher and student outputs</li>
-        <li><strong>α:</strong> Balance factor (typically 0.5-0.9)</li>
+        <li><strong>$L_{\\text{hard}}$:</strong> Cross-entropy with true labels (standard supervision)</li>
+        <li><strong>$L_{\\text{soft}}$:</strong> KL divergence between teacher and student outputs</li>
+        <li><strong>$\\alpha$:</strong> Balance factor (typically 0.5-0.9)</li>
       </ul>
 
       <h5>Temperature Scaling</h5>
       <p><strong>Soften probability distributions for better knowledge transfer:</strong></p>
       <p style="text-align: center;">
-        p_i = exp(z_i / T) / Σ_j exp(z_j / T)
+        $p_i = \\frac{\\exp(z_i / T)}{\\sum_j \\exp(z_j / T)}$
       </p>
       <ul>
-        <li><strong>T=1:</strong> Standard softmax</li>
-        <li><strong>T>1:</strong> Softer distribution, reveals relative magnitudes</li>
+        <li><strong>$T=1$:</strong> Standard softmax</li>
+        <li><strong>$T>1$:</strong> Softer distribution, reveals relative magnitudes</li>
         <li><strong>Typical T:</strong> 3-20 during distillation</li>
-        <li><strong>Inference:</strong> Use T=1 (standard predictions)</li>
+        <li><strong>Inference:</strong> Use $T=1$ (standard predictions)</li>
       </ul>
 
       <h4>Variants and Extensions</h4>
@@ -2639,15 +2647,15 @@ for episode in range(1000):
       <p><strong>Decompose large weight matrix into product of smaller matrices.</strong></p>
 
       <h5>For Fully Connected Layers</h5>
-      <p><strong>Original:</strong> W ∈ ℝ^(m×n) with mn parameters</p>
-      <p><strong>Factorized:</strong> W = U × V where U ∈ ℝ^(m×k), V ∈ ℝ^(k×n)</p>
-      <p><strong>Parameters:</strong> k(m+n) where k << min(m,n)</p>
-      <p><strong>Compression ratio:</strong> mn / [k(m+n)]</p>
+      <p><strong>Original:</strong> $W \\in \\mathbb{R}^{m \\times n}$ with $mn$ parameters</p>
+      <p><strong>Factorized:</strong> $W = U \\times V$ where $U \\in \\mathbb{R}^{m \\times k}$, $V \\in \\mathbb{R}^{k \\times n}$</p>
+      <p><strong>Parameters:</strong> $k(m+n)$ where $k \\ll \\min(m,n)$</p>
+      <p><strong>Compression ratio:</strong> $\\frac{mn}{k(m+n)}$</p>
 
       <h5>Singular Value Decomposition (SVD)</h5>
       <ul>
-        <li><strong>Decomposition:</strong> W = UΣV^T</li>
-        <li><strong>Low-rank approximation:</strong> Keep top k singular values</li>
+        <li><strong>Decomposition:</strong> $W = U\\Sigma V^T$</li>
+        <li><strong>Low-rank approximation:</strong> Keep top $k$ singular values</li>
         <li><strong>Optimal:</strong> Minimizes reconstruction error in Frobenius norm</li>
         <li><strong>Apply:</strong> After training, replace layer with factorized version</li>
       </ul>
@@ -2656,7 +2664,7 @@ for episode in range(1000):
       <ul>
         <li><strong>Tucker decomposition:</strong> Factorize 4D tensor (kernels, channels, height, width)</li>
         <li><strong>Depthwise separable convolutions:</strong> Spatial convolution + pointwise convolution</li>
-        <li><strong>Parameter reduction:</strong> k^2×C_in×C_out → k^2×C_in + C_in×C_out</li>
+        <li><strong>Parameter reduction:</strong> $k^2 \\times C_{\\text{in}} \\times C_{\\text{out}} \\to k^2 \\times C_{\\text{in}} + C_{\\text{in}} \\times C_{\\text{out}}$</li>
       </ul>
 
       <h3>Efficient Architecture Design</h3>
@@ -2692,40 +2700,40 @@ for episode in range(1000):
 Stage-by-Stage Compression (Example: ResNet-50)
 
 ┌────────────────────────────────────────────────────────┐
-│ Original Model: ResNet-50                                   │
-│ Size: 97.8 MB  |  Params: 25.6M  |  Acc: 76.1%            │
+│ Original Model: ResNet-50                              │
+│ Size: 97.8 MB  |  Params: 25.6M  |  Acc: 76.1%         │
 └────────────────────────────────────────────────────────┘
          │
          │ Step 1: Structured Pruning (50% channels)
          ▼
 ┌────────────────────────────────────────────────────────┐
-│ After Pruning                                              │
-│ Size: 97.8 MB  |  Params: 12.8M  |  Acc: 75.3%            │
-│ Compression: 2.0x params (same storage - FP32)            │
+│ After Pruning                                          │
+│ Size: 97.8 MB  |  Params: 12.8M  |  Acc: 75.3%         │
+│ Compression: 2.0x params (same storage - FP32)         │
 └────────────────────────────────────────────────────────┘
          │
          │ Step 2: Fine-tune pruned model
          ▼
 ┌────────────────────────────────────────────────────────┐
-│ After Fine-tuning                                          │
-│ Size: 97.8 MB  |  Params: 12.8M  |  Acc: 75.8%            │
-│ Accuracy recovered!                                       │
+│ After Fine-tuning                                      │
+│ Size: 97.8 MB  |  Params: 12.8M  |  Acc: 75.8%         │
+│ Accuracy recovered!                                    │
 └────────────────────────────────────────────────────────┘
          │
          │ Step 3: Quantization (FP32 → INT8)
          ▼
 ┌────────────────────────────────────────────────────────┐
-│ After Quantization                                         │
-│ Size: 12.2 MB  |  Params: 12.8M  |  Acc: 75.2%            │
-│ Compression: 4x storage (INT8 vs FP32)                    │
+│ After Quantization                                     │
+│ Size: 12.2 MB  |  Params: 12.8M  |  Acc: 75.2%         │
+│ Compression: 4x storage (INT8 vs FP32)                 │
 └────────────────────────────────────────────────────────┘
          │
          ▼
 ┌────────────────────────────────────────────────────────┐
-│ FINAL COMPRESSED MODEL                                     │
-│ Total Compression: 8.0x (97.8 MB → 12.2 MB)             │
-│ Accuracy Loss: 0.9% (76.1% → 75.2%)                     │
-│ Speedup: ~4x faster inference on mobile devices           │
+│ FINAL COMPRESSED MODEL                                 │
+│ Total Compression: 8.0x (97.8 MB → 12.2 MB)            │
+│ Accuracy Loss: 0.9% (76.1% → 75.2%)                    │
+│ Speedup: ~4x faster inference on mobile devices        │
 └────────────────────────────────────────────────────────┘
       </pre>
 
@@ -3137,37 +3145,37 @@ print(f"Output difference: {(original_layer(x) - compressed_layer(x)).abs().mean
                     Round t: Global Model w_t
                               │
                               │ 1. Distribute
-           ┌───────────────┴───────────────┐
-           │                                │
-           ▼                                ▼
-    ┌──────────┐                      ┌──────────┐
-    │ Client 1 │  ...                │ Client K │
-    │ 📱       │                      │ 📱       │
-    └──────────┘                      └──────────┘
-         │                                   │
-         │ 2. Local Training                │
-         │    (On private data)              │
-         │    Data never sent!               │
-         ▼                                   ▼
-    Local Model                        Local Model
-    w_t^1                              w_t^k
-         │                                   │
-         │ 3. Send Updates                   │
-         │    (Model weights only)           │
-           └───────────────┬───────────────┘
-                           │
-                           ▼
-                    ┌──────────┐
-                    │  SERVER  │
-                    │  🖥️      │
-                    └──────────┘
-                           │
-                           │ 4. Aggregate
-                           │    w_{t+1} = Σ (n_k/n) × w_t^k
-                           ▼
-                  Round t+1: Global Model w_{t+1}
-                           │
-                           │ 5. Repeat...
+              ┌───────────────┴───────────────┐
+              │                               │
+              ▼                               ▼
+        ┌──────────┐                      ┌──────────┐
+        │ Client 1 │  ...                 │ Client K │
+        │          │                      │          │
+        └──────────┘                      └──────────┘
+            │                                   │
+            │ 2. Local Training                 │
+            │    (On private data)              │
+            │    Data never sent!               │
+            ▼                                   ▼
+        Local Model                        Local Model
+          w_t^1                               w_t^k
+            │                                   │
+            │ 3. Send Updates                   │
+            │    (Model weights only)           │
+            └───────────────┬───────────────────┘
+                            │
+                            ▼
+                      ┌──────────┐
+                      │  SERVER  │
+                      │          │
+                      └──────────┘
+                            │
+                            │ 4. Aggregate
+                            │    w_{t+1} = Σ (n_k/n) × w_t^k
+                            ▼
+                    Round t+1: Global Model w_{t+1}
+                            │
+                            │ 5. Repeat...
 
 Key Benefits:
 ✓ Privacy: Raw data stays on device
@@ -3250,7 +3258,7 @@ for round t = 1 to T:
       <h5>3. Weighted Aggregation</h5>
       <p><strong>Weight by data size:</strong></p>
       <p style="text-align: center; font-size: 1.1em;">
-        w_{global} = Σ<sub>k∈S</sub> (n_k / n) × w_k
+        $w_{\\text{global}} = \\sum_{k\\in S} \\frac{n_k}{n} \\times w_k$
       </p>
       <ul>
         <li><strong>Rationale:</strong> Clients with more data should contribute more</li>
@@ -3400,7 +3408,7 @@ for round t = 1 to T:
       <p><strong>Informal:</strong> Adding/removing single data point changes output distribution negligibly.</p>
       <p><strong>Formal:</strong> Algorithm A is (ε, δ)-differentially private if for all neighboring datasets D, D' and all outputs S:</p>
       <p style="text-align: center;">
-        P(A(D) ∈ S) ≤ e<sup>ε</sup> × P(A(D') ∈ S) + δ
+        $P(A(D) \\in S) \\leq e^{\\varepsilon} \\times P(A(D') \\in S) + \\delta$
       </p>
 
       <h5>Implementation: DP-SGD</h5>
@@ -3414,7 +3422,7 @@ for round t = 1 to T:
       <h5>Parameters</h5>
       <ul>
         <li><strong>ε (epsilon):</strong> Privacy budget (smaller → more private, e.g., ε=1 strong, ε=10 weak)</li>
-        <li><strong>δ (delta):</strong> Failure probability (typically 10<sup>-5</sup>)</li>
+        <li><strong>δ (delta):</strong> Failure probability (typically $10^{-5}$)</li>
         <li><strong>C (clip norm):</strong> Gradient clipping threshold</li>
         <li><strong>σ (noise scale):</strong> Standard deviation of noise</li>
       </ul>
@@ -3953,23 +3961,23 @@ for client in dp_clients:
       <h5>Visual Example: 5-Way 1-Shot Task</h5>
       <pre class="code-block">
 ┌────────────────────────────────────────────────────────────────┐
-│           SUPPORT SET (Training - K=1 example per class)        │
+│           SUPPORT SET (Training - K=1 example per class)       │
 ├────────────────────────────────────────────────────────────────┤
-│  Class 1: [🐈]     Class 2: [🐶]     Class 3: [🐦]           │
-│     Cat            Dog            Bird                       │
-│                                                               │
-│  Class 4: [🐎]     Class 5: [🐰]                          │
-│    Horse          Rabbit                                     │
+│  Class 1: [🐈]     Class 2: [🐶]     Class 3: [🐦]              │
+│     Cat            Dog            Bird                         │
+│                                                                │
+│  Class 4: [🐎]     Class 5: [🐰]                                │
+│    Horse          Rabbit                                       │
 └────────────────────────────────────────────────────────────────┘
                               │
                               │ Learn from these 5 examples only!
                               ▼
 ┌────────────────────────────────────────────────────────────────┐
-│              QUERY SET (Testing - Classify these!)              │
+│              QUERY SET (Testing - Classify these!)             │
 ├────────────────────────────────────────────────────────────────┤
-│  [🐈?]  Which class?  →  Predict: Cat (Class 1)          │
-│  [🐦?]  Which class?  →  Predict: Bird (Class 3)         │
-│  [🐶?]  Which class?  →  Predict: Dog (Class 2)          │
+│  [🐈?]  Which class?  →  Predict: Cat (Class 1)                │
+│  [🐦?]  Which class?  →  Predict: Bird (Class 3)               │
+│  [🐶?]  Which class?  →  Predict: Dog (Class 2)                │
 └────────────────────────────────────────────────────────────────┘
 
 Key Insight: Must generalize from just 5 total examples!
@@ -3997,17 +4005,17 @@ Key Insight: Must generalize from just 5 total examples!
 
       <p>Siamese networks use twin neural networks with shared weights to process pairs of examples. During training, we feed pairs of images: some from the same class (positive pairs) and some from different classes (negative pairs). The network learns embeddings where same-class pairs have small distances and different-class pairs have large distances.</p>
 
-      <p><strong>Contrastive loss</strong> drives this learning: L = y×d² + (1-y)×max(0, margin-d)², where y=1 for same-class pairs and y=0 for different-class pairs, d is the distance between embeddings, and margin defines how far apart different-class pairs should be. At test time, we compare query embeddings to support embeddings and classify based on smallest distance.</p>
+      <p><strong>Contrastive loss</strong> drives this learning: $L = y \\times d^2 + (1-y) \\times \\max(0, \\text{margin}-d)^2$, where $y=1$ for same-class pairs and $y=0$ for different-class pairs, $d$ is the distance between embeddings, and margin defines how far apart different-class pairs should be. At test time, we compare query embeddings to support embeddings and classify based on smallest distance.</p>
 
       <h5>Prototypical Networks: Class Representatives</h5>
 
       <p>Prototypical Networks simplify metric learning by computing a single <strong>prototype</strong> (representative embedding) per class as the mean of all support examples for that class. Given support set embeddings, we compute:</p>
 
-      <p style="text-align: center;">c_k = (1/K) Σ f_θ(x_i) for all x_i in class k</p>
+      <p style="text-align: center;">$c_k = \\frac{1}{K} \\sum f_\\theta(x_i)$ for all $x_i$ in class $k$</p>
 
-      <p>where f_θ is the embedding network and c_k is the prototype for class k. To classify a query example x, we embed it as f_θ(x) and find the nearest prototype using Euclidean distance:</p>
+      <p>where $f_\\theta$ is the embedding network and $c_k$ is the prototype for class $k$. To classify a query example $x$, we embed it as $f_\\theta(x)$ and find the nearest prototype using Euclidean distance:</p>
 
-      <p style="text-align: center;">ŷ = argmin_k d(f_θ(x), c_k)</p>
+      <p style="text-align: center;">$\\hat{y} = \\arg\\min_k d(f_\\theta(x), c_k)$</p>
 
       <h5>Visual: Embedding Space with Prototypes</h5>
       <pre class="code-block">
@@ -4015,15 +4023,15 @@ Learned Embedding Space (2D projection for visualization):
 
         │
         │     🐶     🐶              Class prototypes:
-        │       ╲   ╱                 ● = Class center
-    Cat │    🐶  ●  🐶  Dog         🐶 = Dog samples
-    ●   │       ╱   ╲               🐈 = Cat samples
-  🐈   │    🐶     🐶            🐦 = Bird samples
-   ╲  │                            ? = Query
- 🐈  ╲ │
+        │       ╲   ╱                ● = Class center
+    Cat │    🐶  ●  🐶  Dog           🐶 = Dog samples
+    ●   │       ╱   ╲                🐈 = Cat samples
+  🐈    │    🐶     🐶                🐦 = Bird samples
+   ╲    │                            ? = Query
+ 🐈  ╲  │
 ────────┼────────────────────────────────
-   ╱  │                    🐦
- 🐈   │                  ╱   ╲
+   ╱    │                   🐦
+ 🐈     │                  ╱   ╲
         │     ?          🐦  ●  🐦  Bird
         │      ╲             ╲   ╱
         │       ╲          🐦     🐦
@@ -4050,14 +4058,14 @@ Key: Same-class examples cluster together,
 
       <h6>Architecture Details</h6>
       <ul>
-        <li><strong>Embedding module f_φ:</strong> CNN or other encoder producing feature maps</li>
-        <li><strong>Relation module g_φ:</strong> Small neural network (2-3 layers) taking concatenated features</li>
+        <li><strong>Embedding module $f_\\phi$:</strong> CNN or other encoder producing feature maps</li>
+        <li><strong>Relation module $g_\\phi$:</strong> Small neural network (2-3 layers) taking concatenated features</li>
         <li><strong>Process:</strong>
           <ol>
-            <li>Embed support examples: f_φ(x_support)</li>
-            <li>Embed query: f_φ(x_query)</li>
-            <li>Concatenate feature pairs: [f_φ(x_query), f_φ(x_support)]</li>
-            <li>Compute relation score: r = g_φ([f_φ(x_query), f_φ(x_support)])</li>
+            <li>Embed support examples: $f_\\phi(x_{\\text{support}})$</li>
+            <li>Embed query: $f_\\phi(x_{\\text{query}})$</li>
+            <li>Concatenate feature pairs: $[f_\\phi(x_{\\text{query}}), f_\\phi(x_{\\text{support}})]$</li>
+            <li>Compute relation score: $r = g_\\phi([f_\\phi(x_{\\text{query}}), f_\\phi(x_{\\text{support}})])$</li>
             <li>Classify as class with highest relation score</li>
           </ol>
         </li>
@@ -4077,59 +4085,61 @@ Key: Same-class examples cluster together,
 
       <h5>MAML: Model-Agnostic Meta-Learning</h5>
 
-      <p>MAML (Model-Agnostic Meta-Learning) is the most influential meta-learning algorithm. It learns initial parameters θ such that after a few gradient steps on a new task with minimal data, the model achieves good performance. This involves two nested optimization loops:</p>
+      <p>MAML (Model-Agnostic Meta-Learning) is the most influential meta-learning algorithm. It learns initial parameters $\\theta$ such that after a few gradient steps on a new task with minimal data, the model achieves good performance. This involves two nested optimization loops:</p>
 
       <h6>Visual: MAML Two-Level Optimization</h6>
       <pre class="code-block">
 MAML: Learning to Learn Fast
 
-┌────────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────────────────┐
 │                    META-LEARNING (Outer Loop)                  │
 │                                                                │
-│  Initial parameters θ  (The goal: find best starting point) │
-│         │                                                     │
-│         ├──────── Task 1 ───────────────────────┐   │
-│         │                                              │   │
-│         │  ┌────────────────────────────────┐  │   │
-│         │  │   INNER LOOP (Adaptation)      │  │   │
-│         │  │                                │  │   │
-│         └─►│  θ → gradient step → θ'     │  │   │
-│            │     (on support set)          │  │   │
-│            │                                │  │   │
-│            │  Few gradient steps           │  │   │
-│            │  = Task-specific adaptation   │  │   │
-│            └────────────────────────────────┘  │   │
-│                       │                         │   │
-│                       ▼                         │   │
-│              Evaluate θ' on query set        │   │
-│                   (test performance)           │   │
-│                                                │   │
-│         ├──────── Task 2 ───────────────────────┘   │
-│         │  [Same inner loop process]                     │
-│         │                                                  │
-│         ├──────── Task 3 ───────────────────────┘   │
-│         │  [Same inner loop process]                     │
-│         │                                                  │
-│         ▼                                                  │
-│  Update θ to minimize average query loss across all tasks  │
-│  (Optimize for good post-adaptation performance)             │
-└────────────────────────────────────────────────────────┘
+│  Initial parameters θ  (The goal: find best starting point)    │
+│         │                                                      │
+│         ├──────── Task 1 ──────────┐                           │
+│         │                          │                           │
+│         │  ┌────────────────────┐  │                           │
+│         │  │  INNER LOOP (Adapt)│  │                           │
+│         │  │  θ → θ'_1          │  │                           │
+│         │  └────────────────────┘  │                           │
+│         │          │               │                           │
+│         │          ▼               │                           │
+│         │  Evaluate on query set   │                           │
+│         │                          │                           │
+│         ├──────── Task 2 ──────────┘                           │
+│         │                          │                           │
+│         │  ┌────────────────────┐  │                           │
+│         │  │  INNER LOOP (Adapt)│  │                           │
+│         │  │  θ → θ'_2          │  │                           │
+│         │  └────────────────────┘  │                           │
+│         │          │               │                           │
+│         │          ▼               │                           │
+│         │  Evaluate on query set   │                           │
+│         │                          │                           │
+│         └──────── Task 3 ──────────┘                           │
+│                    │                                           │
+│            [Same inner loop]                                   │
+│                    │                                           │
+│                    ▼                                           │
+│  Update θ to minimize average query loss across all tasks      │
+│  (Optimize for good post-adaptation performance)               │
+└────────────────────────────────────────────────────────────────┘
 
 Key Insight: Gradient descent THROUGH gradient descent!
              (Second-order optimization)
       </pre>
 
-      <p><strong>Inner loop (task-specific adaptation):</strong> Given a new task with support set D_train, perform a few gradient descent steps:</p>
+      <p><strong>Inner loop (task-specific adaptation):</strong> Given a new task with support set $D_{\\text{train}}$, perform a few gradient descent steps:</p>
 
-      <p style="text-align: center;">θ'_i = θ - α∇_θ L_D_train(θ)</p>
+      <p style="text-align: center;">$\\theta'_i = \\theta - \\alpha \\nabla_\\theta L_{D_{\\text{train}}}(\\theta)$</p>
 
-      <p>where α is the inner learning rate and θ'_i are the task-adapted parameters after one or more gradient steps.</p>
+      <p>where $\\alpha$ is the inner learning rate and $\\theta'_i$ are the task-adapted parameters after one or more gradient steps.</p>
 
-      <p><strong>Outer loop (meta-optimization):</strong> Optimize the initialization θ to minimize loss on query sets after inner-loop adaptation:</p>
+      <p><strong>Outer loop (meta-optimization):</strong> Optimize the initialization $\\theta$ to minimize loss on query sets after inner-loop adaptation:</p>
 
-      <p style="text-align: center;">θ ← θ - β∇_θ Σ_tasks L_D_test(θ'_i)</p>
+      <p style="text-align: center;">$\\theta \\leftarrow \\theta - \\beta \\nabla_\\theta \\sum_{\\text{tasks}} L_{D_{\\text{test}}}(\\theta'_i)$</p>
 
-      <p>where β is the meta-learning rate. This is gradient descent through gradient descent—we backpropagate through the inner loop optimization to find initializations that lead to good post-adaptation performance.</p>
+      <p>where $\\beta$ is the meta-learning rate. This is gradient descent through gradient descent—we backpropagate through the inner loop optimization to find initializations that lead to good post-adaptation performance.</p>
 
       <p>The beauty of MAML is its model-agnosticity: it works with any model trainable by gradient descent. The learned initialization encodes prior knowledge about the task distribution, enabling rapid adaptation to new tasks from the same distribution.</p>
 
@@ -4147,7 +4157,7 @@ Key Insight: Gradient descent THROUGH gradient descent!
 
       <ol>
         <li><strong>Sample an episode:</strong> Randomly select N classes from training set</li>
-        <li><strong>Create support set:</strong> Sample K examples per class (N×K total)</li>
+        <li><strong>Create support set:</strong> Sample $K$ examples per class ($N \\times K$ total)</li>
         <li><strong>Create query set:</strong> Sample additional examples from same N classes</li>
         <li><strong>Train the model:</strong> Use only support set to classify query set</li>
         <li><strong>Update parameters:</strong> Based on query set performance</li>
@@ -4583,11 +4593,11 @@ print(f"Test accuracy: {accuracy.item():.4f}")`,
 
       <h4>Common Modalities and Their Characteristics</h4>
 
-      <p><strong>Vision (images and video):</strong> High-dimensional spatial data, typically processed by CNNs or Vision Transformers. Visual information is rich but ambiguous—an image can be described many ways. Video adds temporal dynamics, requiring spatiotemporal reasoning. Visual data is dense: a 224×224 RGB image has 150,528 dimensions.</p>
+      <p><strong>Vision (images and video):</strong> High-dimensional spatial data, typically processed by CNNs or Vision Transformers. Visual information is rich but ambiguous—an image can be described many ways. Video adds temporal dynamics, requiring spatiotemporal reasoning. Visual data is dense: a $224 \\times 224$ RGB image has $150{,}528$ dimensions.</p>
 
       <p><strong>Language (text):</strong> Sequential symbolic data with discrete tokens from a finite vocabulary. Language is precise and compositional—words combine to form complex meanings. Processed by Transformers, language models capture syntax, semantics, and world knowledge. Unlike images, text is inherently hierarchical (characters → words → sentences → documents).</p>
 
-      <p><strong>Audio (speech, music, sounds):</strong> Temporal waveforms capturing acoustic information. Speech combines linguistic content with prosody, emotion, and speaker identity. Audio is continuous and high-frequency (16kHz+ sample rates), often processed as spectrograms. Environmental sounds carry semantic information (dog barking, car honking).</p>
+      <p><strong>Audio (speech, music, sounds):</strong> Temporal waveforms capturing acoustic information. Speech combines linguistic content with prosody, emotion, and speaker identity. Audio is continuous and high-frequency ($16$ kHz$+$ sample rates), often processed as spectrograms. Environmental sounds carry semantic information (dog barking, car honking).</p>
 
       <p><strong>Sensor data:</strong> LiDAR for 3D geometry, depth cameras, thermal imaging, radar. Critical for robotics and autonomous vehicles where RGB vision alone is insufficient. Different sensors capture complementary information—cameras provide texture, LiDAR provides precise distance.</p>
 
@@ -4613,49 +4623,50 @@ print(f"Test accuracy: {accuracy.item():.4f}")`,
 
       <h4>5. Heterogeneity: Different Scales and Distributions</h4>
 
-      <p>Modalities have different learning dynamics—visual features may converge faster than language features. They have different scales (image pixels 0-255, text token IDs 0-50000). Effective multi-modal learning requires balancing these heterogeneities through careful normalization and loss weighting.</p>
+      <p>Modalities have different learning dynamics—visual features may converge faster than language features. They have different scales (image pixels $0$-$255$, text token IDs $0$-$50{,}000$). Effective multi-modal learning requires balancing these heterogeneities through careful normalization and loss weighting.</p>
 
       <h3>Fusion Strategies: When and How to Combine</h3>
 
       <h4>Visual Comparison of Fusion Strategies</h4>
       <pre class="code-block">
 ┌─────────────────────────────────────────────────────────────────────┐
-│                       EARLY FUSION                                │
+│                       EARLY FUSION                                  │
 ├─────────────────────────────────────────────────────────────────────┤
-│  Image → ┌─────────────────────────────────┐               │
-│           │  Concatenate at Input      │ ─────────────► Output  │
-│  Text  → │  → Single Joint Model     │               │
-│           └─────────────────────────────────┘               │
-│  + Maximum interaction, - High dimensionality                   │
+│  Image → ┌─────────────────────────────────┐                        │
+│          │  Concatenate at Input           │ ─────────────► Output  │
+│  Text  → │  → Single Joint Model           │                        │
+│          └─────────────────────────────────┘                        │
+│  + Maximum interaction, - High dimensionality                       │
 └─────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────┐
-│                        LATE FUSION                                │
-├─────────────────────────────────────────────────────────────────────┤
-│  Image → ┌────────────────┐ ────► Pred 1           │
-│           │ Image Encoder  │         │                   │
-│           └────────────────┘         ▼                   │
-│                             ┌───────────────┐      │
-│  Text  → ┌────────────────┐ ────► Pred 2 ──►│ Combine     │────► Output  │
-│           │ Text Encoder   │         │ (Average/  │      │
-│           └────────────────┘         └───────────────┘      │
-│                                   Concat)                   │
-│  + Modular & interpretable, - Limited cross-modal interaction   │
-└─────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                        LATE FUSION                                           │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  Image → ┌────────────────┐ ────► Pred 1                                     │
+│          │ Image Encoder  │         │                                        │
+│          └────────────────┘         ▼                                        │
+│                                             ┌─────────────────┐              │
+│  Text  → ┌────────────────┐ ────► Pred 2 ──►│ Combine         │────► Output  │
+│          │ Text Encoder   │                 │ (Average/Concat)│              │
+│          └────────────────┘                 └─────────────────┘              │
+│                                                                              │
+│  + Modular & interpretable, - Limited cross-modal interaction                │
+└──────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│                       HYBRID FUSION (Modern)                     │
+│                       HYBRID FUSION (Modern)                        │
 ├─────────────────────────────────────────────────────────────────────┤
-│  Image → ┌────────────────┐             ┌────────────────┐   │
-│           │ Image Encoder  │──────────►│ Cross-       │   │
-│           └────────────────┘    ⇅       │ Attention    │   │
-│                                 ⇅       │ Layers       │───► Output  │
-│  Text  → ┌────────────────┐    ⇅       │ (Interact    │   │
-│           │ Text Encoder   │──────────►│ at multiple  │   │
-│           └────────────────┘             └────────────────┘   │
-│                                   levels)                    │
-│  + Best of both worlds: modality-specific + cross-modal         │
-│  + Most effective for complex tasks (VQA, captioning)           │
+│  Image →  ┌────────────────┐           ┌──────────────┐             │
+│           │ Image Encoder  │──────────►│ Cross-       │             │
+│           └────────────────┘    ⇅      │ Attention    │             │
+│                                 ⇅      │ Layers       │───► Output  │
+│  Text  →  ┌────────────────┐    ⇅      │ (Interact    │             │
+│           │ Text Encoder   │──────────►│ at multiple  │             │
+│           │                │           │  levels)     │             │
+│           └────────────────┘           └──────────────┘             │
+│                                                                     │
+│  + Best of both worlds: modality-specific + cross-modal             │
+│  + Most effective for complex tasks (VQA, captioning)               │
 └─────────────────────────────────────────────────────────────────────┘
       </pre>
 
@@ -4685,39 +4696,39 @@ print(f"Test accuracy: {accuracy.item():.4f}")`,
       <pre class="code-block">
 Cross-Modal Attention: How Image and Text Interact
 
-Image Tokens: [I1, I2, I3, ..., In]  (n=196 for 14x14 patches)
-Text Tokens:  [T1, T2, T3, ..., Tm]  (m=sequence length)
+Image Tokens: [I₁, I₂, I₃, ..., Iₙ]  (n=196 for 14×14 patches)
+Text Tokens:  [T₁, T₂, T₃, ..., Tₘ]  (m=sequence length)
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│            Text-to-Image Cross-Attention                       │
+│            Text-to-Image Cross-Attention                            │
 ├─────────────────────────────────────────────────────────────────────┤
-│  Query:  Text tokens [T1, T2, ..., Tm]                         │
-│  Keys:   Image tokens [I1, I2, ..., In]                        │
-│  Values: Image tokens [I1, I2, ..., In]                        │
-│                                                                 │
-│  Each text token attends to all image regions:                 │
-│                                                                 │
-│    "dog"  ─── high attention ───► [🐶 region]               │
-│      │                                                          │
-│      └─── low attention  ───► [background]                 │
-│                                                                 │
-│  Output: Text tokens enriched with visual information          │
+│  Query:  Text tokens [T₁, T₂, ..., Tₘ]                              │
+│  Keys:   Image tokens [I₁, I₂, ..., Iₙ]                             │
+│  Values: Image tokens [I₁, I₂, ..., Iₙ]                             │
+│                                                                     │
+│  Each text token attends to all image regions:                      │
+│                                                                     │
+│    "dog"  ─── high attention ───► [🐶 region]                       │
+│      │                                                              │
+│      └─── low attention  ───► [background]                          │
+│                                                                     │
+│  Output: Text tokens enriched with visual information               │
 └─────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│            Image-to-Text Cross-Attention                       │
+│            Image-to-Text Cross-Attention                            │
 ├─────────────────────────────────────────────────────────────────────┤
-│  Query:  Image tokens [I1, I2, ..., In]                        │
-│  Keys:   Text tokens [T1, T2, ..., Tm]                         │
-│  Values: Text tokens [T1, T2, ..., Tm]                         │
-│                                                                 │
-│  Each image region attends to relevant words:                  │
-│                                                                 │
-│    [face region] ── high attention ──► "smiling"             │
-│         │                                                       │
-│         └──── low attention ───► "building"              │
-│                                                                 │
-│  Output: Image tokens enriched with semantic information       │
+│  Query:  Image tokens [I₁, I₂, ..., Iₙ]                             │
+│  Keys:   Text tokens [T₁, T₂, ..., Tₘ]                              │
+│  Values: Text tokens [T₁, T₂, ..., Tₘ]                              │
+│                                                                     │
+│  Each image region attends to relevant words:                       │
+│                                                                     │
+│    [face region] ── high attention ──► "smiling"                    │
+│         │                                                           │
+│         └──── low attention ───► "building"                         │
+│                                                                     │
+│  Output: Image tokens enriched with semantic information            │
 └─────────────────────────────────────────────────────────────────────┘
 
 Bidirectional Information Flow:
@@ -4733,9 +4744,9 @@ Image ⇄ Text through multiple cross-attention layers
 
       <p><strong>Architecture:</strong> Two separate encoders—an image encoder (ResNet or Vision Transformer) and a text encoder (Transformer). No fusion layers! Instead, the magic happens in the shared embedding space.</p>
 
-      <p><strong>Training objective:</strong> Contrastive learning. Given a batch of N image-text pairs, compute similarity scores between all N² possible combinations. The correct pairs (diagonal elements) should have high similarity, incorrect pairs (off-diagonal) should have low similarity. Formally, maximize:</p>
+      <p><strong>Training objective:</strong> Contrastive learning. Given a batch of $N$ image-text pairs, compute similarity scores between all $N^2$ possible combinations. The correct pairs (diagonal elements) should have high similarity, incorrect pairs (off-diagonal) should have low similarity. Formally, maximize:</p>
 
-      <p style="text-align: center;">Similarity(Image_i, Text_i) - log Σ_j exp(Similarity(Image_i, Text_j))</p>
+      <p style="text-align: center;">$\\text{Similarity}(\\text{Image}_i, \\text{Text}_i) - \\log \\sum_j \\exp(\\text{Similarity}(\\text{Image}_i, \\text{Text}_j))$</p>
 
       <p><strong>Zero-shot transfer:</strong> The killer application. To classify an image into categories {cat, dog, bird}, create text prompts "a photo of a cat," "a photo of a dog," "a photo of a bird," embed them with the text encoder, compare with the image embedding, and classify as the highest-similarity text. No training on the specific task!</p>
 
@@ -4745,7 +4756,7 @@ Image ⇄ Text through multiple cross-attention layers
 
       <p>Can we generate images from text descriptions? "A corgi wearing a crown, oil painting style"—no such image exists, but DALL-E can create it. This requires understanding language, visual composition, artistic styles, and how to synthesize coherent images.</p>
 
-      <p><strong>DALL-E (2021):</strong> Uses a discrete VAE to tokenize images (compress 256×256 image to grid of discrete codes), then trains an autoregressive Transformer to generate image tokens conditioned on text. Generate token by token, like language generation but for images.</p>
+      <p><strong>DALL-E (2021):</strong> Uses a discrete VAE to tokenize images (compress $256 \\times 256$ image to grid of discrete codes), then trains an autoregressive Transformer to generate image tokens conditioned on text. Generate token by token, like language generation but for images.</p>
 
       <p><strong>Stable Diffusion (2022):</strong> Uses latent diffusion—operates in the latent space of a VAE rather than pixel space. Text encoder (often CLIP's text encoder) conditions the diffusion process. Iteratively denoises random latent vectors guided by text embeddings. More efficient and controllable than DALL-E.</p>
 
@@ -4761,7 +4772,7 @@ Image ⇄ Text through multiple cross-attention layers
 
       <h4>Whisper: Robust Speech Recognition</h4>
 
-      <p>Whisper from OpenAI tackles speech-to-text across 99 languages. It's multi-modal (audio → text) and multi-task (transcription, translation, language identification, timestamp detection). Trained on 680,000 hours of web-collected audio-text pairs using weak supervision.</p>
+      <p>Whisper from OpenAI tackles speech-to-text across $99$ languages. It's multi-modal (audio → text) and multi-task (transcription, translation, language identification, timestamp detection). Trained on $680{,}000$ hours of web-collected audio-text pairs using weak supervision.</p>
 
       <p><strong>Architecture:</strong> Standard Transformer encoder-decoder. Audio converted to log-mel spectrogram features, encoded, then decoded as text tokens. Special tokens indicate task type ([TRANSCRIBE], [TRANSLATE]).</p>
 
@@ -4777,11 +4788,11 @@ Image ⇄ Text through multiple cross-attention layers
 
       <p>Contrastive learning is the dominant approach for learning aligned multi-modal representations. The core idea: pull together representations of matched cross-modal pairs (an image and its caption) while pushing apart unmatched pairs (an image and an irrelevant caption).</p>
 
-      <p><strong>InfoNCE loss</strong> (used by CLIP): Given N image-text pairs in a batch, treat the correct pair as positive and the N-1 incorrect pairings as negatives:</p>
+      <p><strong>InfoNCE loss</strong> (used by CLIP): Given $N$ image-text pairs in a batch, treat the correct pair as positive and the $N-1$ incorrect pairings as negatives:</p>
 
-      <p style="text-align: center;">L = -log( exp(sim(img, text_match)/τ) / Σ_j exp(sim(img, text_j)/τ) )</p>
+      <p style="text-align: center;">$L = -\\log\\left( \\frac{\\exp(\\text{sim}(\\text{img}, \\text{text}_{\\text{match}})/\\tau)}{\\sum_j \\exp(\\text{sim}(\\text{img}, \\text{text}_j)/\\tau)} \\right)$</p>
 
-      <p>where sim is cosine similarity and τ is temperature. Lower temperature makes the model more discriminative. This is essentially cross-entropy loss over similarity scores.</p>
+      <p>where $\\text{sim}$ is cosine similarity and $\\tau$ is temperature. Lower temperature makes the model more discriminative. This is essentially cross-entropy loss over similarity scores.</p>
 
       <h4>Masked Modeling: Self-Supervised Cross-Modal Prediction</h4>
 
@@ -4821,7 +4832,7 @@ Image ⇄ Text through multiple cross-attention layers
 
       <h3>Evaluation: Measuring Multi-Modal Success</h3>
 
-      <p><strong>Retrieval tasks:</strong> Image-text retrieval measured by Recall@K (is correct match in top-K results?), mean rank of correct match.</p>
+      <p><strong>Retrieval tasks:</strong> Image-text retrieval measured by Recall@$K$ (is correct match in top-$K$ results?), mean rank of correct match.</p>
 
       <p><strong>Generation tasks:</strong> Text-to-image evaluated with FID (Fréchet Inception Distance) for image quality, CLIP score for text-image alignment, and human evaluation for subjective quality.</p>
 

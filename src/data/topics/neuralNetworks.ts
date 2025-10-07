@@ -31,17 +31,17 @@ export const neuralNetworksTopics: Record<string, Topic> = {
 
       <p><strong>Stage 1: Linear Combination (Weighted Sum)</strong></p>
       <p>Compute the weighted sum of inputs plus bias:</p>
-      <p><strong>z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b = w·x + b</strong></p>
+      <p><strong>$z = w_1 x_1 + w_2 x_2 + ... + w_n x_n + b = w \\cdot x + b$</strong></p>
       <p>This is a linear function that projects the n-dimensional input onto a single dimension. The value z represents the "activation level" of the neuron—how strongly the input suggests class 1 vs class 0. Large positive z indicates strong evidence for class 1, large negative z indicates strong evidence for class 0, and z near 0 indicates uncertainty.</p>
 
       <p><strong>Stage 2: Activation (Thresholding)</strong></p>
       <p>Apply the step function to produce binary output:</p>
-      <p><strong>ŷ = step(z) = { 1 if z ≥ 0, 0 if z < 0 }</strong></p>
+      <p><strong>$\\hat{y} = \\text{step}(z) = \\begin{cases} 1 & \\text{if } z \\geq 0 \\\\ 0 & \\text{if } z < 0 \\end{cases}$</strong></p>
       <p>The step function is discontinuous: it instantly switches from 0 to 1 at z=0. This makes the perceptron a hard classifier with no probabilistic interpretation. There's no notion of confidence—both z=0.1 and z=1000 produce output 1 with equal certainty.</p>
 
       <p><strong>Decision Boundary:</strong> The set of points where z = 0 defines the decision boundary:</p>
-      <p><strong>w·x + b = 0</strong></p>
-      <p>This is the equation of a hyperplane (line in 2D, plane in 3D, hyperplane in higher dimensions). Points on one side of this hyperplane (w·x + b > 0) are classified as class 1; points on the other side (w·x + b < 0) are classified as class 0. The weight vector <strong>w</strong> is perpendicular (orthogonal) to this hyperplane, pointing in the direction of class 1. The bias <strong>b</strong> controls how far the hyperplane is from the origin.</p>
+      <p><strong>$w \\cdot x + b = 0$</strong></p>
+      <p>This is the equation of a hyperplane (line in 2D, plane in 3D, hyperplane in higher dimensions). Points on one side of this hyperplane ($w \\cdot x + b > 0$) are classified as class 1; points on the other side ($w \\cdot x + b < 0$) are classified as class 0. The weight vector <strong>w</strong> is perpendicular (orthogonal) to this hyperplane, pointing in the direction of class 1. The bias <strong>b</strong> controls how far the hyperplane is from the origin.</p>
 
       <h3>The Perceptron Learning Algorithm: Error-Driven Updates</h3>
       <p>The perceptron learns through a simple yet effective error-correction process. The algorithm is online—it processes one example at a time and updates weights immediately when errors occur. This makes it suitable for streaming data and real-time learning scenarios.</p>
@@ -52,24 +52,24 @@ export const neuralNetworksTopics: Record<string, Topic> = {
         
         <li><strong>Training loop:</strong> For each training example (x, y) where x is the input vector and y is the true label (0 or 1):
           <ul>
-            <li><strong>Forward pass:</strong> Compute the predicted output: ŷ = step(w·x + b)</li>
-            <li><strong>Error calculation:</strong> Compute the error: e = y - ŷ. This error is +1 if we predicted 0 but should have predicted 1 (false negative), -1 if we predicted 1 but should have predicted 0 (false positive), and 0 if the prediction is correct.</li>
-            <li><strong>Weight update:</strong> If e ≠ 0, adjust weights: <strong>wᵢ = wᵢ + η × e × xᵢ</strong> for each feature i. The learning rate η controls the step size (typically 0.01 to 1.0).</li>
-            <li><strong>Bias update:</strong> If e ≠ 0, adjust bias: <strong>b = b + η × e</strong></li>
+            <li><strong>Forward pass:</strong> Compute the predicted output: $\\hat{y} = \\text{step}(w \\cdot x + b)$</li>
+            <li><strong>Error calculation:</strong> Compute the error: $e = y - \\hat{y}$. This error is +1 if we predicted 0 but should have predicted 1 (false negative), -1 if we predicted 1 but should have predicted 0 (false positive), and 0 if the prediction is correct.</li>
+            <li><strong>Weight update:</strong> If $e \\neq 0$, adjust weights: <strong>$w_i = w_i + \\eta \\times e \\times x_i$</strong> for each feature i. The learning rate $\\eta$ controls the step size (typically 0.01 to 1.0).</li>
+            <li><strong>Bias update:</strong> If $e \\neq 0$, adjust bias: <strong>$b = b + \\eta \\times e$</strong></li>
           </ul>
         </li>
         
         <li><strong>Termination:</strong> Repeat the training loop until all examples are correctly classified (convergence) or a maximum number of epochs is reached.</li>
       </ol>
 
-      <p><strong>Understanding the update rule:</strong> The perceptron rule <strong>w = w + η(y - ŷ)x</strong> has an elegant geometric interpretation. When we make a false negative (y=1, ŷ=0, error=+1), we increase weights in the direction of x. This moves the decision boundary toward x, making it more likely to classify x correctly next time. When we make a false positive (y=0, ŷ=1, error=-1), we decrease weights in the direction of x, moving the boundary away from x. The magnitude of the update is proportional to the feature values—features with larger values (more "signal") get larger updates.</p>
+      <p><strong>Understanding the update rule:</strong> The perceptron rule <strong>$w = w + \\eta(y - \\hat{y})x$</strong> has an elegant geometric interpretation. When we make a false negative ($y=1, \\hat{y}=0$, error=+1), we increase weights in the direction of x. This moves the decision boundary toward x, making it more likely to classify x correctly next time. When we make a false positive ($y=0, \\hat{y}=1$, error=-1), we decrease weights in the direction of x, moving the boundary away from x. The magnitude of the update is proportional to the feature values—features with larger values (more "signal") get larger updates.</p>
 
-      <p><strong>Learning rate η:</strong> Controls how aggressively the perceptron updates weights. Too large (η > 1) causes oscillation and instability. Too small (η < 0.01) causes very slow learning. Typical values are 0.01 to 1.0. Unlike modern neural networks that require careful learning rate tuning and schedules, the perceptron is relatively robust to learning rate choice due to its simplicity.</p>
+      <p><strong>Learning rate $\\eta$:</strong> Controls how aggressively the perceptron updates weights. Too large ($\\eta > 1$) causes oscillation and instability. Too small ($\\eta < 0.01$) causes very slow learning. Typical values are 0.01 to 1.0. Unlike modern neural networks that require careful learning rate tuning and schedules, the perceptron is relatively robust to learning rate choice due to its simplicity.</p>
 
       <h3>Perceptron Convergence Theorem: Guaranteed Learning</h3>
       <p>The perceptron convergence theorem, proven by Frank Rosenblatt and later refined by others, provides a strong theoretical guarantee: <strong>if the training data is linearly separable, the perceptron algorithm will converge to a solution in finite time</strong>, regardless of initial weights. This was one of the first formal proofs that a machine learning algorithm could successfully learn from data.</p>
 
-      <p><strong>Formal statement:</strong> Suppose there exists a weight vector w* and bias b* such that w*·x + b* > 0 for all examples of class 1 and w*·x + b* < 0 for all examples of class 0 (i.e., the data is linearly separable with margin γ > 0). Then the perceptron algorithm will make at most <strong>(R/γ)²</strong> mistakes, where R is the maximum norm of any training example: R = max ||x||. This bound is independent of the number of features or training examples—it depends only on the data geometry.</p>
+      <p><strong>Formal statement:</strong> Suppose there exists a weight vector $w^*$ and bias $b^*$ such that $w^* \\cdot x + b^* > 0$ for all examples of class 1 and $w^* \\cdot x + b^* < 0$ for all examples of class 0 (i.e., the data is linearly separable with margin $\\gamma > 0$). Then the perceptron algorithm will make at most <strong>$(R/\\gamma)^2$</strong> mistakes, where R is the maximum norm of any training example: $R = \\max ||x||$. This bound is independent of the number of features or training examples—it depends only on the data geometry.</p>
 
       <p><strong>Implications:</strong> (1) For well-separated data (large margin γ), convergence is very fast. (2) For barely separable data (small γ), convergence may be slow but is still guaranteed. (3) The theorem doesn't specify what separating hyperplane will be found—any solution that classifies all training examples correctly is acceptable. Different random initializations or data orderings may converge to different solutions. (4) Most importantly, <strong>if data is not linearly separable, the theorem doesn't apply</strong>—the perceptron will never converge and will oscillate indefinitely.</p>
 
@@ -80,9 +80,9 @@ export const neuralNetworksTopics: Record<string, Topic> = {
 
       <p><strong>The bias as a threshold:</strong> The bias <strong>b</strong> controls where the hyperplane is positioned. With b=0, the hyperplane must pass through the origin. Positive b shifts the hyperplane in the direction of <strong>w</strong> (toward class 1), making it easier to classify points as class 1. Negative b shifts it the opposite way. In effect, b adjusts the decision threshold: we classify as class 1 if w·x > -b, so increasing b makes classification as class 1 less stringent.</p>
 
-      <p><strong>Distance to the hyperplane:</strong> The signed distance from a point x to the hyperplane w·x + b = 0 is <strong>d = (w·x + b) / ||w||</strong>. The sign indicates which side of the hyperplane x is on, and the magnitude indicates how far. Points far from the boundary (|d| large) are confidently classified; points near the boundary (|d| small) are less certain. However, the perceptron ignores this distance information—it treats all correctly classified points equally and all misclassified points equally.</p>
+      <p><strong>Distance to the hyperplane:</strong> The signed distance from a point x to the hyperplane $w \\cdot x + b = 0$ is <strong>$d = \\frac{w \\cdot x + b}{||w||}$</strong>. The sign indicates which side of the hyperplane x is on, and the magnitude indicates how far. Points far from the boundary ($|d|$ large) are confidently classified; points near the boundary ($|d|$ small) are less certain. However, the perceptron ignores this distance information—it treats all correctly classified points equally and all misclassified points equally.</p>
 
-      <p><strong>Margin:</strong> For linearly separable data, the margin is the smallest distance from any training point to the decision boundary. A large margin indicates well-separated classes (easy problem), while a small margin indicates barely separable classes (hard problem). The perceptron convergence rate depends on the margin (via the (R/γ)² bound), but the perceptron itself doesn't explicitly maximize the margin—it stops as soon as all points are correctly classified. This contrasts with support vector machines (SVMs), which explicitly find the maximum-margin separating hyperplane.</p>
+      <p><strong>Margin:</strong> For linearly separable data, the margin is the smallest distance from any training point to the decision boundary. A large margin indicates well-separated classes (easy problem), while a small margin indicates barely separable classes (hard problem). The perceptron convergence rate depends on the margin (via the $(R/\\gamma)^2$ bound), but the perceptron itself doesn't explicitly maximize the margin—it stops as soon as all points are correctly classified. This contrasts with support vector machines (SVMs), which explicitly find the maximum-margin separating hyperplane.</p>
 
       <h3>The Famous XOR Problem: Why Perceptrons Fail</h3>
       <p>The XOR (exclusive OR) problem is the canonical example demonstrating the perceptron's fundamental limitation. It consists of four 2D points:</p>
@@ -95,7 +95,7 @@ export const neuralNetworksTopics: Record<string, Topic> = {
 
       <p><strong>Why no line can separate XOR:</strong> To separate the positive examples (0,1) and (1,0) from the negative examples (0,0) and (1,1), you would need the decision boundary to pass between (0,0) and (0,1), between (1,1) and (1,0), between (0,0) and (1,0), and between (1,1) and (0,1). No single straight line can do this—you need at least two lines or a non-linear boundary (like a circle or more complex curve). Formally, XOR is <strong>not linearly separable</strong>.</p>
 
-      <p><strong>Mathematical proof:</strong> Suppose a perceptron could solve XOR with weights w₁, w₂ and bias b. Then we need: w₁(0) + w₂(0) + b < 0 (for (0,0)), w₁(0) + w₂(1) + b > 0 (for (0,1)), w₁(1) + w₂(0) + b > 0 (for (1,0)), and w₁(1) + w₂(1) + b < 0 (for (1,1)). The first constraint gives b < 0. The second and third give w₂ + b > 0 and w₁ + b > 0, implying w₁ > -b > 0 and w₂ > -b > 0. The fourth gives w₁ + w₂ + b < 0, or w₁ + w₂ < -b. But we know w₁ > -b and w₂ > -b, so w₁ + w₂ > 2(-b) > -b, contradicting w₁ + w₂ < -b. Thus, no solution exists.</p>
+      <p><strong>Mathematical proof:</strong> Suppose a perceptron could solve XOR with weights $w_1, w_2$ and bias $b$. Then we need: $w_1(0) + w_2(0) + b < 0$ (for (0,0)), $w_1(0) + w_2(1) + b > 0$ (for (0,1)), $w_1(1) + w_2(0) + b > 0$ (for (1,0)), and $w_1(1) + w_2(1) + b < 0$ (for (1,1)). The first constraint gives $b < 0$. The second and third give $w_2 + b > 0$ and $w_1 + b > 0$, implying $w_1 > -b > 0$ and $w_2 > -b > 0$. The fourth gives $w_1 + w_2 + b < 0$, or $w_1 + w_2 < -b$. But we know $w_1 > -b$ and $w_2 > -b$, so $w_1 + w_2 > 2(-b) > -b$, contradicting $w_1 + w_2 < -b$. Thus, no solution exists.</p>
 
       <p><strong>Historical impact:</strong> Minsky and Papert's 1969 book "Perceptrons" rigorously analyzed what functions single-layer perceptrons could and couldn't compute. They showed that perceptrons couldn't solve XOR, parity functions, or detect connectedness in images. This critique dampened enthusiasm for neural networks and contributed to the first "AI winter" in the 1970s. Research funding dried up, and neural networks were largely abandoned. The field didn't recover until the 1980s when backpropagation enabled training of multi-layer networks that could solve XOR and much more complex problems.</p>
 
@@ -296,19 +296,19 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
     interviewQuestions: [
       {
         question: 'What is a perceptron and how does it work?',
-        answer: 'A **perceptron** is the simplest form of a neural network, consisting of a single artificial neuron that performs binary classification. Invented by Frank Rosenblatt in 1957, it takes multiple input features, applies weights to them, sums them up with a bias term, and passes the result through a step activation function to produce a binary output (0 or 1). The perceptron essentially learns a linear decision boundary to separate two classes of data.\n\nMathematically, the perceptron computes **z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b**, where **w** represents the learned weights, **x** are the input features, and **b** is the bias. The output is determined by a **step function**: output = 1 if z ≥ 0, else 0. This creates a linear decision boundary defined by the equation **w·x + b = 0**. Points on one side of this boundary are classified as class 1, while points on the other side are classified as class 0.\n\nThe perceptron learning process involves iteratively adjusting the weights and bias based on prediction errors. When the perceptron makes a correct prediction, no weight updates occur. However, when it misclassifies a data point, the weights are updated in the direction that would have produced the correct output. This process continues until the perceptron correctly classifies all training examples (if the data is linearly separable) or a maximum number of iterations is reached.\n\nThe perceptron\'s significance lies in being the foundation for modern neural networks and demonstrating that machines can learn from data. However, its limitation to linearly separable problems led to the development of multi-layer networks. Despite this constraint, perceptrons remain valuable for understanding neural network fundamentals and are still used in ensemble methods and as building blocks in more complex architectures.'
+        answer: 'A **perceptron** is the simplest form of a neural network, consisting of a single artificial neuron that performs binary classification. Invented by Frank Rosenblatt in 1957, it takes multiple input features, applies weights to them, sums them up with a bias term, and passes the result through a step activation function to produce a binary output (0 or 1). The perceptron essentially learns a linear decision boundary to separate two classes of data.\n\nMathematically, the perceptron computes **$z = w_1 x_1 + w_2 x_2 + ... + w_n x_n + b$**, where **w** represents the learned weights, **x** are the input features, and **b** is the bias. The output is determined by a **step function**: output = 1 if $z \\geq 0$, else 0. This creates a linear decision boundary defined by the equation **$w \\cdot x + b = 0$**. Points on one side of this boundary are classified as class 1, while points on the other side are classified as class 0.\n\nThe perceptron learning process involves iteratively adjusting the weights and bias based on prediction errors. When the perceptron makes a correct prediction, no weight updates occur. However, when it misclassifies a data point, the weights are updated in the direction that would have produced the correct output. This process continues until the perceptron correctly classifies all training examples (if the data is linearly separable) or a maximum number of iterations is reached.\n\nThe perceptron\'s significance lies in being the foundation for modern neural networks and demonstrating that machines can learn from data. However, its limitation to linearly separable problems led to the development of multi-layer networks. Despite this constraint, perceptrons remain valuable for understanding neural network fundamentals and are still used in ensemble methods and as building blocks in more complex architectures.'
       },
       {
         question: 'Explain the perceptron learning algorithm.',
-        answer: 'The **perceptron learning algorithm** is an iterative supervised learning method that adjusts weights to minimize classification errors. The algorithm follows a simple yet effective approach: for each training example, if the prediction is correct, do nothing; if incorrect, update the weights in a direction that reduces the error. This process continues until convergence (all examples classified correctly) or a maximum number of iterations is reached.\n\nThe core update rule is: **w = w + η(y - ŷ)x**, where **η** (eta) is the learning rate, **y** is the true label, **ŷ** is the predicted label, and **x** is the input vector. When the prediction is correct (y = ŷ), the weight change is zero. When incorrect, the weights are adjusted proportionally to the input values and the magnitude of the error. For a false positive (predicted 1, actual 0), weights are decreased; for a false negative (predicted 0, actual 1), weights are increased.\n\nThe algorithm typically follows these steps: (1) Initialize weights and bias to small random values or zeros, (2) For each training example, compute the prediction using the current weights, (3) If the prediction is wrong, update weights using the perceptron rule, (4) Repeat until all examples are correctly classified or maximum iterations reached. The **learning rate** controls the step size—larger values lead to faster but potentially unstable learning, while smaller values provide more stable but slower convergence.\n\nA crucial property of the perceptron learning algorithm is its **guaranteed convergence** for linearly separable data. The algorithm will find a solution in finite time if one exists. However, for non-linearly separable data, the algorithm will oscillate indefinitely without converging. This limitation led to the development of modified perceptron algorithms with stopping criteria and regularization techniques to handle real-world, noisy datasets.'
+        answer: 'The **perceptron learning algorithm** is an iterative supervised learning method that adjusts weights to minimize classification errors. The algorithm follows a simple yet effective approach: for each training example, if the prediction is correct, do nothing; if incorrect, update the weights in a direction that reduces the error. This process continues until convergence (all examples classified correctly) or a maximum number of iterations is reached.\n\nThe core update rule is: **$w = w + \\eta(y - \\hat{y})x$**, where **$\\eta$** (eta) is the learning rate, **y** is the true label, **$\\hat{y}$** is the predicted label, and **x** is the input vector. When the prediction is correct ($y = \\hat{y}$), the weight change is zero. When incorrect, the weights are adjusted proportionally to the input values and the magnitude of the error. For a false positive (predicted 1, actual 0), weights are decreased; for a false negative (predicted 0, actual 1), weights are increased.\n\nThe algorithm typically follows these steps: (1) Initialize weights and bias to small random values or zeros, (2) For each training example, compute the prediction using the current weights, (3) If the prediction is wrong, update weights using the perceptron rule, (4) Repeat until all examples are correctly classified or maximum iterations reached. The **learning rate** controls the step size—larger values lead to faster but potentially unstable learning, while smaller values provide more stable but slower convergence.\n\nA crucial property of the perceptron learning algorithm is its **guaranteed convergence** for linearly separable data. The algorithm will find a solution in finite time if one exists. However, for non-linearly separable data, the algorithm will oscillate indefinitely without converging. This limitation led to the development of modified perceptron algorithms with stopping criteria and regularization techniques to handle real-world, noisy datasets.'
       },
       {
         question: 'What is the perceptron convergence theorem?',
-        answer: 'The **perceptron convergence theorem** is a fundamental result in machine learning that guarantees the perceptron learning algorithm will find a linear separator in finite time if the training data is linearly separable. Formally, the theorem states that if there exists a weight vector that can correctly classify all training examples, the perceptron algorithm will converge to such a solution within a finite number of steps, regardless of the initial weight values.\n\nThe theorem provides an upper bound on the number of updates required for convergence: **number of updates ≤ (R/γ)²**, where **R** is the maximum norm of any training example and **γ** (gamma) is the **margin**—the minimum distance from any training point to the optimal decision boundary. This bound shows that convergence is faster when the data has a larger margin (classes are well-separated) and slower when examples are closer to the decision boundary.\n\nThe proof relies on two key insights: (1) the algorithm makes progress toward the optimal solution with each update, and (2) the weights cannot grow indefinitely while still making errors. Each mistake update moves the weight vector closer to the optimal direction (measured by dot product), while the weight magnitude is bounded by the number of mistakes and data characteristics. These two facts together imply that convergence must occur in finite time.\n\nThis theorem was crucial for establishing machine learning as a mathematically rigorous field, providing the first formal guarantee that a learning algorithm would solve classification problems under reasonable conditions. However, the theorem\'s requirement for linear separability limits its practical applicability, as real-world data is often noisy and not perfectly separable. This limitation sparked the development of more robust algorithms like support vector machines and multi-layer neural networks that can handle non-linearly separable data.'
+        answer: 'The **perceptron convergence theorem** is a fundamental result in machine learning that guarantees the perceptron learning algorithm will find a linear separator in finite time if the training data is linearly separable. Formally, the theorem states that if there exists a weight vector that can correctly classify all training examples, the perceptron algorithm will converge to such a solution within a finite number of steps, regardless of the initial weight values.\n\nThe theorem provides an upper bound on the number of updates required for convergence: **number of updates $\\leq (R/\\gamma)^2$**, where **R** is the maximum norm of any training example and **$\\gamma$** (gamma) is the **margin**—the minimum distance from any training point to the optimal decision boundary. This bound shows that convergence is faster when the data has a larger margin (classes are well-separated) and slower when examples are closer to the decision boundary.\n\nThe proof relies on two key insights: (1) the algorithm makes progress toward the optimal solution with each update, and (2) the weights cannot grow indefinitely while still making errors. Each mistake update moves the weight vector closer to the optimal direction (measured by dot product), while the weight magnitude is bounded by the number of mistakes and data characteristics. These two facts together imply that convergence must occur in finite time.\n\nThis theorem was crucial for establishing machine learning as a mathematically rigorous field, providing the first formal guarantee that a learning algorithm would solve classification problems under reasonable conditions. However, the theorem\'s requirement for linear separability limits its practical applicability, as real-world data is often noisy and not perfectly separable. This limitation sparked the development of more robust algorithms like support vector machines and multi-layer neural networks that can handle non-linearly separable data.'
       },
       {
         question: 'Why can\'t a perceptron solve the XOR problem?',
-        answer: 'The **XOR (exclusive OR) problem** is the classic example demonstrating the fundamental limitation of single-layer perceptrons: they cannot solve problems that are not linearly separable. The XOR function outputs 1 when inputs differ (0,1 or 1,0) and 0 when inputs are the same (0,0 or 1,1). This creates a problem where no single straight line can separate the positive and negative examples in 2D space—you would need two lines or a non-linear boundary.\n\nMathematically, for XOR to be linearly separable, there would need to exist weights **w₁, w₂** and bias **b** such that **w₁x₁ + w₂x₂ + b** produces the same sign for examples in the same class. However, examining the XOR truth table reveals this is impossible: (0,0)→0 and (1,1)→0 should produce negative values, while (0,1)→1 and (1,0)→1 should produce positive values. This would require **b < 0**, **w₁ + w₂ + b < 0**, **w₂ + b > 0**, and **w₁ + b > 0**, which creates contradictory constraints that cannot be satisfied simultaneously.\n\nThis limitation, highlighted by Marvin Minsky and Seymour Papert in their 1969 book "Perceptrons," led to the first "AI winter" as it seemed to show that neural networks were fundamentally limited. The XOR problem demonstrated that perceptrons could only learn **linearly separable functions**, which excludes many important logical and mathematical operations including XOR, XNOR, and parity functions.\n\nThe solution requires **multi-layer networks** with non-linear activation functions. A two-layer network can solve XOR by using hidden units to create intermediate representations that transform the problem into a linearly separable one. For example, one hidden unit can learn "x₁ OR x₂" and another can learn "x₁ AND x₂," allowing the output unit to compute "OR AND NOT AND" which equals XOR. This insight led to the development of multi-layer perceptrons and backpropagation, revitalizing neural network research.'
+        answer: 'The **XOR (exclusive OR) problem** is the classic example demonstrating the fundamental limitation of single-layer perceptrons: they cannot solve problems that are not linearly separable. The XOR function outputs 1 when inputs differ (0,1 or 1,0) and 0 when inputs are the same (0,0 or 1,1). This creates a problem where no single straight line can separate the positive and negative examples in 2D space—you would need two lines or a non-linear boundary.\n\nMathematically, for XOR to be linearly separable, there would need to exist weights **$w_1, w_2$** and bias **b** such that **$w_1 x_1 + w_2 x_2 + b$** produces the same sign for examples in the same class. However, examining the XOR truth table reveals this is impossible: (0,0)→0 and (1,1)→0 should produce negative values, while (0,1)→1 and (1,0)→1 should produce positive values. This would require **$b < 0$**, **$w_1 + w_2 + b < 0$**, **$w_2 + b > 0$**, and **$w_1 + b > 0$**, which creates contradictory constraints that cannot be satisfied simultaneously.\n\nThis limitation, highlighted by Marvin Minsky and Seymour Papert in their 1969 book "Perceptrons," led to the first "AI winter" as it seemed to show that neural networks were fundamentally limited. The XOR problem demonstrated that perceptrons could only learn **linearly separable functions**, which excludes many important logical and mathematical operations including XOR, XNOR, and parity functions.\n\nThe solution requires **multi-layer networks** with non-linear activation functions. A two-layer network can solve XOR by using hidden units to create intermediate representations that transform the problem into a linearly separable one. For example, one hidden unit can learn "x₁ OR x₂" and another can learn "x₁ AND x₂," allowing the output unit to compute "OR AND NOT AND" which equals XOR. This insight led to the development of multi-layer perceptrons and backpropagation, revitalizing neural network research.'
       },
       {
         question: 'What is the difference between a perceptron and logistic regression?',
@@ -388,30 +388,30 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
 
       <p><strong>Step 1: Linear Transformation (Weighted Sum)</strong></p>
       <p>Compute the pre-activation values:</p>
-      <p><strong>z⁽ˡ⁾ = W⁽ˡ⁾a⁽ˡ⁻¹⁾ + b⁽ˡ⁾</strong></p>
+      <p><strong>$z^{(l)} = W^{(l)} a^{(l-1)} + b^{(l)}$</strong></p>
       <ul>
-        <li><strong>W⁽ˡ⁾:</strong> Weight matrix for layer l, shape (n⁽ˡ⁾, n⁽ˡ⁻¹⁾) where n⁽ˡ⁾ is the number of neurons in layer l</li>
-        <li><strong>a⁽ˡ⁻¹⁾:</strong> Activations from previous layer (for l=1, a⁽⁰⁾ = x, the input)</li>
-        <li><strong>b⁽ˡ⁾:</strong> Bias vector for layer l, shape (n⁽ˡ⁾,)</li>
-        <li><strong>z⁽ˡ⁾:</strong> Pre-activation values (before applying activation function), shape (n⁽ˡ⁾,)</li>
+        <li><strong>$W^{(l)}$:</strong> Weight matrix for layer l, shape $(n^{(l)}, n^{(l-1)})$ where $n^{(l)}$ is the number of neurons in layer l</li>
+        <li><strong>$a^{(l-1)}$:</strong> Activations from previous layer (for $l=1$, $a^{(0)} = x$, the input)</li>
+        <li><strong>$b^{(l)}$:</strong> Bias vector for layer l, shape $(n^{(l)},)$</li>
+        <li><strong>$z^{(l)}$:</strong> Pre-activation values (before applying activation function), shape $(n^{(l)},)$</li>
       </ul>
 
       <p><strong>Step 2: Non-Linear Activation</strong></p>
       <p>Apply element-wise activation function:</p>
-      <p><strong>a⁽ˡ⁾ = f⁽ˡ⁾(z⁽ˡ⁾)</strong></p>
+      <p><strong>$a^{(l)} = f^{(l)}(z^{(l)})$</strong></p>
       <ul>
-        <li><strong>f⁽ˡ⁾:</strong> Activation function for layer l (ReLU, sigmoid, tanh, etc.)</li>
-        <li><strong>a⁽ˡ⁾:</strong> Activations (outputs) of layer l, which become inputs to layer l+1</li>
+        <li><strong>$f^{(l)}$:</strong> Activation function for layer l (ReLU, sigmoid, tanh, etc.)</li>
+        <li><strong>$a^{(l)}$:</strong> Activations (outputs) of layer l, which become inputs to layer l+1</li>
       </ul>
 
-      <p><strong>Final Output:</strong> The network's prediction is <strong>ŷ = a⁽ᴸ⁾</strong>, the activation of the final layer.</p>
+      <p><strong>Final Output:</strong> The network's prediction is <strong>$\\hat{y} = a^{(L)}$</strong>, the activation of the final layer.</p>
 
       <p><strong>Example: 2-hidden-layer MLP for binary classification</strong></p>
       <ul>
         <li>Input: x (10 features)</li>
-        <li>Hidden layer 1: z⁽¹⁾ = W⁽¹⁾x + b⁽¹⁾, a⁽¹⁾ = ReLU(z⁽¹⁾) → 64 neurons</li>
-        <li>Hidden layer 2: z⁽²⁾ = W⁽²⁾a⁽¹⁾ + b⁽²⁾, a⁽²⁾ = ReLU(z⁽²⁾) → 32 neurons</li>
-        <li>Output layer: z⁽³⁾ = W⁽³⁾a⁽²⁾ + b⁽³⁾, ŷ = sigmoid(z⁽³⁾) → 1 neuron (probability)</li>
+        <li>Hidden layer 1: $z^{(1)} = W^{(1)}x + b^{(1)}$, $a^{(1)} = \\text{ReLU}(z^{(1)})$ → 64 neurons</li>
+        <li>Hidden layer 2: $z^{(2)} = W^{(2)}a^{(1)} + b^{(2)}$, $a^{(2)} = \\text{ReLU}(z^{(2)})$ → 32 neurons</li>
+        <li>Output layer: $z^{(3)} = W^{(3)}a^{(2)} + b^{(3)}$, $\\hat{y} = \\text{sigmoid}(z^{(3)})$ → 1 neuron (probability)</li>
       </ul>
 
       <p><strong>Concrete numerical example - simple 2-layer network:</strong></p>
@@ -419,35 +419,35 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
       
       <p><strong>Given:</strong></p>
       <ul>
-        <li>Input: <strong>x = [1.0, 2.0, 0.5]</strong></li>
-        <li>Hidden weights: <strong>W⁽¹⁾ = [[0.5, -0.3, 0.2], [0.1, 0.4, -0.1]]</strong> (2×3 matrix)</li>
-        <li>Hidden biases: <strong>b⁽¹⁾ = [0.1, -0.2]</strong></li>
-        <li>Output weights: <strong>W⁽²⁾ = [[0.8], [-0.6]]</strong> (2×1 matrix)</li>
-        <li>Output bias: <strong>b⁽²⁾ = [0.3]</strong></li>
+        <li>Input: <strong>$x = [1.0, 2.0, 0.5]$</strong></li>
+        <li>Hidden weights: <strong>$W^{(1)} = [[0.5, -0.3, 0.2], [0.1, 0.4, -0.1]]$</strong> (2×3 matrix)</li>
+        <li>Hidden biases: <strong>$b^{(1)} = [0.1, -0.2]$</strong></li>
+        <li>Output weights: <strong>$W^{(2)} = [[0.8], [-0.6]]$</strong> (2×1 matrix)</li>
+        <li>Output bias: <strong>$b^{(2)} = [0.3]$</strong></li>
       </ul>
 
       <p><strong>Forward pass computation:</strong></p>
       <ul>
         <li><strong>Hidden layer pre-activation:</strong>
           <ul>
-            <li>z₁⁽¹⁾ = 0.5(1.0) + (-0.3)(2.0) + 0.2(0.5) + 0.1 = 0.5 - 0.6 + 0.1 + 0.1 = 0.1</li>
-            <li>z₂⁽¹⁾ = 0.1(1.0) + 0.4(2.0) + (-0.1)(0.5) + (-0.2) = 0.1 + 0.8 - 0.05 - 0.2 = 0.65</li>
-            <li>z⁽¹⁾ = [0.1, 0.65]</li>
+            <li>$z_1^{(1)} = 0.5(1.0) + (-0.3)(2.0) + 0.2(0.5) + 0.1 = 0.5 - 0.6 + 0.1 + 0.1 = 0.1$</li>
+            <li>$z_2^{(1)} = 0.1(1.0) + 0.4(2.0) + (-0.1)(0.5) + (-0.2) = 0.1 + 0.8 - 0.05 - 0.2 = 0.65$</li>
+            <li>$z^{(1)} = [0.1, 0.65]$</li>
           </ul>
         </li>
         <li><strong>Hidden layer activation (ReLU):</strong>
           <ul>
-            <li>a⁽¹⁾ = ReLU([0.1, 0.65]) = [max(0, 0.1), max(0, 0.65)] = [0.1, 0.65]</li>
+            <li>$a^{(1)} = \\text{ReLU}([0.1, 0.65]) = [\\max(0, 0.1), \\max(0, 0.65)] = [0.1, 0.65]$</li>
           </ul>
         </li>
         <li><strong>Output layer pre-activation:</strong>
           <ul>
-            <li>z⁽²⁾ = 0.8(0.1) + (-0.6)(0.65) + 0.3 = 0.08 - 0.39 + 0.3 = -0.01</li>
+            <li>$z^{(2)} = 0.8(0.1) + (-0.6)(0.65) + 0.3 = 0.08 - 0.39 + 0.3 = -0.01$</li>
           </ul>
         </li>
         <li><strong>Output activation (sigmoid):</strong>
           <ul>
-            <li>ŷ = σ(-0.01) = 1/(1 + e^(0.01)) ≈ 1/(1 + 1.01) ≈ 0.4975</li>
+            <li>$\\hat{y} = \\sigma(-0.01) = \\frac{1}{1 + e^{0.01}} \\approx \\frac{1}{1 + 1.01} \\approx 0.4975$</li>
           </ul>
         </li>
       </ul>
@@ -459,9 +459,9 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
 
       <p>Suppose you stack multiple linear layers without activations:</p>
       <ul>
-        <li>Layer 1: z⁽¹⁾ = W⁽¹⁾x + b⁽¹⁾</li>
-        <li>Layer 2: z⁽²⁾ = W⁽²⁾z⁽¹⁾ + b⁽²⁾ = W⁽²⁾(W⁽¹⁾x + b⁽¹⁾) + b⁽²⁾ = W⁽²⁾W⁽¹⁾x + W⁽²⁾b⁽¹⁾ + b⁽²⁾</li>
-        <li>This simplifies to: z⁽²⁾ = W̃x + b̃ where W̃ = W⁽²⁾W⁽¹⁾ and b̃ = W⁽²⁾b⁽¹⁾ + b⁽²⁾</li>
+        <li>Layer 1: $z^{(1)} = W^{(1)}x + b^{(1)}$</li>
+        <li>Layer 2: $z^{(2)} = W^{(2)}z^{(1)} + b^{(2)} = W^{(2)}(W^{(1)}x + b^{(1)}) + b^{(2)} = W^{(2)}W^{(1)}x + W^{(2)}b^{(1)} + b^{(2)}$</li>
+        <li>This simplifies to: $z^{(2)} = \\tilde{W}x + \\tilde{b}$ where $\\tilde{W} = W^{(2)}W^{(1)}$ and $\\tilde{b} = W^{(2)}b^{(1)} + b^{(2)}$</li>
       </ul>
 
       <p>The composition of linear functions is still linear! No matter how many layers you stack, the entire network is equivalent to a single linear transformation. It can only learn linear decision boundaries, failing on XOR and every other non-linearly separable problem. <strong>Non-linear activations are what give deep networks their power</strong>—they allow the network to learn complex, non-linear mappings from inputs to outputs.</p>
@@ -470,19 +470,19 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
       <p>Training an MLP involves iteratively adjusting weights to minimize a loss function that measures prediction error. The process consists of four repeating steps:</p>
 
       <p><strong>Step 1: Forward Propagation</strong></p>
-      <p>Pass input through the network layer by layer to compute the prediction. For each layer l, compute z⁽ˡ⁾ = W⁽ˡ⁾a⁽ˡ⁻¹⁾ + b⁽ˡ⁾ and a⁽ˡ⁾ = f(z⁽ˡ⁾). Store these values—you'll need them for backpropagation. The final layer's activation a⁽ᴸ⁾ is your prediction ŷ.</p>
+      <p>Pass input through the network layer by layer to compute the prediction. For each layer l, compute $z^{(l)} = W^{(l)}a^{(l-1)} + b^{(l)}$ and $a^{(l)} = f(z^{(l)})$. Store these values—you'll need them for backpropagation. The final layer's activation $a^{(L)}$ is your prediction $\\hat{y}$.</p>
 
       <p><strong>Step 2: Loss Calculation</strong></p>
-      <p>Measure how wrong the prediction is using a loss function L(ŷ, y) where y is the true label. Common choices: mean squared error (MSE) for regression, cross-entropy for classification. The goal of training is to find weights that minimize the average loss over all training examples.</p>
+      <p>Measure how wrong the prediction is using a loss function $L(\\hat{y}, y)$ where y is the true label. Common choices: mean squared error (MSE) for regression, cross-entropy for classification. The goal of training is to find weights that minimize the average loss over all training examples.</p>
 
       <p><strong>Step 3: Backpropagation</strong></p>
-      <p>Compute gradients of the loss with respect to all weights and biases using the chain rule. This is the clever part: instead of computing gradients for each weight independently (which would be prohibitively expensive), backpropagation propagates error signals backward through the network in a single pass, computing all gradients efficiently. For layer l, compute ∂L/∂W⁽ˡ⁾ and ∂L/∂b⁽ˡ⁾.</p>
+      <p>Compute gradients of the loss with respect to all weights and biases using the chain rule. This is the clever part: instead of computing gradients for each weight independently (which would be prohibitively expensive), backpropagation propagates error signals backward through the network in a single pass, computing all gradients efficiently. For layer l, compute $\\frac{\\partial L}{\\partial W^{(l)}}$ and $\\frac{\\partial L}{\\partial b^{(l)}}$.</p>
 
       <p><strong>Step 4: Parameter Update</strong></p>
-      <p>Adjust weights and biases in the direction that reduces loss using gradient descent or a variant (SGD, Adam, etc.). The update rule is: W⁽ˡ⁾ = W⁽ˡ⁾ - η(∂L/∂W⁽ˡ⁾), where η is the learning rate. Repeat this cycle for many epochs (passes through the training data) until the loss converges or stops improving on a validation set.</p>
+      <p>Adjust weights and biases in the direction that reduces loss using gradient descent or a variant (SGD, Adam, etc.). The update rule is: $W^{(l)} = W^{(l)} - \\eta \\frac{\\partial L}{\\partial W^{(l)}}$, where $\\eta$ is the learning rate. Repeat this cycle for many epochs (passes through the training data) until the loss converges or stops improving on a validation set.</p>
 
       <h3>The Universal Approximation Theorem: Theoretical Power</h3>
-      <p>One of the most important theoretical results in neural network theory is the <strong>universal approximation theorem</strong>, which states that a feedforward network with a single hidden layer containing a finite number of neurons can approximate any continuous function on a compact subset of ℝⁿ to arbitrary accuracy, provided the activation function is non-constant, bounded, and continuous (like sigmoid or tanh).</p>
+      <p>One of the most important theoretical results in neural network theory is the <strong>universal approximation theorem</strong>, which states that a feedforward network with a single hidden layer containing a finite number of neurons can approximate any continuous function on a compact subset of $\\mathbb{R}^n$ to arbitrary accuracy, provided the activation function is non-constant, bounded, and continuous (like sigmoid or tanh).</p>
 
       <p><strong>What this means:</strong> MLPs are universal function approximators. In theory, with enough hidden neurons, an MLP can learn any continuous mapping from inputs to outputs. Want to map images to their labels? Learn to play chess? Translate languages? An MLP can approximate the required function, given sufficient capacity and training data.</p>
 
@@ -519,7 +519,7 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
       <h3>Challenges and Practical Considerations</h3>
       
       <p><strong>Overfitting: The Primary Enemy</strong></p>
-      <p>MLPs with many parameters can memorize training data without learning generalizable patterns. If your training accuracy is 99% but test accuracy is 65%, you're overfitting. Solutions: (1) <strong>More data</strong>—the best solution when feasible; (2) <strong>Regularization</strong>—L2 regularization adds ||W||² penalty to loss, encouraging smaller weights; (3) <strong>Dropout</strong>—randomly deactivate neurons during training to prevent co-adaptation; (4) <strong>Early stopping</strong>—stop training when validation loss stops decreasing; (5) <strong>Reduce capacity</strong>—fewer layers/neurons.</p>
+      <p>MLPs with many parameters can memorize training data without learning generalizable patterns. If your training accuracy is 99% but test accuracy is 65%, you're overfitting. Solutions: (1) <strong>More data</strong>—the best solution when feasible; (2) <strong>Regularization</strong>—L2 regularization adds $||W||^2$ penalty to loss, encouraging smaller weights; (3) <strong>Dropout</strong>—randomly deactivate neurons during training to prevent co-adaptation; (4) <strong>Early stopping</strong>—stop training when validation loss stops decreasing; (5) <strong>Reduce capacity</strong>—fewer layers/neurons.</p>
 
       <p><strong>Vanishing/Exploding Gradients</strong></p>
       <p>In deep networks, gradients can become exponentially small (vanishing) or large (exploding) as they propagate backward, making training difficult or impossible. Vanishing gradients cause early layers to learn very slowly; exploding gradients cause numerical instability and NaN values. Solutions: (1) <strong>ReLU activation</strong>—doesn't saturate for positive inputs; (2) <strong>Proper weight initialization</strong>—Xavier or He initialization; (3) <strong>Batch normalization</strong>—normalizes inputs to each layer; (4) <strong>Gradient clipping</strong>—cap maximum gradient magnitude; (5) <strong>Residual connections</strong>—allow gradients to bypass layers.</p>
@@ -528,7 +528,7 @@ print("Perceptron cannot solve XOR - not linearly separable!")`,
       <p>Neural networks are extremely sensitive to input scale. Features with large magnitudes dominate early training, causing optimization difficulties. Always standardize inputs (mean=0, std=1) before training. This makes gradients more uniform across features and enables higher learning rates. Batch normalization helps with internal layers but doesn't eliminate the need for input scaling.</p>
 
       <p><strong>Computational Cost</strong></p>
-      <p>MLPs require significant computation, especially for large networks. Forward pass is O(∑n⁽ˡ⁾n⁽ˡ⁻¹⁾) across all layers. Backpropagation has the same complexity. Training on large datasets can take hours to days even on GPUs. Inference (forward pass only) is faster but still costly for very large networks. Trade-offs: deeper/wider networks are more powerful but slower and require more memory.</p>
+      <p>MLPs require significant computation, especially for large networks. Forward pass is $O(\\sum n^{(l)} n^{(l-1)})$ across all layers. Backpropagation has the same complexity. Training on large datasets can take hours to days even on GPUs. Inference (forward pass only) is faster but still costly for very large networks. Trade-offs: deeper/wider networks are more powerful but slower and require more memory.</p>
 
       <p><strong>Hyperparameter Tuning</strong></p>
       <p>MLPs have many hyperparameters: number of layers, neurons per layer, learning rate, batch size, activation functions, regularization strength, dropout rate, optimizer choice. Finding good values requires experimentation. Start with standard defaults (2-3 layers, 64-256 neurons, Adam optimizer, learning rate 0.001), then tune systematically using validation data. Automated methods like random search, grid search, or Bayesian optimization can help.</p>
@@ -751,12 +751,12 @@ class SimpleMLP:
 
       <p><strong>Mathematical Proof of Linear Collapse:</strong></p>
       <ul>
-        <li>Layer 1: <strong>h₁ = W₁x + b₁</strong></li>
-        <li>Layer 2: <strong>h₂ = W₂h₁ + b₂ = W₂(W₁x + b₁) + b₂ = W₂W₁x + W₂b₁ + b₂</strong></li>
-        <li>Layer 3: <strong>h₃ = W₃h₂ + b₃ = W₃(W₂W₁x + W₂b₁ + b₂) + b₃ = W₃W₂W₁x + (terms with b)</strong></li>
+        <li>Layer 1: <strong>$h_1 = W_1 x + b_1$</strong></li>
+        <li>Layer 2: <strong>$h_2 = W_2 h_1 + b_2 = W_2(W_1 x + b_1) + b_2 = W_2 W_1 x + W_2 b_1 + b_2$</strong></li>
+        <li>Layer 3: <strong>$h_3 = W_3 h_2 + b_3 = W_3(W_2 W_1 x + W_2 b_1 + b_2) + b_3 = W_3 W_2 W_1 x + \\text{(terms with b)}$</strong></li>
       </ul>
 
-      <p>We can define <strong>W̃ = W₃W₂W₁</strong> (a single matrix) and <strong>b̃</strong> as the combined bias terms. The entire deep network simplifies to: <strong>h₃ = W̃x + b̃</strong>—just a single linear transformation! No matter how many layers you add, the composition of linear functions is still linear. This network can only learn linear decision boundaries, meaning it would fail on even simple problems like XOR, and certainly couldn't learn the complex patterns in images, text, or speech.</p>
+      <p>We can define <strong>$\\tilde{W} = W_3 W_2 W_1$</strong> (a single matrix) and <strong>$\\tilde{b}$</strong> as the combined bias terms. The entire deep network simplifies to: <strong>$h_3 = \\tilde{W}x + \\tilde{b}$</strong>—just a single linear transformation! No matter how many layers you add, the composition of linear functions is still linear. This network can only learn linear decision boundaries, meaning it would fail on even simple problems like XOR, and certainly couldn't learn the complex patterns in images, text, or speech.</p>
 
       <p><strong>What non-linearity enables:</strong></p>
       <ul>
@@ -769,8 +769,8 @@ class SimpleMLP:
       <h3>The ReLU Family: Modern Workhorses</h3>
 
       <h4>ReLU (Rectified Linear Unit)</h4>
-      <p><strong>f(x) = max(0, x)</strong></p>
-      <p><strong>Derivative: f'(x) = 1 if x > 0, else 0</strong></p>
+      <p><strong>$f(x) = \\max(0, x)$</strong></p>
+      <p><strong>Derivative: $f'(x) = \\begin{cases} 1 & \\text{if } x > 0 \\\\ 0 & \\text{else} \\end{cases}$</strong></p>
       
       <p>ReLU, introduced in 2010 and popularized by AlexNet (2012), revolutionized deep learning by addressing the vanishing gradient problem that plagued sigmoid and tanh networks. Its elegantly simple definition—just outputting the input if positive, zero otherwise—makes it extremely fast to compute and differentiate. The derivative being 1 for positive inputs means gradients flow backward without diminishing, enabling much deeper networks to train successfully.</p>
 
@@ -786,28 +786,28 @@ class SimpleMLP:
       <p><strong>The dying ReLU problem:</strong> If a neuron's weighted input becomes negative for all training examples, ReLU outputs zero, the gradient is zero, and the neuron stops learning permanently—it "dies." This can happen due to poor initialization, high learning rates causing large weight updates, or unfortunate data distribution. Once dead, the neuron contributes nothing to the network's output and never recovers. In severe cases, large portions of a network can die, dramatically reducing effective capacity. Solutions include careful learning rate selection, proper weight initialization (He initialization), and using ReLU variants like Leaky ReLU.</p>
 
       <h4>Leaky ReLU and Parametric ReLU (PReLU)</h4>
-      <p><strong>Leaky ReLU: f(x) = x if x > 0, else αx</strong> (typically α = 0.01)</p>
-      <p><strong>PReLU: f(x) = x if x > 0, else αx</strong> (α is learned during training)</p>
-      <p><strong>Derivative: f'(x) = 1 if x > 0, else α</strong></p>
+      <p><strong>Leaky ReLU: $f(x) = \\begin{cases} x & \\text{if } x > 0 \\\\ \\alpha x & \\text{else} \\end{cases}$</strong> (typically $\\alpha = 0.01$)</p>
+      <p><strong>PReLU: $f(x) = \\begin{cases} x & \\text{if } x > 0 \\\\ \\alpha x & \\text{else} \\end{cases}$</strong> ($\\alpha$ is learned during training)</p>
+      <p><strong>Derivative: $f'(x) = \\begin{cases} 1 & \\text{if } x > 0 \\\\ \\alpha & \\text{else} \\end{cases}$</strong></p>
 
       <p>Leaky ReLU addresses the dying ReLU problem by allowing a small, non-zero gradient (typically 0.01) when the input is negative. Instead of completely killing the gradient, negative inputs receive a small "leaky" gradient that allows neurons to potentially recover from negative activations. This simple modification prevents neurons from dying while maintaining most of ReLU's benefits. PReLU takes this further by making α a learnable parameter, allowing the network to decide the optimal negative slope for each neuron during training. In practice, Leaky ReLU with α=0.01 works well and is preferred over standard ReLU when dying neurons are a concern.</p>
 
       <h4>ELU (Exponential Linear Unit)</h4>
-      <p><strong>f(x) = x if x > 0, else α(e^x - 1)</strong> (typically α = 1.0)</p>
-      <p><strong>Derivative: f'(x) = 1 if x > 0, else f(x) + α</strong></p>
+      <p><strong>$f(x) = \\begin{cases} x & \\text{if } x > 0 \\\\ \\alpha(e^x - 1) & \\text{else} \\end{cases}$</strong> (typically $\\alpha = 1.0$)</p>
+      <p><strong>Derivative: $f'(x) = \\begin{cases} 1 & \\text{if } x > 0 \\\\ f(x) + \\alpha & \\text{else} \\end{cases}$</strong></p>
 
       <p>ELU uses a smooth exponential curve for negative values instead of a linear slope. This has several advantages: (1) the smooth transition can lead to faster learning; (2) ELU can produce negative outputs, pushing mean activation closer to zero, which helps reduce bias shift and can speed up learning; (3) the saturation for large negative values can provide robustness to noise. However, ELU's exponential computation is slower than ReLU's simple comparison. ELU often outperforms ReLU on smaller datasets or when each training epoch is important, but ReLU remains more common due to its simplicity and speed.</p>
 
       <h3>Classical Activation Functions: Historical But Still Relevant</h3>
 
       <h4>Sigmoid (Logistic Function)</h4>
-      <p><strong>f(x) = 1 / (1 + e^(-x))</strong></p>
-      <p><strong>Output range: (0, 1)</strong></p>
-      <p><strong>Derivative: f'(x) = f(x)(1 - f(x))</strong></p>
+      <p><strong>$f(x) = \\frac{1}{1 + e^{-x}}$</strong></p>
+      <p><strong>Output range: $(0, 1)$</strong></p>
+      <p><strong>Derivative: $f'(x) = f(x)(1 - f(x))$</strong></p>
 
       <p>The sigmoid function squashes any real-valued input into the range (0, 1), producing an S-shaped curve. It was once the default activation function, inspired by biological neurons having a maximum firing rate. Its output can be interpreted as a probability, making it perfect for binary classification outputs. However, sigmoid has severe problems for hidden layers in deep networks.</p>
 
-      <p><strong>The vanishing gradient catastrophe:</strong> The sigmoid derivative peaks at 0.25 (when x=0) and rapidly approaches zero for large positive or negative inputs. During backpropagation, gradients are multiplied by these derivatives layer by layer. If you have 10 layers, gradients might be multiplied by 0.25 ten times: (0.25)^10 ≈ 0.0000001—effectively zero! This means earlier layers receive almost no learning signal, training becomes glacially slow or stops entirely, and the network never learns the fundamental features in early layers that deeper layers depend on.</p>
+      <p><strong>The vanishing gradient catastrophe:</strong> The sigmoid derivative peaks at 0.25 (when $x=0$) and rapidly approaches zero for large positive or negative inputs. During backpropagation, gradients are multiplied by these derivatives layer by layer. If you have 10 layers, gradients might be multiplied by 0.25 ten times: $(0.25)^{10} \\approx 0.0000001$—effectively zero! This means earlier layers receive almost no learning signal, training becomes glacially slow or stops entirely, and the network never learns the fundamental features in early layers that deeper layers depend on.</p>
 
       <p><strong>Additional problems:</strong></p>
       <ul>
@@ -819,9 +819,9 @@ class SimpleMLP:
       <p><strong>Modern uses:</strong> Despite these problems, sigmoid remains essential for binary classification output layers (interpreting output as P(y=1|x)) and for gates in LSTM and GRU recurrent networks where the (0,1) range is needed to control information flow. Just avoid it for hidden layers in deep networks!</p>
 
       <h4>Tanh (Hyperbolic Tangent)</h4>
-      <p><strong>f(x) = (e^x - e^(-x)) / (e^x + e^(-x)) = 2σ(2x) - 1</strong></p>
-      <p><strong>Output range: (-1, 1)</strong></p>
-      <p><strong>Derivative: f'(x) = 1 - f(x)²</strong></p>
+      <p><strong>$f(x) = \\frac{e^x - e^{-x}}{e^x + e^{-x}} = 2\\sigma(2x) - 1$</strong></p>
+      <p><strong>Output range: $(-1, 1)$</strong></p>
+      <p><strong>Derivative: $f'(x) = 1 - f(x)^2$</strong></p>
 
       <p>Tanh is essentially a scaled and shifted sigmoid, offering one crucial improvement: zero-centered outputs. The range (-1, 1) means the mean activation is closer to zero, which generally makes learning easier. The derivative peaks at 1.0 (vs sigmoid's 0.25), giving stronger gradients. For these reasons, tanh was historically preferred over sigmoid for hidden layers. However, tanh still suffers from vanishing gradients in deep networks—the derivative still approaches zero for large |x|, just not quite as badly as sigmoid.</p>
 
@@ -830,7 +830,7 @@ class SimpleMLP:
       <h3>Modern Advanced Activations</h3>
 
       <h4>Softmax: The Multi-Class Specialist</h4>
-      <p><strong>f(x)ᵢ = e^(xᵢ) / Σⱼ e^(xⱼ)</strong></p>
+      <p><strong>$f(x)_i = \\frac{e^{x_i}}{\\sum_j e^{x_j}}$</strong></p>
 
       <p>Softmax is unique among activations—it's not applied element-wise but rather transforms a vector of logits (raw scores) into a probability distribution. Each output is a positive value between 0 and 1, and all outputs sum to exactly 1, allowing interpretation as class probabilities. Softmax "soft-maximizes" the input: the largest input gets the highest probability, but unlike hard max (which outputs 1 for the largest and 0 for others), softmax gives non-zero probabilities to all classes, with the degree of differentiation controlled by the input magnitudes.</p>
 
@@ -844,16 +844,16 @@ class SimpleMLP:
       <p><strong>Critical usage note:</strong> Always use softmax only in the output layer for multi-class classification (mutually exclusive classes). Pair it with categorical cross-entropy loss. For multi-label classification (non-exclusive classes), use independent sigmoid outputs instead. Never use softmax in hidden layers—it destroys information by normalizing activations.</p>
 
       <h4>Swish / SiLU (Sigmoid Linear Unit)</h4>
-      <p><strong>f(x) = x · σ(x) = x / (1 + e^(-x))</strong></p>
-      <p><strong>Derivative: f'(x) = f(x) + σ(x)(1 - f(x))</strong></p>
+      <p><strong>$f(x) = x \\cdot \\sigma(x) = \\frac{x}{1 + e^{-x}}$</strong></p>
+      <p><strong>Derivative: $f'(x) = f(x) + \\sigma(x)(1 - f(x))$</strong></p>
 
       <p>Discovered through extensive neural architecture search by Google researchers, Swish is a smooth, non-monotonic activation that often outperforms ReLU in deep networks. It's "self-gated"—the output is the input modulated by its own sigmoid, allowing the function to decide how much of the input to pass through. For large positive x, Swish ≈ x (like ReLU); for large negative x, Swish ≈ 0 (like ReLU); but the smooth transition and non-monotonicity seem to help optimization and generalization.</p>
 
       <p>Swish has been adopted in state-of-the-art architectures like EfficientNet and some Transformer variants. The main drawback is computational cost—computing both x and σ(x) is slower than ReLU's simple comparison. Use Swish when model quality is paramount and you can afford the extra computation.</p>
 
       <h4>GELU (Gaussian Error Linear Unit)</h4>
-      <p><strong>Exact: f(x) = x · Φ(x)</strong> where Φ is the Gaussian CDF</p>
-      <p><strong>Approximation: f(x) ≈ 0.5x(1 + tanh(√(2/π)(x + 0.044715x³)))</strong></p>
+      <p><strong>Exact: $f(x) = x \\cdot \\Phi(x)$</strong> where $\\Phi$ is the Gaussian CDF</p>
+      <p><strong>Approximation: $f(x) \\approx 0.5x\\left(1 + \\tanh\\left(\\sqrt{\\frac{2}{\\pi}}(x + 0.044715x^3)\\right)\\right)$</strong></p>
 
       <p>GELU provides a smooth approximation to ReLU with a probabilistic interpretation: it weights inputs by their probability under a standard normal distribution. Inputs significantly above zero are passed through, inputs significantly below are zeroed, and intermediate values are probabilistically gated. The smooth curve (no kink at zero like ReLU) may help optimization, and empirical results show GELU often outperforms ReLU in natural language processing.</p>
 
@@ -889,7 +889,7 @@ class SimpleMLP:
       <h3>Common Problems and Solutions</h3>
 
       <h4>Vanishing Gradients: The Deep Network Killer</h4>
-      <p>In deep networks, gradients must flow through many layers during backpropagation. Each layer multiplies the gradient by its local derivative. If these derivatives are consistently less than 1 (as with sigmoid/tanh), the product becomes exponentially smaller: 0.25^20 ≈ 10^-13. Early layers receive essentially zero gradient, stopping learning entirely.</p>
+      <p>In deep networks, gradients must flow through many layers during backpropagation. Each layer multiplies the gradient by its local derivative. If these derivatives are consistently less than 1 (as with sigmoid/tanh), the product becomes exponentially smaller: $0.25^{20} \\approx 10^{-13}$. Early layers receive essentially zero gradient, stopping learning entirely.</p>
 
       <p><strong>Symptoms:</strong> Early layers don't improve during training, validation loss plateaus early, network performs poorly despite deep architecture, gradient norms decrease exponentially with depth.</p>
 
@@ -1136,7 +1136,7 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <p>The core insight is elegant: instead of computing each parameter's gradient independently (which would require one forward pass per parameter—impossibly expensive for large networks), backpropagation computes all gradients in exactly one forward pass and one backward pass. This efficiency comes from recognizing that many gradient computations share common sub-expressions. By carefully ordering computations and reusing intermediate results, backpropagation transforms an exponentially complex problem into a linear-time algorithm.</p>
 
       <h3>The Big Picture: Training as Optimization</h3>
-      <p>Training a neural network is an optimization problem: find the parameters (weights and biases) that minimize a loss function measuring prediction error on training data. The loss function <strong>L(θ)</strong> depends on parameters <strong>θ</strong> (all the weights and biases in the network). To minimize it, we use gradient descent and its variants, which require computing <strong>∇L(θ)</strong>—the gradient of the loss with respect to each parameter. This gradient indicates the direction of steepest increase; we move in the opposite direction to decrease loss.</p>
+      <p>Training a neural network is an optimization problem: find the parameters (weights and biases) that minimize a loss function measuring prediction error on training data. The loss function <strong>$L(\\theta)$</strong> depends on parameters <strong>$\\theta$</strong> (all the weights and biases in the network). To minimize it, we use gradient descent and its variants, which require computing <strong>$\\nabla L(\\theta)$</strong>—the gradient of the loss with respect to each parameter. This gradient indicates the direction of steepest increase; we move in the opposite direction to decrease loss.</p>
 
       <p><strong>The training cycle consists of four repeating steps:</strong></p>
       <ol>
@@ -1151,18 +1151,18 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <h3>Mathematical Foundation: The Chain Rule</h3>
       <p>Backpropagation is essentially a systematic application of the <strong>chain rule</strong> from calculus. The chain rule tells us how to compute derivatives of composite functions:</p>
 
-      <p><strong>For functions f(g(x)): df/dx = (df/dg) × (dg/dx)</strong></p>
+      <p><strong>For functions $f(g(x))$: $\\frac{df}{dx} = \\frac{df}{dg} \\times \\frac{dg}{dx}$</strong></p>
 
-      <p>Neural networks are deeply nested compositions of functions. Consider a simple 2-layer network predicting ŷ from input x:</p>
+      <p>Neural networks are deeply nested compositions of functions. Consider a simple 2-layer network predicting $\\hat{y}$ from input x:</p>
       <ul>
-        <li>Layer 1: <strong>z₁ = W₁x + b₁</strong>, <strong>a₁ = f(z₁)</strong></li>
-        <li>Layer 2: <strong>z₂ = W₂a₁ + b₂</strong>, <strong>ŷ = g(z₂)</strong></li>
-        <li>Loss: <strong>L = loss_function(ŷ, y)</strong></li>
+        <li>Layer 1: <strong>$z_1 = W_1 x + b_1$</strong>, <strong>$a_1 = f(z_1)$</strong></li>
+        <li>Layer 2: <strong>$z_2 = W_2 a_1 + b_2$</strong>, <strong>$\\hat{y} = g(z_2)$</strong></li>
+        <li>Loss: <strong>$L = \\text{loss\\_function}(\\hat{y}, y)$</strong></li>
       </ul>
 
-      <p>To compute how a weight in layer 1, say <strong>W₁[i,j]</strong>, affects the final loss, we must account for the entire chain of dependencies: <strong>W₁ → z₁ → a₁ → z₂ → ŷ → L</strong>. The chain rule gives us:</p>
+      <p>To compute how a weight in layer 1, say <strong>$W_1[i,j]$</strong>, affects the final loss, we must account for the entire chain of dependencies: <strong>$W_1 \\to z_1 \\to a_1 \\to z_2 \\to \\hat{y} \\to L$</strong>. The chain rule gives us:</p>
 
-      <p><strong>∂L/∂W₁ = (∂L/∂ŷ) × (∂ŷ/∂z₂) × (∂z₂/∂a₁) × (∂a₁/∂z₁) × (∂z₁/∂W₁)</strong></p>
+      <p><strong>$\\frac{\\partial L}{\\partial W_1} = \\frac{\\partial L}{\\partial \\hat{y}} \\times \\frac{\\partial \\hat{y}}{\\partial z_2} \\times \\frac{\\partial z_2}{\\partial a_1} \\times \\frac{\\partial a_1}{\\partial z_1} \\times \\frac{\\partial z_1}{\\partial W_1}$</strong></p>
 
       <p>Each term in this product is a <strong>local gradient</strong>—a derivative that depends only on values immediately adjacent in the computational graph. Backpropagation computes these local gradients efficiently during the backward pass, multiplying them together to get global gradients for each parameter.</p>
 
@@ -1171,27 +1171,27 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
 
       <p><strong>Layer l (for l = 1, 2, ..., L):</strong></p>
       <ul>
-        <li><strong>Linear transformation:</strong> z⁽ˡ⁾ = W⁽ˡ⁾a⁽ˡ⁻¹⁾ + b⁽ˡ⁾ (note: a⁽⁰⁾ = x is the input)</li>
-        <li><strong>Non-linear activation:</strong> a⁽ˡ⁾ = f⁽ˡ⁾(z⁽ˡ⁾)</li>
+        <li><strong>Linear transformation:</strong> $z^{(l)} = W^{(l)} a^{(l-1)} + b^{(l)}$ (note: $a^{(0)} = x$ is the input)</li>
+        <li><strong>Non-linear activation:</strong> $a^{(l)} = f^{(l)}(z^{(l)})$</li>
       </ul>
 
       <p><strong>Output and Loss:</strong></p>
       <ul>
-        <li>Prediction: <strong>ŷ = a⁽ᴸ⁾</strong></li>
-        <li>Loss: <strong>L = loss_function(ŷ, y)</strong></li>
+        <li>Prediction: <strong>$\\hat{y} = a^{(L)}$</strong></li>
+        <li>Loss: <strong>$L = \\text{loss\\_function}(\\hat{y}, y)$</strong></li>
       </ul>
 
-      <p><strong>Critical: Store all z⁽ˡ⁾ and a⁽ˡ⁾ values!</strong> These are needed during backpropagation to compute local gradients. Without them, we'd have to recompute forward passes, losing all efficiency gains.</p>
+      <p><strong>Critical: Store all $z^{(l)}$ and $a^{(l)}$ values!</strong> These are needed during backpropagation to compute local gradients. Without them, we'd have to recompute forward passes, losing all efficiency gains.</p>
 
       <p><strong>Example: 2-layer network with ReLU hidden layer, sigmoid output, binary cross-entropy loss</strong></p>
       <ul>
-        <li>Input: x ∈ ℝ⁵ (5 features)</li>
-        <li>Hidden layer: z₁ = W₁x + b₁ ∈ ℝ³ (3 neurons), a₁ = ReLU(z₁)</li>
-        <li>Output layer: z₂ = W₂a₁ + b₂ ∈ ℝ¹, ŷ = σ(z₂) (σ = sigmoid)</li>
-        <li>Loss: L = -[y log(ŷ) + (1-y) log(1-ŷ)]</li>
+        <li>Input: $x \\in \\mathbb{R}^5$ (5 features)</li>
+        <li>Hidden layer: $z_1 = W_1 x + b_1 \\in \\mathbb{R}^3$ (3 neurons), $a_1 = \\text{ReLU}(z_1)$</li>
+        <li>Output layer: $z_2 = W_2 a_1 + b_2 \\in \\mathbb{R}^1$, $\\hat{y} = \\sigma(z_2)$ ($\\sigma$ = sigmoid)</li>
+        <li>Loss: $L = -[y \\log(\\hat{y}) + (1-y) \\log(1-\\hat{y})]$</li>
       </ul>
 
-      <p>After the forward pass, we've computed ŷ and L, and stored z₁, a₁, z₂. Now we're ready for backpropagation.</p>
+      <p>After the forward pass, we've computed $\\hat{y}$ and $L$, and stored $z_1, a_1, z_2$. Now we're ready for backpropagation.</p>
 
       <h3>Backward Propagation: Computing Gradients Efficiently</h3>
       <p>Backpropagation works by computing gradients layer by layer, starting from the loss and moving backward toward the input. At each layer, we compute two types of gradients: (1) gradients with respect to the layer's parameters (weights and biases)—these are what we need to update the network, and (2) gradients with respect to the layer's inputs—these are passed to the previous layer to continue the backward pass.</p>
@@ -1199,9 +1199,9 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <p><strong>Step 1: Output Layer Gradient</strong></p>
       <p>Start by computing how the loss changes with respect to the output layer's activations. For many common loss/activation combinations, this has a simple form:</p>
       <ul>
-        <li><strong>Softmax + Cross-Entropy:</strong> ∂L/∂z⁽ᴸ⁾ = ŷ - y (predicted probabilities minus true one-hot)</li>
-        <li><strong>Sigmoid + Binary Cross-Entropy:</strong> ∂L/∂z⁽ᴸ⁾ = ŷ - y</li>
-        <li><strong>Linear + MSE:</strong> ∂L/∂z⁽ᴸ⁾ = 2(ŷ - y)/m where m is batch size</li>
+        <li><strong>Softmax + Cross-Entropy:</strong> $\\frac{\\partial L}{\\partial z^{(L)}} = \\hat{y} - y$ (predicted probabilities minus true one-hot)</li>
+        <li><strong>Sigmoid + Binary Cross-Entropy:</strong> $\\frac{\\partial L}{\\partial z^{(L)}} = \\hat{y} - y$</li>
+        <li><strong>Linear + MSE:</strong> $\\frac{\\partial L}{\\partial z^{(L)}} = \\frac{2(\\hat{y} - y)}{m}$ where m is batch size</li>
       </ul>
 
       <p>These convenient simplifications are why we pair specific activations with specific losses!</p>
@@ -1209,18 +1209,18 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <p><strong>Step 2: Hidden Layer Gradients (layer l = L-1, L-2, ..., 1)</strong></p>
       <p>For each hidden layer, moving backward from output to input:</p>
 
-      <p><strong>Gradient w.r.t. pre-activations z⁽ˡ⁾:</strong></p>
+      <p><strong>Gradient w.r.t. pre-activations $z^{(l)}$:</strong></p>
       <ul>
-        <li>Gradient flows from next layer: <strong>∂L/∂a⁽ˡ⁾ = (W⁽ˡ⁺¹⁾)ᵀ ∂L/∂z⁽ˡ⁺¹⁾</strong></li>
-        <li>Apply activation derivative: <strong>∂L/∂z⁽ˡ⁾ = ∂L/∂a⁽ˡ⁾ ⊙ f'(z⁽ˡ⁾)</strong> (⊙ = element-wise product)</li>
+        <li>Gradient flows from next layer: <strong>$\\frac{\\partial L}{\\partial a^{(l)}} = (W^{(l+1)})^T \\frac{\\partial L}{\\partial z^{(l+1)}}$</strong></li>
+        <li>Apply activation derivative: <strong>$\\frac{\\partial L}{\\partial z^{(l)}} = \\frac{\\partial L}{\\partial a^{(l)}} \\odot f'(z^{(l)})$</strong> ($\\odot$ = element-wise product)</li>
       </ul>
 
       <p>The first line shows how gradients propagate backward through the linear transformation—it's a matrix-vector product with the <em>transpose</em> of the weight matrix. The second line accounts for the non-linear activation by element-wise multiplying with the activation's derivative.</p>
 
       <p><strong>Gradient w.r.t. parameters (weights and biases):</strong></p>
       <ul>
-        <li><strong>∂L/∂W⁽ˡ⁾ = (1/m) ∂L/∂z⁽ˡ⁾ (a⁽ˡ⁻¹⁾)ᵀ</strong> (outer product: if ∂L/∂z⁽ˡ⁾ is n×1 and a⁽ˡ⁻¹⁾ is m×1, result is n×m like W)</li>
-        <li><strong>∂L/∂b⁽ˡ⁾ = (1/m) sum over batch of ∂L/∂z⁽ˡ⁾</strong></li>
+        <li><strong>$\\frac{\\partial L}{\\partial W^{(l)}} = \\frac{1}{m} \\frac{\\partial L}{\\partial z^{(l)}} (a^{(l-1)})^T$</strong> (outer product: if $\\frac{\\partial L}{\\partial z^{(l)}}$ is n×1 and $a^{(l-1)}$ is m×1, result is n×m like W)</li>
+        <li><strong>$\\frac{\\partial L}{\\partial b^{(l)}} = \\frac{1}{m} \\sum \\text{(over batch)} \\frac{\\partial L}{\\partial z^{(l)}}$</strong></li>
       </ul>
 
       <p>These are the gradients we've been seeking! They tell us how to update each weight and bias to reduce the loss.</p>
@@ -1230,43 +1230,43 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
 
       <p><strong>Forward pass:</strong></p>
       <ul>
-        <li>Weights: W₁ = [[1, 0], [0, 1]], b₁ = [0, 0], W₂ = [[1], [1]], b₂ = [0]</li>
-        <li>Hidden: z₁ = [1, 2], a₁ = ReLU([1, 2]) = [1, 2]</li>
-        <li>Output: z₂ = 1×1 + 1×2 + 0 = 3, ŷ = 3</li>
-        <li>Loss: L = (3 - 5)² = 4</li>
+        <li>Weights: $W_1 = [[1, 0], [0, 1]]$, $b_1 = [0, 0]$, $W_2 = [[1], [1]]$, $b_2 = [0]$</li>
+        <li>Hidden: $z_1 = [1, 2]$, $a_1 = \\text{ReLU}([1, 2]) = [1, 2]$</li>
+        <li>Output: $z_2 = 1 \\times 1 + 1 \\times 2 + 0 = 3$, $\\hat{y} = 3$</li>
+        <li>Loss: $L = (3 - 5)^2 = 4$</li>
       </ul>
 
       <p><strong>Backward pass:</strong></p>
       <ul>
-        <li>Output gradient: ∂L/∂ŷ = 2(3-5) = -4, ∂L/∂z₂ = -4 (linear activation derivative is 1)</li>
-        <li>Output weights: ∂L/∂W₂ = -4 × [1, 2]ᵀ = [-4, -8], ∂L/∂b₂ = -4</li>
-        <li>Hidden gradient: ∂L/∂a₁ = [1, 1]ᵀ × (-4) = [-4, -4]</li>
-        <li>Apply ReLU derivative: ∂L/∂z₁ = [-4, -4] ⊙ [1, 1] = [-4, -4] (ReLU derivative is 1 where z>0)</li>
-        <li>Hidden weights: ∂L/∂W₁ = [-4, -4]ᵀ × [1, 2] = [[-4, -8], [-4, -8]]</li>
-        <li>Hidden biases: ∂L/∂b₁ = [-4, -4]</li>
+        <li>Output gradient: $\\frac{\\partial L}{\\partial \\hat{y}} = 2(3-5) = -4$, $\\frac{\\partial L}{\\partial z_2} = -4$ (linear activation derivative is 1)</li>
+        <li>Output weights: $\\frac{\\partial L}{\\partial W_2} = -4 \\times [1, 2]^T = [-4, -8]$, $\\frac{\\partial L}{\\partial b_2} = -4$</li>
+        <li>Hidden gradient: $\\frac{\\partial L}{\\partial a_1} = [1, 1]^T \\times (-4) = [-4, -4]$</li>
+        <li>Apply ReLU derivative: $\\frac{\\partial L}{\\partial z_1} = [-4, -4] \\odot [1, 1] = [-4, -4]$ (ReLU derivative is 1 where $z>0$)</li>
+        <li>Hidden weights: $\\frac{\\partial L}{\\partial W_1} = [-4, -4]^T \\times [1, 2] = [[-4, -8], [-4, -8]]$</li>
+        <li>Hidden biases: $\\frac{\\partial L}{\\partial b_1} = [-4, -4]$</li>
       </ul>
 
-      <p>Now we have all gradients! With learning rate η=0.1, updates would be: W₂ = [[1], [1]] - 0.1×[[-4], [-8]] = [[1.4], [1.8]], etc.</p>
+      <p>Now we have all gradients! With learning rate $\\eta=0.1$, updates would be: $W_2 = [[1], [1]] - 0.1 \\times [[-4], [-8]] = [[1.4], [1.8]]$, etc.</p>
 
       <p><strong>Second iteration (showing learning):</strong></p>
-      <p>After applying updates with η=0.1:</p>
+      <p>After applying updates with $\\eta=0.1$:</p>
       <ul>
-        <li>Updated weights: W₁ = [[1.4, 0.8], [0.4, 1.8]], b₁ = [0.4, 0.4], W₂ = [[1.4], [1.8]], b₂ = [0.4]</li>
+        <li>Updated weights: $W_1 = [[1.4, 0.8], [0.4, 1.8]]$, $b_1 = [0.4, 0.4]$, $W_2 = [[1.4], [1.8]]$, $b_2 = [0.4]$</li>
       </ul>
 
       <p><strong>Forward pass (iteration 2):</strong></p>
       <ul>
-        <li>Hidden: z₁ = [1.4(1) + 0.8(2) + 0.4, 0.4(1) + 1.8(2) + 0.4] = [3.4, 4.0], a₁ = [3.4, 4.0]</li>
-        <li>Output: z₂ = 1.4(3.4) + 1.8(4.0) + 0.4 = 4.76 + 7.2 + 0.4 = 12.36, ŷ = 12.36</li>
-        <li>Loss: L = (12.36 - 5)² = 54.17</li>
+        <li>Hidden: $z_1 = [1.4(1) + 0.8(2) + 0.4, 0.4(1) + 1.8(2) + 0.4] = [3.4, 4.0]$, $a_1 = [3.4, 4.0]$</li>
+        <li>Output: $z_2 = 1.4(3.4) + 1.8(4.0) + 0.4 = 4.76 + 7.2 + 0.4 = 12.36$, $\\hat{y} = 12.36$</li>
+        <li>Loss: $L = (12.36 - 5)^2 = 54.17$</li>
       </ul>
 
-      <p><strong>Progress check:</strong> Wait, the loss increased from 4 to 54.17! This is because our learning rate (0.1) was too large for this toy example. Reducing to η=0.01 would give: ŷ ≈ 3.53, L ≈ 2.88—better! This illustrates why learning rate tuning is critical. The model is learning (moving predictions toward target), but the step size matters.</p>
+      <p><strong>Progress check:</strong> Wait, the loss increased from 4 to 54.17! This is because our learning rate (0.1) was too large for this toy example. Reducing to $\\eta=0.01$ would give: $\\hat{y} \\approx 3.53$, $L \\approx 2.88$—better! This illustrates why learning rate tuning is critical. The model is learning (moving predictions toward target), but the step size matters.</p>
 
       <h3>Why Backpropagation is Efficient: Complexity Analysis</h3>
-      <p><strong>Naive gradient computation:</strong> To compute ∂L/∂w for one weight using finite differences, we'd perturb that weight, run a forward pass, and measure the change in loss: ∂L/∂w ≈ (L(w+ε) - L(w))/ε. For a network with n parameters, this requires n+1 forward passes—one for the base loss and one per parameter. Complexity: O(n × forward_cost).</p>
+      <p><strong>Naive gradient computation:</strong> To compute $\\frac{\\partial L}{\\partial w}$ for one weight using finite differences, we'd perturb that weight, run a forward pass, and measure the change in loss: $\\frac{\\partial L}{\\partial w} \\approx \\frac{L(w+\\varepsilon) - L(w)}{\\varepsilon}$. For a network with n parameters, this requires n+1 forward passes—one for the base loss and one per parameter. Complexity: $O(n \\times \\text{forward\\_cost})$.</p>
 
-      <p><strong>Backpropagation:</strong> One forward pass computes the loss and stores intermediates. One backward pass computes all n gradients. Complexity: O(forward_cost + backward_cost). The backward pass has essentially the same cost as the forward pass (same number of operations, just in reverse order). So total complexity is O(2 × forward_cost), independent of the number of parameters!</p>
+      <p><strong>Backpropagation:</strong> One forward pass computes the loss and stores intermediates. One backward pass computes all n gradients. Complexity: $O(\\text{forward\\_cost} + \\text{backward\\_cost})$. The backward pass has essentially the same cost as the forward pass (same number of operations, just in reverse order). So total complexity is $O(2 \\times \\text{forward\\_cost})$, independent of the number of parameters!</p>
 
       <p>For a network with 1 million parameters, naive finite differences would require 1 million forward passes, while backpropagation requires just 1 forward + 1 backward pass. This efficiency is why training deep networks became feasible. The speedup factor equals the number of parameters—astronomical for modern networks with billions of parameters.</p>
 
@@ -1284,9 +1284,9 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <p>When you write "loss.backward()" in PyTorch, you're triggering reverse-mode automatic differentiation on the computational graph, which is precisely backpropagation.</p>
 
       <h3>Memory Requirements and Optimization</h3>
-      <p>Backpropagation requires storing all intermediate activations from the forward pass. For a network with L layers, each with n neurons, and a batch size of m, this requires O(L × n × m) memory. This can be substantial: a ResNet-50 processing a batch of 256 images (224×224×3) stores gigabytes of activations!</p>
+      <p>Backpropagation requires storing all intermediate activations from the forward pass. For a network with L layers, each with n neurons, and a batch size of m, this requires $O(L \\times n \\times m)$ memory. This can be substantial: a ResNet-50 processing a batch of 256 images (224×224×3) stores gigabytes of activations!</p>
 
-      <p><strong>Gradient checkpointing:</strong> Trade computation for memory by storing only some activations (e.g., every k layers) and recomputing the rest during backpropagation. Reduces memory from O(L) to O(√L) with only ~50% additional computation. Essential for training very deep networks or using large batch sizes.</p>
+      <p><strong>Gradient checkpointing:</strong> Trade computation for memory by storing only some activations (e.g., every k layers) and recomputing the rest during backpropagation. Reduces memory from $O(L)$ to $O(\\sqrt{L})$ with only ~50% additional computation. Essential for training very deep networks or using large batch sizes.</p>
 
       <p><strong>Activation recomputation:</strong> For layers with cheap forward passes (ReLU, batch norm) but expensive storage (large feature maps), recompute activations during backprop instead of storing them.</p>
 
@@ -1295,7 +1295,7 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <h3>Common Issues and Solutions</h3>
 
       <h4>Vanishing Gradients: The Deep Network Killer</h4>
-      <p>In deep networks, gradients must flow through many layers. Each layer multiplies the gradient by its local derivative (the activation function's derivative and the weight matrix). If these multipliers are consistently less than 1, the gradient shrinks exponentially: 0.25²⁰ ≈ 10⁻¹³. Early layers receive essentially zero gradient, learning grinds to a halt, and the network never learns fundamental features.</p>
+      <p>In deep networks, gradients must flow through many layers. Each layer multiplies the gradient by its local derivative (the activation function's derivative and the weight matrix). If these multipliers are consistently less than 1, the gradient shrinks exponentially: $0.25^{20} \\approx 10^{-13}$. Early layers receive essentially zero gradient, learning grinds to a halt, and the network never learns fundamental features.</p>
 
       <p><strong>Symptoms:</strong> Early layers' weights barely change; validation loss plateaus early; network performs poorly despite deep architecture; monitoring gradient norms shows exponential decay with depth.</p>
 
@@ -1303,7 +1303,7 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <ul>
         <li><strong>ReLU activation:</strong> Derivative is 1 for positive inputs, preventing gradient diminishment in the linear regime</li>
         <li><strong>Batch normalization:</strong> Normalizes layer inputs, keeping activations centered and gradients healthy</li>
-        <li><strong>Residual connections:</strong> Skip connections allow gradients to bypass layers via shortcut paths (∂L/∂x = ∂L/∂output × (1 + ∂F/∂x) where the +1 term provides a gradient highway)</li>
+        <li><strong>Residual connections:</strong> Skip connections allow gradients to bypass layers via shortcut paths ($\\frac{\\partial L}{\\partial x} = \\frac{\\partial L}{\\partial \\text{output}} \\times (1 + \\frac{\\partial F}{\\partial x})$ where the +1 term provides a gradient highway)</li>
         <li><strong>Proper initialization:</strong> He initialization for ReLU, Xavier for tanh—sets initial weight magnitudes to preserve gradient variance across layers</li>
         <li><strong>Layer normalization, weight normalization:</strong> Alternative normalization schemes that help gradient flow</li>
       </ul>
@@ -1315,7 +1315,7 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
 
       <p><strong>Solutions:</strong></p>
       <ul>
-        <li><strong>Gradient clipping:</strong> Cap gradient norms at a maximum value (e.g., clip total gradient norm to 5): g = g × (threshold / ||g||) if ||g|| > threshold</li>
+        <li><strong>Gradient clipping:</strong> Cap gradient norms at a maximum value (e.g., clip total gradient norm to 5): $g = g \\times \\frac{\\text{threshold}}{||g||}$ if $||g|| > \\text{threshold}$</li>
         <li><strong>Lower learning rate:</strong> Smaller steps prevent dramatic weight changes</li>
         <li><strong>Proper initialization:</strong> Small initial weights prevent early explosion</li>
         <li><strong>Batch normalization:</strong> Keeps activations and gradients in reasonable ranges</li>
@@ -1325,9 +1325,9 @@ print(f"ReLU model parameters: {sum(p.numel() for p in model_relu.parameters())}
       <h4>Numerical Stability Considerations</h4>
       <p><strong>Softmax overflow:</strong> Computing e^x for large x causes overflow. Solution: softmax(x - max(x)) is numerically equivalent but stable.</p>
 
-      <p><strong>Log of zero:</strong> Loss functions like -log(ŷ) fail when ŷ=0. Solution: use ŷ = clip(ŷ, eps, 1-eps) where eps ≈ 10⁻⁷.</p>
+      <p><strong>Log of zero:</strong> Loss functions like $-\\log(\\hat{y})$ fail when $\\hat{y}=0$. Solution: use $\\hat{y} = \\text{clip}(\\hat{y}, \\varepsilon, 1-\\varepsilon)$ where $\\varepsilon \\approx 10^{-7}$.</p>
 
-      <p><strong>Catastrophic cancellation:</strong> Subtracting nearly equal numbers loses precision. Example: sigmoid derivative σ(x)(1-σ(x)) when σ(x) ≈ 1. Use mathematically equivalent but numerically stable formulations.</p>
+      <p><strong>Catastrophic cancellation:</strong> Subtracting nearly equal numbers loses precision. Example: sigmoid derivative $\\sigma(x)(1-\\sigma(x))$ when $\\sigma(x) \\approx 1$. Use mathematically equivalent but numerically stable formulations.</p>
 
       <h3>Automatic Differentiation: The Modern Implementation</h3>
       <p>Modern deep learning frameworks implement backpropagation through <strong>automatic differentiation (AD)</strong>, specifically <strong>reverse-mode AD</strong>. AD is a family of techniques for computing derivatives of functions specified as computer programs. Unlike symbolic differentiation (manipulating mathematical expressions) or numerical differentiation (finite differences), AD computes exact derivatives efficiently.</p>
@@ -1484,19 +1484,19 @@ for name, param in model.named_parameters():
     interviewQuestions: [
       {
         question: 'Explain how backpropagation works at a high level.',
-        answer: '**Backpropagation** is the algorithm used to train neural networks by efficiently computing gradients of the loss function with respect to all network parameters. It works by applying the **chain rule of calculus** to propagate error signals backward through the network from the output layer to the input layer. The process begins with forward propagation to compute predictions, then calculates the loss, and finally works backward to determine how much each weight and bias contributed to the error.\n\nThe algorithm operates in two phases: **forward pass** and **backward pass**. During the forward pass, input data flows through the network layer by layer, with each neuron computing its weighted sum and applying an activation function. All intermediate values (activations and pre-activation values) are stored for use in the backward pass. During the backward pass, the algorithm starts with the loss gradient at the output and systematically computes gradients for each layer by applying the chain rule.\n\nMathematically, backpropagation computes **∂L/∂w** for each weight **w** by decomposing the gradient using the chain rule: **∂L/∂w = ∂L/∂a × ∂a/∂z × ∂z/∂w**, where **L** is the loss, **a** is the activation, **z** is the pre-activation, and **w** is the weight. This decomposition allows the algorithm to reuse partial derivatives across multiple gradient computations, making it much more efficient than computing each gradient independently.\n\nThe beauty of backpropagation lies in its **computational efficiency**: instead of requiring separate forward passes to compute each gradient (which would be prohibitively expensive for large networks), it computes all gradients in a single forward and backward pass. This efficiency made training of deep neural networks computationally feasible and was crucial for the development of modern deep learning. The algorithm automatically handles the complex dependencies between layers and parameters, making it possible to train networks with millions or billions of parameters.'
+        answer: '**Backpropagation** is the algorithm used to train neural networks by efficiently computing gradients of the loss function with respect to all network parameters. It works by applying the **chain rule of calculus** to propagate error signals backward through the network from the output layer to the input layer. The process begins with forward propagation to compute predictions, then calculates the loss, and finally works backward to determine how much each weight and bias contributed to the error.\n\nThe algorithm operates in two phases: **forward pass** and **backward pass**. During the forward pass, input data flows through the network layer by layer, with each neuron computing its weighted sum and applying an activation function. All intermediate values (activations and pre-activation values) are stored for use in the backward pass. During the backward pass, the algorithm starts with the loss gradient at the output and systematically computes gradients for each layer by applying the chain rule.\n\nMathematically, backpropagation computes **$\\frac{\\partial L}{\\partial w}$** for each weight **w** by decomposing the gradient using the chain rule: **$\\frac{\\partial L}{\\partial w} = \\frac{\\partial L}{\\partial a} \\times \\frac{\\partial a}{\\partial z} \\times \\frac{\\partial z}{\\partial w}$**, where **L** is the loss, **a** is the activation, **z** is the pre-activation, and **w** is the weight. This decomposition allows the algorithm to reuse partial derivatives across multiple gradient computations, making it much more efficient than computing each gradient independently.\n\nThe beauty of backpropagation lies in its **computational efficiency**: instead of requiring separate forward passes to compute each gradient (which would be prohibitively expensive for large networks), it computes all gradients in a single forward and backward pass. This efficiency made training of deep neural networks computationally feasible and was crucial for the development of modern deep learning. The algorithm automatically handles the complex dependencies between layers and parameters, making it possible to train networks with millions or billions of parameters.'
       },
       {
         question: 'What is the chain rule and how does it relate to backpropagation?',
-        answer: 'The **chain rule** is a fundamental calculus principle for computing derivatives of composite functions, and it forms the mathematical foundation of backpropagation. When you have a composite function **f(g(x))**, the chain rule states that the derivative is **df/dx = (df/dg) × (dg/dx)**. This principle extends to functions with multiple variables and multiple composition levels, allowing us to compute gradients through complex computational graphs like neural networks.\n\nIn neural networks, the relationship between the final loss and any intermediate parameter involves a chain of function compositions. For example, to compute how a weight **w₁** in the first layer affects the final loss **L**, we must account for how **w₁** affects the first layer\'s output, which affects the second layer\'s input, which affects the second layer\'s output, and so on until reaching the loss. The chain rule allows us to break this complex dependency into manageable pieces.\n\nBackpropagation applies the chain rule systematically by computing **local gradients** at each layer and combining them to get **global gradients**. For a weight **w_ij** connecting neuron **i** to neuron **j**, the gradient is: **∂L/∂w_ij = ∂L/∂a_j × ∂a_j/∂z_j × ∂z_j/∂w_ij**, where **a_j** is the activation and **z_j** is the pre-activation of neuron **j**. Each term represents a local derivative that can be computed using only local information.\n\nThe key insight is that many of these partial derivatives are **reused** across different gradient computations. For instance, **∂L/∂a_j** (how the loss changes with respect to neuron **j**\'s activation) is needed for computing gradients of all weights feeding into neuron **j**. By computing and storing these intermediate gradients during the backward pass, backpropagation avoids redundant calculations and achieves its remarkable efficiency. This systematic application of the chain rule transforms what could be an exponentially complex gradient computation into a linear-time algorithm.'
+        answer: 'The **chain rule** is a fundamental calculus principle for computing derivatives of composite functions, and it forms the mathematical foundation of backpropagation. When you have a composite function **$f(g(x))$**, the chain rule states that the derivative is **$\\frac{df}{dx} = \\frac{df}{dg} \\times \\frac{dg}{dx}$**. This principle extends to functions with multiple variables and multiple composition levels, allowing us to compute gradients through complex computational graphs like neural networks.\n\nIn neural networks, the relationship between the final loss and any intermediate parameter involves a chain of function compositions. For example, to compute how a weight **$w_1$** in the first layer affects the final loss **L**, we must account for how **$w_1$** affects the first layer\'s output, which affects the second layer\'s input, which affects the second layer\'s output, and so on until reaching the loss. The chain rule allows us to break this complex dependency into manageable pieces.\n\nBackpropagation applies the chain rule systematically by computing **local gradients** at each layer and combining them to get **global gradients**. For a weight **$w_{ij}$** connecting neuron **i** to neuron **j**, the gradient is: **$\\frac{\\partial L}{\\partial w_{ij}} = \\frac{\\partial L}{\\partial a_j} \\times \\frac{\\partial a_j}{\\partial z_j} \\times \\frac{\\partial z_j}{\\partial w_{ij}}$**, where **$a_j$** is the activation and **$z_j$** is the pre-activation of neuron **j**. Each term represents a local derivative that can be computed using only local information.\n\nThe key insight is that many of these partial derivatives are **reused** across different gradient computations. For instance, **$\\frac{\\partial L}{\\partial a_j}$** (how the loss changes with respect to neuron **j**\'s activation) is needed for computing gradients of all weights feeding into neuron **j**. By computing and storing these intermediate gradients during the backward pass, backpropagation avoids redundant calculations and achieves its remarkable efficiency. This systematic application of the chain rule transforms what could be an exponentially complex gradient computation into a linear-time algorithm.'
       },
       {
         question: 'Why is backpropagation more efficient than numerical differentiation?',
-        answer: '**Numerical differentiation** approximates gradients by evaluating the function at multiple points using the finite difference formula: **df/dx ≈ (f(x + h) - f(x)) / h** for small **h**. For a neural network with **n** parameters, this approach would require **n+1** forward passes (one for the original function value and one for each parameter perturbation), making the computational cost **O(n)** times that of a single forward pass. For networks with millions of parameters, this becomes prohibitively expensive.\n\n**Backpropagation**, in contrast, computes all gradients in exactly **one forward pass** and **one backward pass**, regardless of the number of parameters. This makes its computational cost **O(1)** relative to the number of parameters (though still proportional to network size). The efficiency comes from the systematic reuse of intermediate computations made possible by the chain rule. Instead of treating each gradient as an independent calculation, backpropagation recognizes that gradients share common subexpressions that can be computed once and reused.\n\nBeyond computational efficiency, backpropagation provides **exact gradients** (within floating-point precision), while numerical differentiation gives **approximations** that depend on the choice of step size **h**. If **h** is too large, the approximation is inaccurate due to higher-order terms; if **h** is too small, floating-point errors dominate. This creates a trade-off between accuracy and numerical stability that doesn\'t exist with backpropagation.\n\n**Memory efficiency** also favors backpropagation. Numerical differentiation requires storing multiple copies of the network (one for each parameter perturbation being evaluated), while backpropagation only needs to store intermediate activations from the forward pass. Additionally, backpropagation can leverage **automatic differentiation** frameworks that optimize memory usage through techniques like gradient checkpointing, further improving efficiency. These advantages make backpropagation not just faster but also more accurate and practical for training large neural networks.'
+        answer: '**Numerical differentiation** approximates gradients by evaluating the function at multiple points using the finite difference formula: **$\\frac{df}{dx} \\approx \\frac{f(x + h) - f(x)}{h}$** for small **h**. For a neural network with **n** parameters, this approach would require **n+1** forward passes (one for the original function value and one for each parameter perturbation), making the computational cost **$O(n)$** times that of a single forward pass. For networks with millions of parameters, this becomes prohibitively expensive.\n\n**Backpropagation**, in contrast, computes all gradients in exactly **one forward pass** and **one backward pass**, regardless of the number of parameters. This makes its computational cost **$O(1)$** relative to the number of parameters (though still proportional to network size). The efficiency comes from the systematic reuse of intermediate computations made possible by the chain rule. Instead of treating each gradient as an independent calculation, backpropagation recognizes that gradients share common subexpressions that can be computed once and reused.\n\nBeyond computational efficiency, backpropagation provides **exact gradients** (within floating-point precision), while numerical differentiation gives **approximations** that depend on the choice of step size **h**. If **h** is too large, the approximation is inaccurate due to higher-order terms; if **h** is too small, floating-point errors dominate. This creates a trade-off between accuracy and numerical stability that doesn\'t exist with backpropagation.\n\n**Memory efficiency** also favors backpropagation. Numerical differentiation requires storing multiple copies of the network (one for each parameter perturbation being evaluated), while backpropagation only needs to store intermediate activations from the forward pass. Additionally, backpropagation can leverage **automatic differentiation** frameworks that optimize memory usage through techniques like gradient checkpointing, further improving efficiency. These advantages make backpropagation not just faster but also more accurate and practical for training large neural networks.'
       },
       {
         question: 'What values need to be stored during forward pass for backpropagation?',
-        answer: 'During the forward pass, backpropagation requires storing several types of intermediate values that will be needed during the backward pass to compute gradients efficiently. The most critical values are **activations** (the outputs of each layer after applying activation functions) and **pre-activations** (the weighted sums before activation functions). These values are essential because the chain rule requires local derivatives, and computing these derivatives depends on the function inputs that were present during the forward pass.\n\n**Activations** **a^(l) = f(z^(l))** from each layer **l** are needed because they serve as inputs to the next layer and are required for computing gradients of weights in the following layer. When computing **∂L/∂w^(l+1)**, we need **∂z^(l+1)/∂w^(l+1) = a^(l)** (the activation from the previous layer). **Pre-activations** **z^(l) = w^(l)a^(l-1) + b^(l)** are needed to compute derivatives of activation functions: **∂a^(l)/∂z^(l) = f\'(z^(l))**, where **f\'** is the derivative of the activation function.\n\nFor some activation functions and loss functions, additional values might be stored for efficiency. For example, when using **dropout**, we need to store the **dropout mask** (which neurons were set to zero) to apply the same mask during backpropagation. For **batch normalization**, we store the **batch statistics** (mean and variance) and **normalized values** used during the forward pass to compute gradients correctly.\n\nThe **memory trade-off** is significant: storing all these intermediate values requires memory proportional to the network size times the batch size. This can be substantial for large networks and large batches. **Gradient checkpointing** is a technique that trades computation for memory by storing only some intermediate values and recomputing others during the backward pass. This allows training of much larger networks with limited memory, though at the cost of additional computation. Modern deep learning frameworks automatically manage this storage and provide options for memory optimization based on the specific requirements of the model and available hardware resources.'
+        answer: 'During the forward pass, backpropagation requires storing several types of intermediate values that will be needed during the backward pass to compute gradients efficiently. The most critical values are **activations** (the outputs of each layer after applying activation functions) and **pre-activations** (the weighted sums before activation functions). These values are essential because the chain rule requires local derivatives, and computing these derivatives depends on the function inputs that were present during the forward pass.\n\n**Activations** **$a^{(l)} = f(z^{(l)})$** from each layer **l** are needed because they serve as inputs to the next layer and are required for computing gradients of weights in the following layer. When computing **$\\frac{\\partial L}{\\partial w^{(l+1)}}$**, we need **$\\frac{\\partial z^{(l+1)}}{\\partial w^{(l+1)}} = a^{(l)}$** (the activation from the previous layer). **Pre-activations** **$z^{(l)} = w^{(l)}a^{(l-1)} + b^{(l)}$** are needed to compute derivatives of activation functions: **$\\frac{\\partial a^{(l)}}{\\partial z^{(l)}} = f\\\'(z^{(l)})$**, where **$f\\\'$** is the derivative of the activation function.\n\nFor some activation functions and loss functions, additional values might be stored for efficiency. For example, when using **dropout**, we need to store the **dropout mask** (which neurons were set to zero) to apply the same mask during backpropagation. For **batch normalization**, we store the **batch statistics** (mean and variance) and **normalized values** used during the forward pass to compute gradients correctly.\n\nThe **memory trade-off** is significant: storing all these intermediate values requires memory proportional to the network size times the batch size. This can be substantial for large networks and large batches. **Gradient checkpointing** is a technique that trades computation for memory by storing only some intermediate values and recomputing others during the backward pass. This allows training of much larger networks with limited memory, though at the cost of additional computation. Modern deep learning frameworks automatically manage this storage and provide options for memory optimization based on the specific requirements of the model and available hardware resources.'
       },
       {
         question: 'How do vanishing gradients occur during backpropagation?',
@@ -1556,29 +1556,29 @@ for name, param in model.named_parameters():
       <h2>Gradient Descent & Optimizers: The Engines of Learning</h2>
       <p>Gradient descent is the fundamental optimization algorithm powering neural network training. It's an iterative first-order optimization method that adjusts model parameters in the direction that most rapidly decreases the loss function. Understanding gradient descent and its modern variants (optimizers) is essential because they directly control how—and whether—your network learns. The choice of optimizer and its hyperparameters can mean the difference between a model that converges quickly to excellent performance and one that trains slowly, gets stuck, or fails entirely.</p>
 
-      <p>At its core, gradient descent leverages a simple insight from calculus: the gradient ∇L(θ) points in the direction of steepest increase of the loss function L at parameters θ. Moving in the opposite direction (-∇L(θ)) decreases the loss most rapidly. By repeatedly taking small steps downhill, gradient descent navigates the loss landscape toward minima. While conceptually simple, the practical implementation involves numerous subtleties: batch sizes, learning rates, momentum, adaptive learning rates, and learning rate schedules all dramatically impact training success.</p>
+      <p>At its core, gradient descent leverages a simple insight from calculus: the gradient $\\nabla L(\\theta)$ points in the direction of steepest increase of the loss function L at parameters $\\theta$. Moving in the opposite direction ($-\\nabla L(\\theta)$) decreases the loss most rapidly. By repeatedly taking small steps downhill, gradient descent navigates the loss landscape toward minima. While conceptually simple, the practical implementation involves numerous subtleties: batch sizes, learning rates, momentum, adaptive learning rates, and learning rate schedules all dramatically impact training success.</p>
 
       <h3>The Basic Algorithm: Vanilla Gradient Descent</h3>
       <p>The fundamental gradient descent update rule is elegantly simple:</p>
 
-      <p><strong>θ ← θ - η∇L(θ)</strong></p>
+      <p><strong>$\\theta \\leftarrow \\theta - \\eta \\nabla L(\\theta)$</strong></p>
 
       <p>Where:</p>
       <ul>
-        <li><strong>θ:</strong> Model parameters (all weights and biases in the network)</li>
-        <li><strong>η:</strong> Learning rate (step size), typically 0.001-0.1</li>
-        <li><strong>∇L(θ):</strong> Gradient of the loss function with respect to parameters (computed via backpropagation)</li>
+        <li><strong>$\\theta$:</strong> Model parameters (all weights and biases in the network)</li>
+        <li><strong>$\\eta$:</strong> Learning rate (step size), typically 0.001-0.1</li>
+        <li><strong>$\\nabla L(\\theta)$:</strong> Gradient of the loss function with respect to parameters (computed via backpropagation)</li>
         <li><strong>Minus sign:</strong> Move opposite to the gradient (downhill)</li>
       </ul>
 
-      <p>The algorithm iterates: compute gradient → update parameters → repeat until convergence (when gradients become very small) or a maximum number of iterations is reached. The learning rate η controls how large each step is: too large and you overshoot the minimum; too small and convergence is painfully slow.</p>
+      <p>The algorithm iterates: compute gradient → update parameters → repeat until convergence (when gradients become very small) or a maximum number of iterations is reached. The learning rate $\\eta$ controls how large each step is: too large and you overshoot the minimum; too small and convergence is painfully slow.</p>
 
       <h3>Three Variants: Batch, Stochastic, and Mini-Batch</h3>
 
       <h4>Batch Gradient Descent (BGD)</h4>
       <p>Compute the gradient using the <strong>entire training dataset</strong> before making a single parameter update:</p>
 
-      <p><strong>∇L(θ) = (1/N) Σᵢ₌₁ᴺ ∇L(θ; xᵢ, yᵢ)</strong></p>
+      <p><strong>$\\nabla L(\\theta) = \\frac{1}{N} \\sum_{i=1}^{N} \\nabla L(\\theta; x_i, y_i)$</strong></p>
 
       <p>Where N is the total number of training examples. This averages gradients over all examples, providing the most accurate estimate of the true gradient.</p>
 
@@ -1602,7 +1602,7 @@ for name, param in model.named_parameters():
       <h4>Stochastic Gradient Descent (SGD)</h4>
       <p>Compute gradient using just a <strong>single randomly selected training example</strong> and immediately update:</p>
 
-      <p><strong>∇L(θ) = ∇L(θ; xᵢ, yᵢ)</strong> for randomly sampled i</p>
+      <p><strong>$\\nabla L(\\theta) = \\nabla L(\\theta; x_i, y_i)$</strong> for randomly sampled i</p>
 
       <p>This provides a noisy estimate of the true gradient but allows extremely frequent updates.</p>
 
@@ -1627,7 +1627,7 @@ for name, param in model.named_parameters():
       <h4>Mini-Batch Gradient Descent (The Standard Choice)</h4>
       <p>Compute gradient using a <strong>small random subset (batch) of training examples</strong>, typically 32-512 examples:</p>
 
-      <p><strong>∇L(θ) = (1/m) Σᵢ₌₁ᵐ ∇L(θ; xᵢ, yᵢ)</strong></p>
+      <p><strong>$\\nabla L(\\theta) = \\frac{1}{m} \\sum_{i=1}^{m} \\nabla L(\\theta; x_i, y_i)$</strong></p>
 
       <p>Where m is the mini-batch size. This strikes a balance between accurate gradient estimates and computational efficiency.</p>
 
@@ -1653,11 +1653,11 @@ for name, param in model.named_parameters():
       <h4>Momentum: Accelerating Convergence</h4>
       <p><strong>Update rules:</strong></p>
       <ul>
-        <li><strong>v_t = βv_{t-1} + ∇L(θ)</strong> (accumulate velocity)</li>
-        <li><strong>θ = θ - ηv_t</strong> (update using velocity)</li>
+        <li><strong>$v_t = \\beta v_{t-1} + \\nabla L(\\theta)$</strong> (accumulate velocity)</li>
+        <li><strong>$\\theta = \\theta - \\eta v_t$</strong> (update using velocity)</li>
       </ul>
 
-      <p>Where β (typically 0.9) is the momentum coefficient, and v is the velocity vector (moving average of gradients). Think of a ball rolling down a hill: momentum accumulates speed in consistent directions while damping oscillations.</p>
+      <p>Where $\\beta$ (typically 0.9) is the momentum coefficient, and v is the velocity vector (moving average of gradients). Think of a ball rolling down a hill: momentum accumulates speed in consistent directions while damping oscillations.</p>
 
       <p><strong>Why it helps:</strong></p>
       <ul>
@@ -1669,22 +1669,22 @@ for name, param in model.named_parameters():
 
       <p><strong>Nesterov Momentum (NAG):</strong> A clever variant that "looks ahead" before computing gradients:</p>
       <ul>
-        <li><strong>v_t = βv_{t-1} + ∇L(θ - ηβv_{t-1})</strong></li>
-        <li><strong>θ = θ - ηv_t</strong></li>
+        <li><strong>$v_t = \\beta v_{t-1} + \\nabla L(\\theta - \\eta \\beta v_{t-1})$</strong></li>
+        <li><strong>$\\theta = \\theta - \\eta v_t$</strong></li>
       </ul>
 
-      <p>By evaluating the gradient at the predicted future position (θ - ηβv_{t-1}) rather than current position, NAG often converges faster and more accurately. Widely used in practice.</p>
+      <p>By evaluating the gradient at the predicted future position ($\\theta - \\eta \\beta v_{t-1}$) rather than current position, NAG often converges faster and more accurately. Widely used in practice.</p>
 
       <h4>RMSprop: Adaptive Per-Parameter Learning Rates</h4>
       <p><strong>Update rules:</strong></p>
       <ul>
-        <li><strong>s_t = βs_{t-1} + (1-β)(∇L(θ))²</strong> (moving average of squared gradients)</li>
-        <li><strong>θ = θ - η∇L(θ) / (√s_t + ε)</strong></li>
+        <li><strong>$s_t = \\beta s_{t-1} + (1-\\beta)(\\nabla L(\\theta))^2$</strong> (moving average of squared gradients)</li>
+        <li><strong>$\\theta = \\theta - \\frac{\\eta \\nabla L(\\theta)}{\\sqrt{s_t} + \\varepsilon}$</strong></li>
       </ul>
 
-      <p>Where β ≈ 0.9 and ε ≈ 10⁻⁸ prevents division by zero. RMSprop divides learning rate by the root of the moving average of squared gradients, adapting the learning rate per parameter.</p>
+      <p>Where $\\beta \\approx 0.9$ and $\\varepsilon \\approx 10^{-8}$ prevents division by zero. RMSprop divides learning rate by the root of the moving average of squared gradients, adapting the learning rate per parameter.</p>
 
-      <p><strong>Key insight:</strong> Parameters with consistently large gradients get smaller effective learning rates (divided by large √s_t), while parameters with small gradients get larger effective learning rates (divided by small √s_t). This automatic per-parameter adaptation helps optimization, especially when parameters have very different scales or update frequencies.</p>
+      <p><strong>Key insight:</strong> Parameters with consistently large gradients get smaller effective learning rates (divided by large $\\sqrt{s_t}$), while parameters with small gradients get larger effective learning rates (divided by small $\\sqrt{s_t}$). This automatic per-parameter adaptation helps optimization, especially when parameters have very different scales or update frequencies.</p>
 
       <p><strong>Advantages:</strong> Works well for non-stationary problems (RNNs) and handles sparse gradients better than plain SGD. Often enables higher base learning rates.</p>
 
@@ -1693,13 +1693,13 @@ for name, param in model.named_parameters():
 
       <p><strong>Update rules:</strong></p>
       <ul>
-        <li><strong>m_t = β₁m_{t-1} + (1-β₁)∇L(θ)</strong> (first moment: momentum)</li>
-        <li><strong>v_t = β₂v_{t-1} + (1-β₂)(∇L(θ))²</strong> (second moment: adaptive LR)</li>
-        <li><strong>Bias correction:</strong> m̂_t = m_t/(1-β₁ᵗ), v̂_t = v_t/(1-β₂ᵗ)</li>
-        <li><strong>θ = θ - η(m̂_t / (√v̂_t + ε))</strong></li>
+        <li><strong>$m_t = \\beta_1 m_{t-1} + (1-\\beta_1)\\nabla L(\\theta)$</strong> (first moment: momentum)</li>
+        <li><strong>$v_t = \\beta_2 v_{t-1} + (1-\\beta_2)(\\nabla L(\\theta))^2$</strong> (second moment: adaptive LR)</li>
+        <li><strong>Bias correction:</strong> $\\hat{m}_t = \\frac{m_t}{1-\\beta_1^t}$, $\\hat{v}_t = \\frac{v_t}{1-\\beta_2^t}$</li>
+        <li><strong>$\\theta = \\theta - \\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\varepsilon}$</strong></li>
       </ul>
 
-      <p>Default hyperparameters (work well across many tasks): β₁=0.9, β₂=0.999, η=0.001, ε=10⁻⁸</p>
+      <p>Default hyperparameters (work well across many tasks): $\\beta_1=0.9$, $\\beta_2=0.999$, $\\eta=0.001$, $\\varepsilon=10^{-8}$</p>
 
       <p><strong>Why Adam is popular:</strong></p>
       <ul>
@@ -1710,33 +1710,33 @@ for name, param in model.named_parameters():
         <li><strong>Bias correction:</strong> Ensures proper behavior from first iteration despite zero initialization</li>
       </ul>
 
-      <p><strong>Bias correction explained:</strong> m_t and v_t are initialized to zero, biasing them toward zero early in training. Without correction, Adam would take huge initial steps. Corrections m̂_t and v̂_t account for this, with the correction effect diminishing as t increases.</p>
+      <p><strong>Bias correction explained:</strong> $m_t$ and $v_t$ are initialized to zero, biasing them toward zero early in training. Without correction, Adam would take huge initial steps. Corrections $\\hat{m}_t$ and $\\hat{v}_t$ account for this, with the correction effect diminishing as t increases.</p>
 
       <h4>AdamW: Fixing Weight Decay</h4>
       <p>Standard Adam incorporates weight decay (L2 regularization) by adding it to gradients. However, this interacts poorly with adaptive learning rates, causing inconsistent regularization across parameters. <strong>AdamW</strong> decouples weight decay from gradient updates:</p>
 
-      <p><strong>θ = θ - η(m̂_t / (√v̂_t + ε)) - λθ</strong></p>
+      <p><strong>$\\theta = \\theta - \\eta \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\varepsilon} - \\lambda\\theta$</strong></p>
 
-      <p>Where λ is weight decay coefficient (typically 0.01-0.1). The weight decay term is applied directly to parameters, independent of gradient-based updates. This ensures uniform regularization strength across all parameters.</p>
+      <p>Where $\\lambda$ is weight decay coefficient (typically 0.01-0.1). The weight decay term is applied directly to parameters, independent of gradient-based updates. This ensures uniform regularization strength across all parameters.</p>
 
       <p><strong>Why decoupling matters - concrete example:</strong></p>
-      <p>Consider two parameters: parameter A with large historical gradients (v̂ = 100) and parameter B with small historical gradients (v̂ = 1). With learning rate η = 0.001 and weight decay λ = 0.01:</p>
-      
+      <p>Consider two parameters: parameter A with large historical gradients ($\\hat{v} = 100$) and parameter B with small historical gradients ($\\hat{v} = 1$). With learning rate $\\eta = 0.001$ and weight decay $\\lambda = 0.01$:</p>
+
       <p><strong>Standard Adam with L2 in gradient:</strong></p>
       <ul>
-        <li>Effective learning rate for A: η/√v̂_A = 0.001/√100 = 0.0001</li>
-        <li>Effective learning rate for B: η/√v̂_B = 0.001/√1 = 0.001</li>
-        <li>Weight decay for A: 0.0001 × λ × θ_A (weak regularization)</li>
-        <li>Weight decay for B: 0.001 × λ × θ_B (10× stronger regularization)</li>
+        <li>Effective learning rate for A: $\\eta/\\sqrt{\\hat{v}_A} = 0.001/\\sqrt{100} = 0.0001$</li>
+        <li>Effective learning rate for B: $\\eta/\\sqrt{\\hat{v}_B} = 0.001/\\sqrt{1} = 0.001$</li>
+        <li>Weight decay for A: $0.0001 \\times \\lambda \\times \\theta_A$ (weak regularization)</li>
+        <li>Weight decay for B: $0.001 \\times \\lambda \\times \\theta_B$ (10× stronger regularization)</li>
         <li><strong>Problem:</strong> Parameters with different gradient histories get inconsistent regularization!</li>
       </ul>
 
       <p><strong>AdamW with decoupled weight decay:</strong></p>
       <ul>
-        <li>Gradient update for A: η × m̂_A/√v̂_A (adaptive)</li>
-        <li>Gradient update for B: η × m̂_B/√v̂_B (adaptive)</li>
-        <li>Weight decay for A: λ × θ_A (consistent)</li>
-        <li>Weight decay for B: λ × θ_B (consistent)</li>
+        <li>Gradient update for A: $\\eta \\times \\hat{m}_A/\\sqrt{\\hat{v}_A}$ (adaptive)</li>
+        <li>Gradient update for B: $\\eta \\times \\hat{m}_B/\\sqrt{\\hat{v}_B}$ (adaptive)</li>
+        <li>Weight decay for A: $\\lambda \\times \\theta_A$ (consistent)</li>
+        <li>Weight decay for B: $\\lambda \\times \\theta_B$ (consistent)</li>
         <li><strong>Solution:</strong> All parameters get uniform regularization regardless of gradient history!</li>
       </ul>
 
@@ -1781,19 +1781,19 @@ for name, param in model.named_parameters():
       <p>Fixed learning rates are suboptimal: large rates needed early for fast progress become too large later, preventing fine-tuning. Learning rate schedules adjust LR during training for better convergence.</p>
 
       <h4>Step Decay</h4>
-      <p><strong>η_t = η₀ × γ^(floor(t/k))</strong></p>
+      <p><strong>$\\eta_t = \\eta_0 \\times \\gamma^{\\lfloor t/k \\rfloor}$</strong></p>
 
-      <p>Reduce LR by factor γ (e.g., 0.1, 0.5) every k epochs. Simple and effective. Example: start at 0.01, multiply by 0.1 every 30 epochs → 0.01, 0.001, 0.0001, ...</p>
+      <p>Reduce LR by factor $\\gamma$ (e.g., 0.1, 0.5) every k epochs. Simple and effective. Example: start at 0.01, multiply by 0.1 every 30 epochs → 0.01, 0.001, 0.0001, ...</p>
 
       <h4>Exponential Decay</h4>
-      <p><strong>η_t = η₀ × e^(-kt)</strong></p>
+      <p><strong>$\\eta_t = \\eta_0 \\times e^{-kt}$</strong></p>
 
       <p>Smooth continuous decay. Less common than step decay but provides gradual reduction without abrupt changes.</p>
 
       <h4>Cosine Annealing</h4>
-      <p><strong>η_t = η_min + 0.5(η_max - η_min)(1 + cos(πt/T))</strong></p>
+      <p><strong>$\\eta_t = \\eta_{\\text{min}} + 0.5(\\eta_{\\text{max}} - \\eta_{\\text{min}})(1 + \\cos(\\pi t/T))$</strong></p>
 
-      <p>Follows cosine curve from η_max to η_min over T epochs. Smooth, gradual decay. Popular for training from scratch (ResNet, Transformers). Provides gentle, continuous reduction that often improves final performance.</p>
+      <p>Follows cosine curve from $\\eta_{\\text{max}}$ to $\\eta_{\\text{min}}$ over T epochs. Smooth, gradual decay. Popular for training from scratch (ResNet, Transformers). Provides gentle, continuous reduction that often improves final performance.</p>
 
       <h4>ReduceLROnPlateau</h4>
       <p>Monitor validation metric; when it stops improving for N epochs (patience), reduce LR by factor (e.g., 0.5). Adaptive to training dynamics—automatically adjusts when progress stalls. No need to manually choose decay schedule.</p>
@@ -2044,21 +2044,21 @@ for epoch in range(100):
       <p><strong>Step 1: Compute Batch Statistics</strong></p>
       <p>Given a mini-batch of m examples with activations <strong>x = {x₁, x₂, ..., xₘ}</strong>, compute:</p>
       <ul>
-        <li><strong>Batch mean:</strong> μ_B = (1/m) Σᵢ₌₁ᵐ xᵢ</li>
-        <li><strong>Batch variance:</strong> σ²_B = (1/m) Σᵢ₌₁ᵐ (xᵢ - μ_B)²</li>
+        <li><strong>Batch mean:</strong> $\\mu_B = \\frac{1}{m} \\sum_{i=1}^m x_i$</li>
+        <li><strong>Batch variance:</strong> $\\sigma^2_B = \\frac{1}{m} \\sum_{i=1}^m (x_i - \\mu_B)^2$</li>
       </ul>
 
       <p>These statistics are computed independently for each feature dimension (each neuron in fully connected layers, each channel in convolutional layers).</p>
 
       <p><strong>Step 2: Normalize</strong></p>
       <p>Transform each activation to have zero mean and unit variance:</p>
-      <p><strong>x̂ᵢ = (xᵢ - μ_B) / √(σ²_B + ε)</strong></p>
+      <p><strong>$\\hat{x}_i = \\frac{x_i - \\mu_B}{\\sqrt{\\sigma^2_B + \\varepsilon}}$</strong></p>
 
-      <p>Where ε (typically 10⁻⁵) is added for numerical stability to prevent division by zero when variance is very small.</p>
+      <p>Where $\\varepsilon$ (typically $10^{-5}$) is added for numerical stability to prevent division by zero when variance is very small.</p>
 
       <p><strong>Step 3: Scale and Shift</strong></p>
       <p>Apply learnable affine transformation:</p>
-      <p><strong>yᵢ = γx̂ᵢ + β</strong></p>
+      <p><strong>$y_i = \\gamma \\hat{x}_i + \\beta$</strong></p>
 
       <p>Where:</p>
       <ul>
