@@ -81,6 +81,7 @@ export const categories: Category[] = [
       'transformer-architecture',
       'self-attention-multi-head',
       'positional-encoding',
+      'vision-transformers',
       'bert',
       'gpt',
       't5-bart',

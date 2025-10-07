@@ -14,7 +14,7 @@ import { decisionTreesQuestions, randomForestsQuestions, gradientBoostingQuestio
 import { svmQuestions, knnQuestions, kMeansQuestions } from './classicalML_part3';
 import { pcaQuestions, naiveBayesQuestions } from './classicalML_part4';
 // Neural Networks
-import { perceptronQuestions, mlpQuestions, activationFunctionsQuestions } from './neuralNetworks';
+import { perceptronQuestions, mlpQuestions, activationFunctionsQuestions, neuralNetworksScenarioQuestions } from './neuralNetworks';
 import { backpropagationQuestions, gradientDescentQuestions, batchNormQuestions, lossFunctionsQuestions } from './neuralNetworks_part2';
 // Computer Vision
 import { cnnQuestions, poolingQuestions, classicArchitecturesQuestions } from './computerVision';
@@ -57,12 +57,12 @@ export const quizQuestionPools: Record<string, QuizQuestion[]> = {
   'naive-bayes': naiveBayesQuestions,
   // Neural Networks
   'perceptron': perceptronQuestions,
-  'mlp': mlpQuestions,
-  'activation-functions': activationFunctionsQuestions,
-  'backpropagation': backpropagationQuestions,
-  'gradient-descent': gradientDescentQuestions,
-  'batch-normalization': batchNormQuestions,
-  'loss-functions': lossFunctionsQuestions,
+  'mlp': [...mlpQuestions, ...neuralNetworksScenarioQuestions.slice(0, 3)],
+  'activation-functions': [...activationFunctionsQuestions, ...neuralNetworksScenarioQuestions.slice(3, 5)],
+  'backpropagation': [...backpropagationQuestions, ...neuralNetworksScenarioQuestions.slice(5, 7)],
+  'gradient-descent': [...gradientDescentQuestions, ...neuralNetworksScenarioQuestions.slice(7, 8)],
+  'batch-normalization': [...batchNormQuestions, ...neuralNetworksScenarioQuestions.slice(1, 2).concat(neuralNetworksScenarioQuestions.slice(4, 5))],
+  'loss-functions': [...lossFunctionsQuestions, ...neuralNetworksScenarioQuestions.slice(8, 10)],
   // Computer Vision
   'cnns': cnnQuestions,
   'pooling-layers': poolingQuestions,

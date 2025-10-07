@@ -466,3 +466,127 @@ export const activationFunctionsQuestions: QuizQuestion[] = [
     explanation: 'Choice depends on the problem (classification/regression), network depth, and empirical testing on validation data.'
   }
 ];
+
+// Scenario-based questions for deeper understanding
+export const neuralNetworksScenarioQuestions: QuizQuestion[] = [
+  {
+    id: 'nn-scenario-1',
+    question: 'Your deep network (10 layers, sigmoid activations) trains for 100 epochs. Training loss drops from 2.5 to 2.3, then plateaus. Validation loss barely moves. The first 3 layers\' weights barely change. What are the top 3 things to try?',
+    options: [
+      'Get more data, use a bigger model, train longer',
+      'Switch to ReLU activations, add batch normalization, use residual connections (vanishing gradient problem)',
+      'Lower learning rate, use SGD instead of Adam, reduce batch size',
+      'Add more layers, use dropout everywhere, use L2 regularization'
+    ],
+    correctAnswer: 1,
+    explanation: 'Classic vanishing gradient: sigmoid derivatives shrink exponentially through layers. Early layers can\'t learn. Solutions: ReLU (derivative=1), BatchNorm (stabilizes gradients), residual connections (gradient highways). This is why modern deep networks use ReLU, not sigmoid.'
+  },
+  {
+    id: 'nn-scenario-2',
+    question: 'You train an image classifier with BatchNorm. Training accuracy: 95%. When you deploy and test on single images, accuracy drops to 62%. What\'s the most likely issue?',
+    options: [
+      'Model is overfitting to training data',
+      'Forgot to call model.eval() - BatchNorm using wrong statistics',
+      'Test images are too different from training',
+      'Need data augmentation'
+    ],
+    correctAnswer: 1,
+    explanation: 'BatchNorm behavior differs in train vs eval mode. Training uses batch statistics (unreliable for batch=1). Eval mode uses running averages from training. Forgetting model.eval() is the #1 BatchNorm mistake, causing dramatic performance drop on single examples.'
+  },
+  {
+    id: 'nn-scenario-3',
+    question: 'Your binary classifier outputs: [0.51, 0.49, 0.50, 0.52, 0.48] for all samples (basically 0.5 for everything). Training with BCE loss and sigmoid output. Loss decreases slowly but predictions stay near 0.5. What\'s wrong?',
+    options: [
+      'Learning rate too low - increase by 10x',
+      'Model is learning but stuck at trivial solution. Check: class balance, learning rate, model capacity, feature quality',
+      'Need more epochs - train longer',
+      'BatchNorm is causing the issue'
+    ],
+    correctAnswer: 1,
+    explanation: 'Outputting 0.5 is a trivial "hedge" solution. Possible causes: (1) Extreme class imbalance - model learned "always predict majority", (2) Learning rate too low - no meaningful updates, (3) Insufficient capacity - model too simple, (4) Features don\'t contain signal. Check class distribution first, then try higher LR, bigger model, or feature engineering.'
+  },
+  {
+    id: 'nn-scenario-4',
+    question: 'Training loss becomes NaN after 50 iterations. Before NaN, gradients for later layers were ~100, early layers ~0.01. What happened and how to fix?',
+    options: [
+      'Underfitting - need bigger model',
+      'Exploding gradients in later layers. Solutions: lower learning rate (10x), gradient clipping, better initialization',
+      'Vanishing gradients - switch to ReLU',
+      'Bad data - clean dataset'
+    ],
+    correctAnswer: 1,
+    explanation: 'Gradient ~100 indicates exploding gradients. Eventually causes NaN when weights/gradients become infinite. Fixes: (1) Lower learning rate (0.001 → 0.0001), (2) Gradient clipping (torch.nn.utils.clip_grad_norm_), (3) He initialization, (4) BatchNorm. The vanishing gradients in early layers is a separate issue also needing attention.'
+  },
+  {
+    id: 'nn-scenario-5',
+    question: 'Your model with BatchNorm works great with batch size 32 but training becomes unstable with batch size 4 (loss oscillates wildly). Why and what to do?',
+    options: [
+      'Batch size 4 is too small - just use 32',
+      'BatchNorm relies on batch statistics - with batch=4, statistics are too noisy. Use GroupNorm or LayerNorm instead',
+      'Lower learning rate for batch size 4',
+      'Add more dropout'
+    ],
+    correctAnswer: 1,
+    explanation: 'BatchNorm quality degrades with small batches. Batch=4 gives noisy mean/variance estimates, destabilizing normalization. Solutions: (1) Use GroupNorm (normalizes within channel groups, batch-independent), (2) Use LayerNorm (normalizes across features per sample), (3) Increase batch size if memory allows. GroupNorm is specifically designed for small-batch training.'
+  },
+  {
+    id: 'nn-scenario-6',
+    question: 'You use MSE loss for a 10-class classification problem (classes 0-9). The model outputs probabilities via softmax. Training works but accuracy is only 35%. What\'s wrong?',
+    options: [
+      'Need more data',
+      'Using wrong loss function - use CrossEntropyLoss for classification, not MSE',
+      'Model architecture is bad',
+      'Learning rate is wrong'
+    ],
+    correctAnswer: 1,
+    explanation: 'MSE is for regression, not classification. It treats classes as numbers (class 8 is "closer" to class 9 than class 1), which is nonsensical. MSE also gives poor gradients for softmax outputs. Use CrossEntropyLoss (includes softmax) or NLLLoss (with log_softmax). This single fix often improves accuracy by 30-50%.'
+  },
+  {
+    id: 'nn-scenario-7',
+    question: 'Your network has 40% of ReLU neurons permanently outputting 0 for all inputs (dead neurons). Training/validation accuracy is poor (both ~60%). What caused this and how to fix?',
+    options: [
+      'This is normal for ReLU - no fix needed',
+      'Dying ReLU problem from high learning rate or bad initialization. Fix: lower LR, use Leaky ReLU, use He initialization',
+      'Need more layers',
+      'Batch size is too small'
+    ],
+    correctAnswer: 1,
+    explanation: 'Dying ReLU: neurons stuck outputting 0, gradients permanently 0, can\'t recover. Causes: (1) Learning rate too high - large updates push weights negative, (2) Bad initialization - starts in dead region. Fixes: (1) Lower learning rate (0.01 → 0.001), (2) Leaky ReLU (small negative slope allows recovery), (3) He initialization, (4) BatchNorm. 40% dead neurons severely limits model capacity.'
+  },
+  {
+    id: 'nn-scenario-8',
+    question: 'Training an image segmentation model. Training loss: 0.05, validation loss: 0.08. Dice score (evaluation metric): training 0.92, validation 0.65. What\'s the issue?',
+    options: [
+      'Validation set is harder',
+      'Severe overfitting - model memorizes training data. Add regularization: dropout, weight decay, data augmentation, or get more data',
+      'Loss function is wrong',
+      'Learning rate too high'
+    ],
+    correctAnswer: 1,
+    explanation: 'Large train-validation gap (0.92 vs 0.65 Dice) indicates overfitting. Model learns training-specific patterns, doesn\'t generalize. Solutions: (1) Dropout (0.3-0.5), (2) L2 regularization (weight_decay=0.01), (3) Data augmentation (flips, rotations, color jitter), (4) More training data, (5) Reduce model size, (6) Early stopping. Try multiple techniques together.'
+  },
+  {
+    id: 'nn-scenario-9',
+    question: 'You apply softmax before passing outputs to nn.CrossEntropyLoss in PyTorch. Model trains but converges very slowly and final accuracy is 15% below baseline. Why?',
+    options: [
+      'Need to train longer',
+      'CrossEntropyLoss includes softmax internally - applying it twice gives wrong gradients. Pass raw logits to the loss',
+      'Learning rate is too low',
+      'Model architecture needs improvement'
+    ],
+    correctAnswer: 1,
+    explanation: 'Critical PyTorch gotcha: nn.CrossEntropyLoss = softmax + log + negative log likelihood, all in one numerically stable operation. Applying softmax first: (1) Double-applies softmax (softmax of softmax), (2) Breaks numerical stability, (3) Wrong gradients - prevents proper learning. Always pass raw logits (pre-softmax) to CrossEntropyLoss.'
+  },
+  {
+    id: 'nn-scenario-10',
+    question: 'Training a multi-label classifier (images can have multiple labels: "cat", "outdoor", "sunny"). You use softmax + CrossEntropyLoss. Model performs poorly. What\'s wrong?',
+    options: [
+      'Need more data',
+      'Softmax forces mutual exclusivity (probabilities sum to 1). Use independent sigmoid outputs + BCELoss for multi-label',
+      'Learning rate too low',
+      'Need deeper network'
+    ],
+    correctAnswer: 1,
+    explanation: 'Softmax outputs sum to 1, implying classes are mutually exclusive. For multi-label (non-exclusive classes), this is wrong. Solution: Use K independent sigmoid outputs (one per class) with BCELoss. Each sigmoid outputs independent probability for its class. Image can then have multiple labels with high probability simultaneously.'
+  }
+];
