@@ -286,7 +286,7 @@ export const objectDetection: Topic = {
     <h3>Evaluation Metrics</h3>
 
     <h4>Intersection over Union (IoU)</h4>
-    <p><strong>Definition:</strong> IoU = Area(Bbox₁ ∩ Bbox₂) / Area(Bbox₁ ∪ Bbox₂)</p>
+    <p><strong>Definition:</strong> $$\\text{IoU} = \\frac{\\text{Area}(\\text{Bbox}_1 \\cap \\text{Bbox}_2)}{\\text{Area}(\\text{Bbox}_1 \\cup \\text{Bbox}_2)}$$</p>
     
     <p>IoU measures the overlap between predicted and ground truth bounding boxes, providing a scale-invariant metric that ranges from 0 (no overlap) to 1 (perfect overlap).</p>
     

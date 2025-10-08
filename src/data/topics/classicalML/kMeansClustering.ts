@@ -55,8 +55,8 @@ export const kMeansClustering: Topic = {
     <h3>Objective Function</h3>
     <p>K-Means minimizes the within-cluster sum of squares (WCSS/inertia):</p>
     <ul>
-      <li><strong>J = Σᵏᵢ₌₁ Σₓ∈Cᵢ ||x - μᵢ||²</strong></li>
-      <li>Where μᵢ is the centroid of cluster Cᵢ</li>
+      <li>$$J = \\sum_{i=1}^{k} \\sum_{\\mathbf{x} \\in C_i} ||\\mathbf{x} - \\boldsymbol{\\mu}_i||^2$$</li>
+      <li>Where $\\boldsymbol{\\mu}_i$ is the centroid of cluster $C_i$</li>
       <li>Goal: minimize distance between points and their cluster centroids</li>
     </ul>
 

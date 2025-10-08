@@ -92,7 +92,7 @@ export const evaluationMetrics: Topic = {
     <p>From these four values, all classification metrics are derived. The key insight is that different metrics emphasize different cells of the confusion matrix, reflecting different priorities about which errors matter most.</p>
 
     <h4>Accuracy: The Simplest But Often Misleading Metric</h4>
-    <p><strong>Accuracy = (TP + TN) / (TP + TN + FP + FN)</strong></p>
+    <p>$$\\text{Accuracy} = \\frac{TP + TN}{TP + TN + FP + FN}$$</p>
     <p>Accuracy measures the fraction of predictions that are correct. It's intuitive, easy to explain to non-technical stakeholders, and works well when classes are balanced and errors have equal cost. However, accuracy is notoriously misleading for imbalanced datasets.</p>
 
     <p><strong>The imbalance problem:</strong> Suppose you're detecting fraud in credit card transactions, where 99.9% of transactions are legitimate. A naive model that classifies every transaction as "not fraud" achieves 99.9% accuracy while being completely useless—it catches zero fraud cases. Accuracy hides this failure because the denominator is dominated by the abundant negative class. In imbalanced settings, a model can have high accuracy by simply predicting the majority class for everything.</p>
@@ -100,7 +100,7 @@ export const evaluationMetrics: Topic = {
     <p><strong>When to use accuracy:</strong> Balanced datasets where all classes are equally important and errors have roughly equal cost. Examples: classifying balanced datasets of cat/dog images, predicting coin flips, or multi-class problems with equal representation. Avoid accuracy for imbalanced data, rare event detection, or when different error types have different costs.</p>
 
     <h4>Precision: Minimizing False Alarms</h4>
-    <p><strong>Precision = TP / (TP + FP)</strong></p>
+    <p>$$\\text{Precision} = \\frac{TP}{TP + FP}$$</p>
     <p>Precision answers the question: "Of all the examples my model labeled as positive, what fraction actually were positive?" It measures how "precise" or "pure" your positive predictions are. High precision means few false alarms—when your model says positive, it's usually right.</p>
 
     <p><strong>When to optimize for precision:</strong> Situations where false positives are expensive or harmful. Email spam filtering is the classic example: marking a legitimate email as spam (false positive) is very bad—users might miss important messages from clients, jobs, or family. Missing some spam (false negative) is annoying but acceptable. Similarly, in content moderation, false positives (censoring legitimate speech) may have legal or ethical consequences. Other precision-critical domains include medical treatment recommendations (giving wrong treatment is worse than conservative monitoring), legal document review (flagging wrong documents wastes expensive lawyer time), and fraud alerts sent to customers (too many false alarms train customers to ignore real alerts).</p>
@@ -108,7 +108,7 @@ export const evaluationMetrics: Topic = {
     <p><strong>The trade-off:</strong> You can achieve perfect precision = 1.0 by being extremely conservative—only predicting positive when you're absolutely certain. But this will miss many true positives, giving low recall. Precision alone doesn't tell you whether you're catching most positive cases.</p>
 
     <h4>Recall (Sensitivity, True Positive Rate): Minimizing Missed Cases</h4>
-    <p><strong>Recall = TP / (TP + FN)</strong></p>
+    <p>$$\\text{Recall} = \\frac{TP}{TP + FN}$$</p>
     <p>Recall answers: "Of all the actual positive examples, what fraction did my model correctly identify?" It measures how "complete" your positive predictions are. High recall means you're catching most of the positive cases, with few slipping through.</p>
 
     <p><strong>When to optimize for recall:</strong> Situations where false negatives are catastrophic. Medical screening tests are the paradigm: missing a cancer diagnosis (false negative) could be fatal, while a false positive just means an unnecessary follow-up test. You want high recall to catch all potential cases, accepting some false alarms that get filtered by confirmatory testing. Airport security screening similarly prioritizes recall—better to flag innocent passengers for additional screening than miss a threat. Other recall-critical applications include fraud detection (missing fraud causes direct financial loss), safety monitoring (missing equipment failures causes accidents), and missing children alerts (false alarms are acceptable when safety is at risk).</p>
@@ -116,12 +116,12 @@ export const evaluationMetrics: Topic = {
     <p><strong>The trade-off:</strong> You can achieve perfect recall = 1.0 by predicting everything as positive—you'll catch all true positives but also flag all negatives as false positives. Recall alone doesn't tell you how many false alarms you're generating.</p>
 
     <h4>F1 Score: Balancing Precision and Recall</h4>
-    <p><strong>F1 = 2 × (Precision × Recall) / (Precision + Recall)</strong></p>
+    <p>$$F1 = 2 \\times \\frac{\\text{Precision} \\times \\text{Recall}}{\\text{Precision} + \\text{Recall}}$$</p>
     <p>The F1 score is the harmonic mean of precision and recall. The harmonic mean (unlike arithmetic mean) heavily penalizes low values—if either precision or recall is very low, F1 will be low. This makes F1 a balanced metric that requires both precision and recall to be reasonably high.</p>
 
     <p><strong>Why harmonic mean?</strong> Suppose precision = 1.0 (perfect) and recall = 0.01 (terrible). The arithmetic mean would be 0.505 (appearing decent), but the harmonic mean (F1) is 0.0198 (correctly reflecting the terrible recall). The harmonic mean is more conservative and appropriate when you need both metrics to be good.</p>
 
-    <p><strong>Generalizations:</strong> The F1 score is a special case of the F$\\beta$ score: $F_\\beta = (1 + \\beta^2) \\times \\frac{\\text{Precision} \\times \\text{Recall}}{\\beta^2 \\times \\text{Precision} + \\text{Recall}}$. With $\\beta = 1$, you get F1 (equal weight). $\\beta = 2$ (F2 score) weighs recall twice as much as precision—useful when recall is more important. $\\beta = 0.5$ weighs precision higher. In practice, F1 is the most common choice for imbalanced classification.</p>
+    <p><strong>Generalizations:</strong> The F1 score is a special case of the $F_\\beta$ score: $F_\\beta = (1 + \\beta^2) \\times \\frac{\\text{Precision} \\times \\text{Recall}}{\\beta^2 \\times \\text{Precision} + \\text{Recall}}$. With $\\beta = 1$, you get F1 (equal weight). $\\beta = 2$ (F2 score) weighs recall twice as much as precision—useful when recall is more important. $\\beta = 0.5$ weighs precision higher. In practice, F1 is the most common choice for imbalanced classification.</p>
 
     <p><strong>Limitations:</strong> F1 requires choosing a classification threshold. It also doesn't account for true negatives at all—it focuses purely on positive class performance. For severely imbalanced data, this is actually a feature, not a bug.</p>
 

@@ -10,25 +10,25 @@ export const naiveBayes: Topic = {
     <p>Naive Bayes is a probabilistic classification algorithm based on Bayes' Theorem with the "naive" assumption that features are conditionally independent given the class label. Despite this strong assumption, it performs surprisingly well in many real-world applications.</p>
 
     <h3>Bayes' Theorem</h3>
-    <p><strong>P(C|X) = [P(X|C) × P(C)] / P(X)</strong></p>
+    <p>$$P(C|X) = \\frac{P(X|C) \\times P(C)}{P(X)}$$</p>
     <ul>
-      <li><strong>P(C|X):</strong> Posterior probability (probability of class C given features X)</li>
-      <li><strong>P(X|C):</strong> Likelihood (probability of features X given class C)</li>
-      <li><strong>P(C):</strong> Prior probability (probability of class C)</li>
-      <li><strong>P(X):</strong> Evidence (probability of features X, acts as normalizing constant)</li>
+      <li><strong>$P(C|X)$:</strong> Posterior probability (probability of class C given features X)</li>
+      <li><strong>$P(X|C)$:</strong> Likelihood (probability of features X given class C)</li>
+      <li><strong>$P(C)$:</strong> Prior probability (probability of class C)</li>
+      <li><strong>$P(X)$:</strong> Evidence (probability of features X, acts as normalizing constant)</li>
     </ul>
 
     <h3>Naive Independence Assumption</h3>
     <p>Assumes features are conditionally independent given the class:</p>
     <ul>
-      <li><strong>P(X|C) = P(x₁|C) × P(x₂|C) × ... × P(xₙ|C)</strong></li>
+      <li>$$P(X|C) = P(x_1|C) \\times P(x_2|C) \\times ... \\times P(x_n|C)$$</li>
       <li>Simplifies computation significantly</li>
       <li>"Naive" because features are usually dependent in practice</li>
       <li>Works well despite violated assumption</li>
     </ul>
 
     <h3>The "Naive" Independence Assumption: Why It's Both Wrong and Useful</h3>
-    <p>The "naive" assumption states that all features are <strong>conditionally independent</strong> given the class label. Mathematically: P(x₁, x₂, ..., xₙ | y) = P(x₁|y) × P(x₂|y) × ... × P(xₙ|y). This means once you know the class, knowing one feature's value tells you nothing about another feature's value.</p>
+    <p>The "naive" assumption states that all features are <strong>conditionally independent</strong> given the class label. Mathematically: $P(x_1, x_2, ..., x_n | y) = P(x_1|y) \\times P(x_2|y) \\times ... \\times P(x_n|y)$. This means once you know the class, knowing one feature's value tells you nothing about another feature's value.</p>
     
     <p><strong>Why It's "Naive" (Usually Wrong):</strong></p>
     <p>In reality, features are often correlated. In spam classification with features ["contains 'free'", "contains 'winner'", "length > 100 words"], the presence of "free" and "winner" together is more common in spam than their individual probabilities would suggest—they're not independent. Spam emails use templates that include both words. Similarly, in medical diagnosis, symptoms often co-occur (fever and cough together in flu), violating independence.</p>
@@ -36,7 +36,7 @@ export const naiveBayes: Topic = {
     <p><strong>Why It Works Anyway:</strong></p>
     <p>Despite being false, the assumption often doesn't hurt classification accuracy much because:</p>
     <ul>
-      <li><strong>Classification uses ranking, not absolute probabilities:</strong> You only need P(spam|email) > P(ham|email), not accurate probability values. Even if Naive Bayes estimates P(spam|email) = 0.9 when true value is 0.7, the classification is correct.</li>
+      <li><strong>Classification uses ranking, not absolute probabilities:</strong> You only need $P(\\text{spam}|\\text{email}) > P(\\text{ham}|\\text{email})$, not accurate probability values. Even if Naive Bayes estimates $P(\\text{spam}|\\text{email}) = 0.9$ when true value is 0.7, the classification is correct.</li>
       <li><strong>Redundancy helps:</strong> Correlated features provide overlapping evidence pointing to the correct class. Even if the model double-counts evidence, all classes are affected similarly, preserving relative rankings.</li>
       <li><strong>Simplicity prevents overfitting:</strong> With few parameters (linear in features), Naive Bayes generalizes well despite bias. Complex models that capture correlations might overfit those correlations if they're noisy or training-specific.</li>
       <li><strong>High dimensions dilute correlations:</strong> In text with 10,000+ words, most feature pairs are only weakly correlated, making the assumption less harmful.</li>
@@ -47,9 +47,9 @@ export const naiveBayes: Topic = {
     <h3>Classification</h3>
     <p>Predict the class with highest posterior probability:</p>
     <ul>
-      <li><strong>ŷ = argmax_c P(C=c|X)</strong></li>
-      <li>Since P(X) is constant, we maximize: P(X|C) × P(C)</li>
-      <li>Taking log for numerical stability: log P(C) + Σ log P(xᵢ|C)</li>
+      <li>$\\hat{y} = \\text{argmax}_c P(C=c|X)$</li>
+      <li>Since $P(X)$ is constant, we maximize: $P(X|C) \\times P(C)$</li>
+      <li>Taking log for numerical stability: $\\log P(C) + \\sum \\log P(x_i|C)$</li>
     </ul>
 
     <h3>Types of Naive Bayes</h3>
@@ -58,8 +58,8 @@ export const naiveBayes: Topic = {
     <ul>
       <li>For continuous features</li>
       <li>Assumes features follow Gaussian (normal) distribution</li>
-      <li>P(xᵢ|C) = (1/√(2πσ²)) × exp(-(xᵢ-μ)²/(2σ²))</li>
-      <li>Learn mean μ and variance σ² for each feature per class</li>
+      <li>$P(x_i|C) = \\frac{1}{\\sqrt{2\\pi\\sigma^2}} \\times \\exp\\left(-\\frac{(x_i-\\mu)^2}{2\\sigma^2}\\right)$</li>
+      <li>Learn mean $\\mu$ and variance $\\sigma^2$ for each feature per class</li>
       <li>Best for: Continuous numerical features</li>
     </ul>
 
@@ -67,7 +67,7 @@ export const naiveBayes: Topic = {
     <ul>
       <li>For discrete count features</li>
       <li>Originally for document classification (word counts)</li>
-      <li>P(xᵢ|C) = (count of feature i in class C) / (total count in class C)</li>
+      <li>$P(x_i|C) = \\frac{\\text{count of feature } i \\text{ in class } C}{\\text{total count in class } C}$</li>
       <li>Laplace smoothing prevents zero probabilities</li>
       <li>Best for: Text classification, count data</li>
     </ul>
@@ -83,21 +83,21 @@ export const naiveBayes: Topic = {
     <h3>Laplace Smoothing: Solving the Zero-Probability Problem</h3>
     <p>Laplace smoothing (add-one smoothing) prevents catastrophic failure when a feature-class combination never appears in training data.</p>
     
-    <p><strong>The Problem:</strong> If word "blockchain" never appeared in training spam emails, the estimated P("blockchain"|spam) = 0/1000 = 0. During classification, P(spam|email) = P(spam) × P(word₁|spam) × ... × P("blockchain"|spam) × ... = P(spam) × ... × 0 × ... = 0, regardless of other evidence. A single zero eliminates the class entirely. This is overly harsh—absence from training data doesn't mean impossibility.</p>
+    <p><strong>The Problem:</strong> If word "blockchain" never appeared in training spam emails, the estimated $P(\\text{"blockchain"}|\\text{spam}) = 0/1000 = 0$. During classification, $P(\\text{spam}|\\text{email}) = P(\\text{spam}) \\times P(\\text{word}_1|\\text{spam}) \\times ... \\times P(\\text{"blockchain"}|\\text{spam}) \\times ... = P(\\text{spam}) \\times ... \\times 0 \\times ... = 0$, regardless of other evidence. A single zero eliminates the class entirely. This is overly harsh—absence from training data doesn't mean impossibility.</p>
     
     <p><strong>The Solution:</strong> Add pseudo-counts to all feature-class combinations:</p>
-    <p><strong>P(xᵢ|C) = (count(xᵢ, C) + α) / (count(C) + α × |vocabulary|)</strong></p>
+    <p>$$P(x_i|C) = \\frac{\\text{count}(x_i, C) + \\alpha}{\\text{count}(C) + \\alpha \\times |\\text{vocabulary}|}$$</p>
     <ul>
-      <li><strong>α:</strong> Smoothing parameter (typically α=1, hence "add-one")</li>
-      <li><strong>Numerator:</strong> Actual count + α gives every combination at least α "virtual" occurrences</li>
-      <li><strong>Denominator:</strong> Total count + (α × vocab size) normalizes probabilities to sum to 1</li>
+      <li><strong>$\\alpha$:</strong> Smoothing parameter (typically $\\alpha=1$, hence "add-one")</li>
+      <li><strong>Numerator:</strong> Actual count + $\\alpha$ gives every combination at least $\\alpha$ "virtual" occurrences</li>
+      <li><strong>Denominator:</strong> Total count + $(\\alpha \\times \\text{vocab size})$ normalizes probabilities to sum to 1</li>
     </ul>
     
     <p><strong>Example (Multinomial NB for text):</strong></p>
     <p>Training data: 1000 spam emails, vocabulary of 10,000 words. Word "blockchain" appears 0 times in spam.</p>
     <ul>
-      <li><strong>Without smoothing:</strong> P("blockchain"|spam) = 0/1000 = 0 ← Problem!</li>
-      <li><strong>With α=1:</strong> P("blockchain"|spam) = (0+1)/(1000+1×10000) = 1/11000 ≈ 0.00009 ← Small but non-zero</li>
+      <li><strong>Without smoothing:</strong> $P(\\text{"blockchain"}|\\text{spam}) = 0/1000 = 0$ ← Problem!</li>
+      <li><strong>With $\\alpha=1$:</strong> $P(\\text{"blockchain"}|\\text{spam}) = \\frac{0+1}{1000+1 \\times 10000} = \\frac{1}{11000} \\approx 0.00009$ ← Small but non-zero</li>
     </ul>
     
     <p>Now a spam email containing "blockchain" won't be automatically classified as ham just because this word is unseen in training spam.</p>

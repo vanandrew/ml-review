@@ -31,19 +31,19 @@ export const kNearestNeighbors: Topic = {
     <p>The choice of distance metric profoundly affects KNN's behavior, defining what "near" means:</p>
 
     <ul>
-      <li><strong>Euclidean Distance (L2 norm): d(x, y) = √(Σ(x_i - y_i)²)</strong>
+      <li><strong>Euclidean Distance (L2 norm): $d(\\mathbf{x}, \\mathbf{y}) = \\sqrt{\\sum (x_i - y_i)^2}$</strong>
         <p>The most common metric. Measures straight-line distance in feature space. Geometrically intuitive (shortest path between points) and works well for continuous numerical features where Euclidean geometry applies. Sensitive to scale—features with larger ranges dominate. **Always standardize features before using Euclidean distance.**</p>
       </li>
-      <li><strong>Manhattan Distance (L1 norm, City Block): d(x, y) = Σ|x_i - y_i|</strong>
+      <li><strong>Manhattan Distance (L1 norm, City Block): $d(\\mathbf{x}, \\mathbf{y}) = \\sum |x_i - y_i|$</strong>
         <p>Sum of absolute differences along each dimension. Useful when movement is restricted to axes (like navigating city blocks). More robust to outliers than Euclidean (no squaring amplifies extremes). Can work better in high dimensions where Euclidean distances become less discriminative. Preferred for discrete or grid-like data.</p>
       </li>
-      <li><strong>Minkowski Distance: d(x, y) = (Σ|x_i - y_i|^p)^(1/p)</strong>
-        <p>Generalization of both Euclidean (p=2) and Manhattan (p=1). Parameter p controls sensitivity to large differences. p→∞ gives Chebyshev distance (max difference along any dimension). Rarely used in practice except as a way to interpolate between L1 and L2.</p>
+      <li><strong>Minkowski Distance: $d(\\mathbf{x}, \\mathbf{y}) = \\left(\\sum |x_i - y_i|^p\\right)^{\\frac{1}{p}}$</strong>
+        <p>Generalization of both Euclidean ($p=2$) and Manhattan ($p=1$). Parameter $p$ controls sensitivity to large differences. $p \\to \\infty$ gives Chebyshev distance (max difference along any dimension). Rarely used in practice except as a way to interpolate between L1 and L2.</p>
       </li>
-      <li><strong>Cosine Distance: d(x, y) = 1 - (x·y)/(||x||·||y||)</strong>
+      <li><strong>Cosine Distance: $d(\\mathbf{x}, \\mathbf{y}) = 1 - \\frac{\\mathbf{x} \\cdot \\mathbf{y}}{||\\mathbf{x}|| \\cdot ||\\mathbf{y}||}$</strong>
         <p>Measures angle between vectors, not magnitude. Two vectors pointing in the same direction have distance 0, regardless of length. Ideal for text data (TF-IDF vectors), where document length doesn't indicate similarity—"AI is great" and "AI is great great great" should be similar. Also used for high-dimensional sparse data (recommendation systems) where magnitude is less meaningful than direction.</p>
       </li>
-      <li><strong>Hamming Distance: d(x, y) = number of differing positions</strong>
+      <li><strong>Hamming Distance: $d(\\mathbf{x}, \\mathbf{y}) = \\text{number of differing positions}$</strong>
         <p>For categorical or binary features. Counts how many features differ between two points. For binary strings [1,0,1,1] and [1,1,1,0], Hamming distance = 2 (positions 2 and 4 differ). Used for DNA sequences, error-correcting codes, or purely categorical data.</p>
       </li>
     </ul>

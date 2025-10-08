@@ -14,13 +14,13 @@ export const lossFunctions: Topic = {
     <h3>Regression Loss Functions: Continuous Value Prediction</h3>
 
     <h4>Mean Squared Error (MSE) / L2 Loss</h4>
-    <p><strong>L_MSE = (1/n) Σᵢ₌₁ⁿ (yᵢ - ŷᵢ)²</strong></p>
+    <p><strong>$$L_{\\text{MSE}} = \\frac{1}{n} \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2$$</strong></p>
 
     <p>MSE is the most common regression loss, computing the average squared difference between predictions ŷ and targets y. The squaring operation makes MSE highly sensitive to large errors—an error of 10 contributes 100 to the loss, while ten errors of 1 each contribute only 10 total. This quadratic penalty strongly encourages the model to avoid large mistakes.</p>
 
     <p><strong>Mathematical properties:</strong></p>
     <ul>
-      <li><strong>Gradient:</strong> ∂L/∂ŷᵢ = 2(ŷᵢ - yᵢ)/n, proportional to error magnitude—larger errors get stronger correction signals</li>
+      <li><strong>Gradient:</strong> $\\frac{\\partial L}{\\partial \\hat{y}_i} = \\frac{2(\\hat{y}_i - y_i)}{n}$, proportional to error magnitude—larger errors get stronger correction signals</li>
       <li><strong>Smooth everywhere:</strong> No discontinuities, making optimization straightforward</li>
       <li><strong>Convex for linear models:</strong> Single global minimum, guaranteed convergence with gradient descent</li>
       <li><strong>Corresponds to Gaussian likelihood:</strong> Minimizing MSE is equivalent to maximum likelihood estimation assuming Gaussian errors</li>
@@ -44,14 +44,14 @@ export const lossFunctions: Topic = {
     <p><strong>Use when:</strong> Standard regression tasks, outliers are genuine errors (not valid data), you want to heavily penalize large mistakes, Gaussian error assumptions are reasonable.</p>
 
     <h4>Mean Absolute Error (MAE) / L1 Loss</h4>
-    <p><strong>L_MAE = (1/n) Σᵢ₌₁ⁿ |yᵢ - ŷᵢ|</strong></p>
+    <p><strong>$$L_{\\text{MAE}} = \\frac{1}{n} \\sum_{i=1}^{n} |y_i - \\hat{y}_i|$$</strong></p>
 
     <p>MAE computes the average absolute difference between predictions and targets. Unlike MSE, it treats all errors linearly—an error of 10 contributes exactly 10× as much as an error of 1. This makes MAE more robust to outliers: extreme values don't dominate the loss as they do with MSE.</p>
 
     <p><strong>Mathematical properties:</strong></p>
     <ul>
-      <li><strong>Gradient:</strong> ∂L/∂ŷᵢ = sign(ŷᵢ - yᵢ)/n, constant magnitude regardless of error size</li>
-      <li><strong>Discontinuous gradient at zero:</strong> The derivative doesn't exist at ŷᵢ = yᵢ, can cause optimization issues</li>
+      <li><strong>Gradient:</strong> $\\frac{\\partial L}{\\partial \\hat{y}_i} = \\frac{\\text{sign}(\\hat{y}_i - y_i)}{n}$, constant magnitude regardless of error size</li>
+      <li><strong>Discontinuous gradient at zero:</strong> The derivative doesn't exist at $\\hat{y}_i = y_i$, can cause optimization issues</li>
       <li><strong>Corresponds to Laplace likelihood:</strong> Minimizing MAE assumes Laplace (double exponential) error distribution</li>
       <li><strong>Median predictor:</strong> MAE encourages predicting the conditional median, not mean</li>
     </ul>
@@ -73,7 +73,7 @@ export const lossFunctions: Topic = {
     <p><strong>Use when:</strong> Data contains outliers that are valid (not errors), you want robust regression, all errors should be weighted equally, predicting the median is appropriate.</p>
 
     <h4>Huber Loss / Smooth L1 Loss</h4>
-    <p><strong>L_Huber(y, ŷ) = { ½(y - ŷ)² if |y - ŷ| ≤ δ; δ(|y - ŷ| - ½δ) otherwise }</strong></p>
+    <p><strong>$$L_{\\text{Huber}}(y, \\hat{y}) = \\begin{cases} \\frac{1}{2}(y - \\hat{y})^2 & \\text{if } |y - \\hat{y}| \\leq \\delta \\\\ \\delta(|y - \\hat{y}| - \\frac{1}{2}\\delta) & \\text{otherwise} \\end{cases}$$</strong></p>
 
     <p>Huber loss combines the best of MSE and MAE: quadratic for small errors (smooth, fast convergence) and linear for large errors (robust to outliers). The threshold δ determines the transition point. This gives smooth gradients everywhere (unlike MAE) while limiting outlier impact (unlike MSE).</p>
 
@@ -91,22 +91,22 @@ export const lossFunctions: Topic = {
     <h3>Classification Loss Functions: Discrete Label Prediction</h3>
 
     <h4>Binary Cross-Entropy (BCE) / Log Loss</h4>
-    <p><strong>L_BCE = -(1/n) Σᵢ₌₁ⁿ [yᵢ log(pᵢ) + (1-yᵢ) log(1-pᵢ)]</strong></p>
+    <p><strong>$$L_{\\text{BCE}} = -\\frac{1}{n} \\sum_{i=1}^{n} [y_i \\log(p_i) + (1-y_i) \\log(1-p_i)]$$</strong></p>
 
-    <p>Where yᵢ ∈ {0, 1} is the true binary label and pᵢ ∈ (0, 1) is the predicted probability (from sigmoid). BCE measures the divergence between the true distribution (all probability mass on the correct class) and the predicted distribution. It heavily penalizes confident wrong predictions while being gentle on uncertain predictions.</p>
+    <p>Where $y_i \\in \\{0, 1\\}$ is the true binary label and $p_i \\in (0, 1)$ is the predicted probability (from sigmoid). BCE measures the divergence between the true distribution (all probability mass on the correct class) and the predicted distribution. It heavily penalizes confident wrong predictions while being gentle on uncertain predictions.</p>
 
     <p><strong>Why this form?</strong> BCE derives from maximum likelihood estimation for Bernoulli-distributed data. Minimizing BCE is equivalent to maximizing the likelihood of observing the true labels given the model's predicted probabilities. This provides a principled statistical foundation.</p>
 
-    <p><strong>Key insight:</strong> When yᵢ = 1, the loss is -log(pᵢ); when yᵢ = 0, the loss is -log(1-pᵢ). As pᵢ → 0 (confident wrong prediction for positive class), -log(pᵢ) → ∞—the loss explodes, strongly penalizing the error. As pᵢ → 1 (confident correct prediction), -log(pᵢ) → 0—minimal loss. This asymmetry ensures the model learns to produce calibrated probabilities.</p>
+    <p><strong>Key insight:</strong> When $y_i = 1$, the loss is $-\\log(p_i)$; when $y_i = 0$, the loss is $-\\log(1-p_i)$. As $p_i \\to 0$ (confident wrong prediction for positive class), $-\\log(p_i) \\to \\infty$—the loss explodes, strongly penalizing the error. As $p_i \\to 1$ (confident correct prediction), $-\\log(p_i) \\to 0$—minimal loss. This asymmetry ensures the model learns to produce calibrated probabilities.</p>
 
-    <p><strong>Gradient with sigmoid:</strong> When paired with sigmoid activation, the gradient simplifies beautifully: ∂L/∂z = p - y (where z is pre-activation). This clean gradient is why sigmoid+BCE is the standard pairing for binary classification.</p>
+    <p><strong>Gradient with sigmoid:</strong> When paired with sigmoid activation, the gradient simplifies beautifully: $\\frac{\\partial L}{\\partial z} = p - y$ (where $z$ is pre-activation). This clean gradient is why sigmoid+BCE is the standard pairing for binary classification.</p>
 
     <p><strong>Use when:</strong> Binary classification (spam detection, medical diagnosis, sentiment analysis), you need probability outputs, evaluation metrics are based on probabilities or decisions.</p>
 
     <h4>Categorical Cross-Entropy</h4>
-    <p><strong>L_CE = -(1/n) Σᵢ₌₁ⁿ Σⱼ₌₁ᶜ yᵢⱼ log(pᵢⱼ)</strong></p>
+    <p><strong>$$L_{\\text{CE}} = -\\frac{1}{n} \\sum_{i=1}^{n} \\sum_{j=1}^{c} y_{ij} \\log(p_{ij})$$</strong></p>
 
-    <p>Where yᵢⱼ is the one-hot encoded true label (yᵢⱼ = 1 for correct class j, 0 otherwise) and pᵢⱼ is the predicted probability for class j (from softmax). For the true class c, this simplifies to -log(pᵢc)—only the predicted probability for the true class matters.</p>
+    <p>Where $y_{ij}$ is the one-hot encoded true label ($y_{ij} = 1$ for correct class $j$, 0 otherwise) and $p_{ij}$ is the predicted probability for class $j$ (from softmax). For the true class $c$, this simplifies to $-\\log(p_{ic})$—only the predicted probability for the true class matters.</p>
 
     <p><strong>Softmax + Cross-Entropy:</strong> This pairing is mathematically optimal for multi-class classification. Softmax ensures outputs form a valid probability distribution (sum to 1, all positive), and cross-entropy measures the divergence from the true distribution. The combined gradient is simply p - y (predicted probabilities minus true one-hot).</p>
 
@@ -115,36 +115,36 @@ export const lossFunctions: Topic = {
     <p><strong>Use when:</strong> Multi-class classification (ImageNet, text classification), mutually exclusive classes, you need class probabilities, standard classification evaluation metrics.</p>
 
     <h4>Sparse Categorical Cross-Entropy</h4>
-    <p>Mathematically identical to categorical cross-entropy but accepts integer class labels instead of one-hot encoding. For a true class c, computes -log(p_c) directly. This is more memory-efficient when you have many classes—storing integers (4 bytes each) vs. one-hot vectors (4 bytes × num_classes).</p>
+    <p>Mathematically identical to categorical cross-entropy but accepts integer class labels instead of one-hot encoding. For a true class $c$, computes $-\\log(p_c)$ directly. This is more memory-efficient when you have many classes—storing integers (4 bytes each) vs. one-hot vectors (4 bytes × num_classes).</p>
 
     <p><strong>Use when:</strong> Multi-class classification with many classes (ImageNet's 1000 classes, NLP with 50K+ word vocabularies), memory is constrained, you want cleaner code (no one-hot encoding needed).</p>
 
     <h4>Focal Loss: Tackling Class Imbalance</h4>
-    <p><strong>L_FL = -αₜ(1-pₜ)^γ log(pₜ)</strong></p>
+    <p><strong>$$L_{\\text{FL}} = -\\alpha_t(1-p_t)^\\gamma \\log(p_t)$$</strong></p>
 
-    <p>Where pₜ is the predicted probability for the true class, α is a weighting factor, and γ (gamma, typically 2) is the focusing parameter. The key innovation is the modulating factor (1-pₜ)^γ that down-weights easy examples.</p>
+    <p>Where $p_t$ is the predicted probability for the true class, $\\alpha$ is a weighting factor, and $\\gamma$ (gamma, typically 2) is the focusing parameter. The key innovation is the modulating factor $(1-p_t)^\\gamma$ that down-weights easy examples.</p>
 
     <p><strong>How it addresses imbalance:</strong> In severely imbalanced datasets (e.g., 99% background, 1% objects in detection), the abundant easy examples (background patches correctly classified with high confidence) dominate training, overshadowing the rare hard examples (actual objects, ambiguous cases). Focal loss reduces the loss contribution from easy examples while maintaining full loss for hard examples.</p>
 
     <p><strong>Focusing mechanism:</strong></p>
     <ul>
-      <li>Easy example (pₜ = 0.9): (1-0.9)² = 0.01, loss reduced by 99%</li>
-      <li>Hard example (pₜ = 0.5): (1-0.5)² = 0.25, loss reduced by 75%</li>
-      <li>Very hard example (pₜ = 0.1): (1-0.1)² = 0.81, loss reduced by 19%</li>
+      <li>Easy example ($p_t = 0.9$): $(1-0.9)^2 = 0.01$, loss reduced by 99%</li>
+      <li>Hard example ($p_t = 0.5$): $(1-0.5)^2 = 0.25$, loss reduced by 75%</li>
+      <li>Very hard example ($p_t = 0.1$): $(1-0.1)^2 = 0.81$, loss reduced by 19%</li>
     </ul>
 
     <p>This automatic reweighting focuses training on examples the model struggles with.</p>
 
-    <p><strong>γ parameter:</strong> Controls focusing strength. γ=0 gives standard cross-entropy; γ=2 is typical; higher γ focuses more aggressively on hard examples but can destabilize training.</p>
+    <p><strong>γ parameter:</strong> Controls focusing strength. $\\gamma=0$ gives standard cross-entropy; $\\gamma=2$ is typical; higher $\\gamma$ focuses more aggressively on hard examples but can destabilize training.</p>
 
     <p><strong>Use when:</strong> Severe class imbalance (object detection, medical diagnosis of rare diseases), you want to focus on hard examples, standard weighted loss isn't sufficient.</p>
 
     <h3>Embedding and Metric Learning Losses</h3>
 
     <h4>Contrastive Loss</h4>
-    <p><strong>L = (1-y) × ½D² + y × ½max(margin - D, 0)²</strong></p>
+    <p><strong>$$L = (1-y) \\times \\frac{1}{2}D^2 + y \\times \\frac{1}{2}\\max(\\text{margin} - D, 0)^2$$</strong></p>
 
-    <p>Where D is the Euclidean distance between embeddings, y ∈ {0, 1} indicates whether the pair is similar (y=1) or dissimilar (y=0), and margin is a hyperparameter. For similar pairs, loss increases with distance (pull together). For dissimilar pairs, loss only applies if distance < margin (push apart until margin is reached, then stop caring).</p>
+    <p>Where $D$ is the Euclidean distance between embeddings, $y \\in \\{0, 1\\}$ indicates whether the pair is similar ($y=1$) or dissimilar ($y=0$), and margin is a hyperparameter. For similar pairs, loss increases with distance (pull together). For dissimilar pairs, loss only applies if distance < margin (push apart until margin is reached, then stop caring).</p>
 
     <p><strong>Use when:</strong> Learning embeddings where similar items should be close, dissimilar items should be far apart. Face verification (same person vs. different people), signature verification, Siamese networks.</p>
 

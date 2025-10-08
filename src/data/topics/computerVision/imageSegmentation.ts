@@ -419,18 +419,20 @@ Dice Loss = 1 - 0.958 = 0.042 (low is good!)
     <p><strong>Problem:</strong> Heavily biased toward majority class. A model predicting all pixels as "background" achieves 90%+ accuracy on many datasets.</p>
 
     <h4>Mean Intersection over Union (mIoU): The Gold Standard</h4>
-    <p>IoU for class c: IoU_c = TP_c / (TP_c + FP_c + FN_c) = intersection / union</p>
+    <p>$$\\text{IoU}_c = \\frac{TP_c}{TP_c + FP_c + FN_c} = \\frac{\\text{intersection}}{\\text{union}}$$</p>
     
-    <p>$\\text{mIoU} = \\frac{1}{C} \\sum_c \\text{IoU}_c$, averaging over all classes (including background or excluding based on convention).</p>
+    <p>$$\\text{mIoU} = \\frac{1}{C} \\sum_c \\text{IoU}_c$$</p>
+    
+    <p>Averaging over all classes (including background or excluding based on convention).</p>
 
     <p><strong>Why it's better:</strong> Penalizes both false positives and false negatives, not biased toward majority class, aligns with human perception of segmentation quality.</p>
 
     <p><strong>Interpretation:</strong> mIoU of 0.75 means average overlap of 75% between predictions and ground truth across all classes.</p>
 
     <h4>Dice Coefficient (F1 Score): Alternative Region Metric</h4>
-    <p>Dice = 2TP / (2TP + FP + FN) = 2|A ∩ B| / (|A| + |B|)</p>
+    <p>$$\\text{Dice} = \\frac{2TP}{2TP + FP + FN} = \\frac{2|A \\cap B|}{|A| + |B|}$$</p>
     
-    <p><strong>Relationship to IoU:</strong> Dice = 2IoU / (1 + IoU), monotonically related but gives more weight to true positives.</p>
+    <p><strong>Relationship to IoU:</strong> $\\text{Dice} = \\frac{2 \\cdot \\text{IoU}}{1 + \\text{IoU}}$, monotonically related but gives more weight to true positives.</p>
 
     <p><strong>Usage:</strong> Common in medical imaging, often used as both loss and metric.</p>
 

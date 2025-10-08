@@ -30,9 +30,9 @@ export const convolutionalNeuralNetworks: Topic = {
     <p><strong>Simple analogy:</strong> Imagine you have a 3×3 stencil with numbers on it. You place it over a 3×3 region of the image, multiply each image pixel by the corresponding stencil number, and add all 9 results together. Then you slide the stencil one pixel over and repeat. That's convolution!</p>
     
     <p>For continuous functions, convolution is defined as:</p>
-    <p><strong>(f * g)(t) = ∫ f(τ) · g(t - τ) dτ</strong></p>
+    <p>$$(f * g)(t) = \\int f(\\tau) \\cdot g(t - \\tau) d\\tau$$</p>
     <p>For discrete 2D images, this becomes:</p>
-    <p><strong>$(I * K)(i,j) = \\sum_m \\sum_n I(i+m, j+n) \\cdot K(m, n)$</strong></p>
+    <p>$$(I * K)(i,j) = \\sum_m \\sum_n I(i+m, j+n) \\cdot K(m, n)$$</p>
     <p>where <strong>I</strong> is the input image, <strong>K</strong> is the kernel (filter), and the summation is over the kernel dimensions. In practice, most deep learning frameworks implement <strong>cross-correlation</strong> rather than true convolution (which would flip the kernel), but the term "convolution" remains standard.</p>
 
     <h3>Why Convolution Works for Images: Three Principles</h3>
@@ -73,18 +73,18 @@ export const convolutionalNeuralNetworks: Topic = {
     <p>This filter responds strongly to vertical edges and ignores horizontal ones, demonstrating how specific weight patterns detect specific features.</p>
 
     <h4>Output Dimensions: The Size Calculation Formula</h4>
-    <p>Given input size <strong>W × H</strong>, filter size <strong>F</strong>, padding <strong>P</strong>, and stride <strong>S</strong>:</p>
-    <p><strong>Output Width = ⌊(W + 2P - F) / S⌋ + 1</strong></p>
-    <p><strong>Output Height = ⌊(H + 2P - F) / S⌋ + 1</strong></p>
-    <p><strong>Example:</strong> Input 32×32, filter 5×5, padding 2, stride 1 → Output: ⌊(32 + 4 - 5)/1⌋ + 1 = 32×32 ("same" padding)</p>
+    <p>Given input size $W \\times H$, filter size $F$, padding $P$, and stride $S$:</p>
+    <p>$$\\text{Output Width} = \\left\\lfloor \\frac{W + 2P - F}{S} \\right\\rfloor + 1$$</p>
+    <p>$$\\text{Output Height} = \\left\\lfloor \\frac{H + 2P - F}{S} \\right\\rfloor + 1$$</p>
+    <p><strong>Example:</strong> Input $32 \\times 32$, filter $5 \\times 5$, padding 2, stride 1 → Output: $\\lfloor(32 + 4 - 5)/1\\rfloor + 1 = 32 \\times 32$ ("same" padding)</p>
 
     <h4>Stride: Controlling Spatial Downsampling</h4>
     <p><strong>Stride</strong> determines how many pixels the filter moves between applications. Stride 1 (most common) produces dense outputs, while stride 2 halves dimensions, providing computational savings and larger receptive fields in subsequent layers.</p>
 
     <h4>Padding: Managing Border Effects</h4>
     <ul>
-      <li><strong>Valid padding (P=0):</strong> No padding, output shrinks by (F-1) pixels per dimension</li>
-      <li><strong>Same padding (P=(F-1)/2):</strong> Zero-pad borders to maintain spatial dimensions</li>
+      <li><strong>Valid padding ($P=0$):</strong> No padding, output shrinks by $(F-1)$ pixels per dimension</li>
+      <li><strong>Same padding ($P=(F-1)/2$):</strong> Zero-pad borders to maintain spatial dimensions</li>
       <li><strong>Full padding:</strong> Pad enough to see all partial overlaps (rarely used)</li>
     </ul>
     <p><strong>Border information:</strong> Same padding ensures edge pixels receive equal processing as central pixels, critical for tasks like segmentation where boundaries matter.</p>
@@ -115,7 +115,7 @@ export const convolutionalNeuralNetworks: Topic = {
       <li><strong>After pooling:</strong> Receptive field doubles</li>
       <li><strong>Stacked convolutions:</strong> Receptive field grows linearly with depth</li>
     </ul>
-    <p><strong>Formula for stacked 3×3 convs:</strong> RF = 1 + depth × (filter_size - 1) = 1 + n × 2</p>
+    <p><strong>Formula for stacked 3×3 convs:</strong> $\\text{RF} = 1 + \\text{depth} \\times (\\text{filter\\_size} - 1) = 1 + n \\times 2$</p>
     <p><strong>Design principle:</strong> Deep layers need large receptive fields to capture global context (e.g., 224×224 for ImageNet classification).</p>
 
     <h3>Why CNNs Dominate Computer Vision</h3>
@@ -345,7 +345,7 @@ The **depth dimension** (number of channels) follows different rules: the output
 
 **Local vs. Global receptive fields**: In the first convolutional layer, neurons have small receptive fields equal to the filter size (e.g., 3×3 pixels). However, as we move deeper into the network, receptive fields grow **progressively larger** through the combination of multiple convolution and pooling operations. A neuron in a deep layer might have a receptive field covering 100×100+ pixels of the original input, allowing it to integrate information across large spatial regions.
 
-**Calculation of receptive field size** follows a recursive formula. For a sequence of convolutional layers, the receptive field grows as: **RF_out = RF_in + (kernel_size - 1) × ∏(previous_strides)**. Pooling layers significantly increase receptive field size by their pooling factor. For example, a 2×2 max pooling doubles the effective receptive field of subsequent layers.
+**Calculation of receptive field size** follows a recursive formula. For a sequence of convolutional layers, the receptive field grows as: $\\text{RF}_{\\text{out}} = \\text{RF}_{\\text{in}} + (\\text{kernel\\_size} - 1) \\times \\prod(\\text{previous\\_strides})$. Pooling layers significantly increase receptive field size by their pooling factor. For example, a 2×2 max pooling doubles the effective receptive field of subsequent layers.
 
 **Hierarchical feature learning** emerges from this receptive field progression. **Early layers** with small receptive fields detect local features like edges, corners, and simple textures. **Middle layers** with medium receptive fields detect object parts like wheels, faces, or leaves. **Deep layers** with large receptive fields can detect entire objects or complex spatial relationships between multiple objects.
 
@@ -357,7 +357,7 @@ The **depth dimension** (number of channels) follows different rules: the output
       question: 'What are the advantages of using smaller filters (like 3x3) vs larger filters?',
       answer: `**Smaller filters (3×3)** have become the dominant choice in modern CNN architectures due to multiple computational and representational advantages over larger filters like 5×5 or 7×7. This preference was notably popularized by the **VGG architecture** and has been adopted by most subsequent designs.
 
-**Parameter efficiency** is a major advantage. Two stacked 3×3 convolutions have the same receptive field as one 5×5 convolution but use fewer parameters: 2×(3×3×C×C) = 18C² vs 25C² parameters (where C is the number of channels). Similarly, three 3×3 convolutions equal one 7×7 convolution with 27C² vs 49C² parameters. This parameter reduction helps **prevent overfitting** and reduces memory requirements.
+**Parameter efficiency** is a major advantage. Two stacked 3×3 convolutions have the same receptive field as one 5×5 convolution but use fewer parameters: $2 \\times (3 \\times 3 \\times C \\times C) = 18C^2$ vs $25C^2$ parameters (where $C$ is the number of channels). Similarly, three 3×3 convolutions equal one 7×7 convolution with $27C^2$ vs $49C^2$ parameters. This parameter reduction helps **prevent overfitting** and reduces memory requirements.
 
 **Increased non-linearity** comes from stacking multiple smaller convolutions with activation functions between them. While one 5×5 convolution applies one activation function, two 3×3 convolutions apply two activation functions, creating a **more expressive function**. This additional non-linearity allows the network to learn more complex feature transformations and decision boundaries.
 
