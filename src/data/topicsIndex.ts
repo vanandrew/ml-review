@@ -1,14 +1,14 @@
 import { Topic } from '../types';
 
-// Import topics by category
-import { foundationsTopics } from './topics/foundations';
-import { classicalMLTopics } from './topics/classicalML';
-import { neuralNetworksTopics } from './topics/neuralNetworks';
-import { computerVisionTopics } from './topics/computerVision';
-import { nlpTopics } from './topics/nlp';
-import { transformersTopics } from './topics/transformers';
-import { advancedTopics } from './topics/advanced';
-import { mlSystemsTopics } from './topics/mlSystems';
+// Import topics by category (now from subdirectories)
+import { foundationsTopics } from './topics/foundations/index';
+import { classicalMLTopics } from './topics/classicalML/index';
+import { neuralNetworksTopics } from './topics/neuralNetworks/index';
+import { computerVisionTopics } from './topics/computerVision/index';
+import { nlpTopics } from './topics/nlp/index';
+import { transformersTopics } from './topics/transformers/index';
+import { advancedTopics } from './topics/advanced/index';
+import { mlSystemsTopics } from './topics/mlSystems/index';
 
 // Combine all topics
 export const topics: Record<string, Topic> = {
