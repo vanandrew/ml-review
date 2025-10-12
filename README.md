@@ -25,12 +25,6 @@ The app features a comprehensive quiz system with:
 - **Fresh experience** every time you retake a quiz
 - **Progress tracking** with score history
 
-**Current Status**: 7 of 52 topics have complete quiz pools (13%)
-- ✅ All Foundations topics (7/7) - **COMPLETE**
-- ⏸️ Classical ML, Neural Networks, Computer Vision, NLP, Transformers, Advanced Topics, ML Systems - **IN PROGRESS**
-
-See [QUIZ_TODO.md](QUIZ_TODO.md) for contribution opportunities!
-
 ## Mastery System
 
 The app features an **automatic mastery tracking system** that updates your progress based on quiz performance:
@@ -66,8 +60,6 @@ Your mastery status is dynamic and reflects your current knowledge level:
 - 🎓 **Bonus XP**: Earn 50 bonus XP when you achieve mastery
 - 🏆 **Challenge Access**: Master topics to unlock advanced challenge modes
 - 📈 **Motivated Learning**: Visual feedback encourages consistent practice
-
-rep
 
 A comprehensive platform to master machine learning concepts for technical interviews, built with React and TypeScript.
 
