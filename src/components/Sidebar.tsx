@@ -1,5 +1,5 @@
 
-import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap, LogIn, UserCircle, LogOut, Cloud, CloudOff, Trophy } from 'lucide-react';
+import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap, LogIn, UserCircle, LogOut, Cloud, CloudOff, Trophy, X } from 'lucide-react';
 import { categories } from '../data/categories';
 import { UserProgress, GamificationData } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -26,6 +26,7 @@ interface SidebarProps {
   onLoginClick?: () => void;
   onSignupClick?: () => void;
   syncStatus?: { isSyncing: boolean; lastSyncTime: Date | null; syncError: string | null };
+  onCloseMobileMenu?: () => void;
 }
 
 export default function Sidebar({
@@ -48,6 +49,7 @@ export default function Sidebar({
   onLoginClick,
   onSignupClick,
   syncStatus,
+  onCloseMobileMenu,
 }: SidebarProps) {
   const { user, logout } = useAuth();
   const getProgressIcon = (topicId: string) => {
@@ -85,12 +87,24 @@ export default function Sidebar({
   return (
     <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
       <div className="p-4">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-          ML Interview Prep
-        </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          Master ML concepts for interviews
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              ML Interview Prep
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Master ML concepts for interviews
+            </p>
+          </div>
+          {/* Mobile Close Button */}
+          <button
+            onClick={onCloseMobileMenu}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Authentication Section */}

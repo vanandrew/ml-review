@@ -23,13 +23,48 @@ const THEME_GRADIENTS: Record<string, string> = {
 };
 
 const CATEGORY_INFO = {
-  all: { icon: ShoppingCart, color: 'blue', label: 'All Items' },
-  consumable: { icon: Package, color: 'green', label: 'Consumables' },
-  'power-up': { icon: Zap, color: 'yellow', label: 'Power-Ups' },
-  unlock: { icon: Unlock, color: 'purple', label: 'Unlocks' },
-  cosmetic: { icon: Sparkles, color: 'pink', label: 'Cosmetics' },
-  premium: { icon: Crown, color: 'amber', label: 'Premium' },
-  social: { icon: Users, color: 'cyan', label: 'Social' },
+  all: { 
+    icon: ShoppingCart, 
+    label: 'All Items',
+    activeClass: 'bg-blue-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
+  consumable: { 
+    icon: Package, 
+    label: 'Consumables',
+    activeClass: 'bg-green-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
+  'power-up': { 
+    icon: Zap, 
+    label: 'Power-Ups',
+    activeClass: 'bg-yellow-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
+  unlock: { 
+    icon: Unlock, 
+    label: 'Unlocks',
+    activeClass: 'bg-purple-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
+  cosmetic: { 
+    icon: Sparkles, 
+    label: 'Cosmetics',
+    activeClass: 'bg-pink-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
+  premium: { 
+    icon: Crown, 
+    label: 'Premium',
+    activeClass: 'bg-amber-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
+  social: { 
+    icon: Users, 
+    label: 'Social',
+    activeClass: 'bg-cyan-500 text-white shadow-md',
+    inactiveClass: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+  },
 };
 
 export default function GemShop({ currentGems, purchasedItems, consumableInventory, activePowerUps, onPurchase, selectedTheme = 'default' }: GemShopProps) {
@@ -89,8 +124,8 @@ export default function GemShop({ currentGems, purchasedItems, consumableInvento
               onClick={() => setSelectedCategory(key as any)}
               className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
                 isSelected
-                  ? `bg-${info.color}-500 text-white shadow-md scale-105`
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? info.activeClass
+                  : info.inactiveClass
               }`}
             >
               <Icon className="w-4 h-4" />

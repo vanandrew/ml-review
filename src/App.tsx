@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Menu } from 'lucide-react';
 import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore, ConsumableInventory } from './types';
 import { useAuth } from './contexts/AuthContext';
 import { migrateLocalDataToFirestore, saveUserDataToFirestore, loadUserDataFromFirestore, updateUserProfile } from './utils/firebaseSync';
@@ -28,6 +29,7 @@ function App() {
   const { user, loading: authLoading } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{ isSyncing: boolean; lastSyncTime: Date | null; syncError: string | null }>({
     isSyncing: false,
     lastSyncTime: null,
@@ -422,6 +424,9 @@ function App() {
     setShowingDashboard(false);
     setShowingShop(false);
     setShowingSettings(false);
+    setShowingChallengeMode(false);
+    setShowingRanking(false);
+    setIsMobileMenuOpen(false); // Close mobile menu on selection
 
     // Update last accessed time
     setUserProgress(prev => ({
@@ -443,16 +448,20 @@ function App() {
     setShowingDashboard(true);
     setShowingShop(false);
     setShowingSettings(false);
+    setShowingChallengeMode(false);
     setShowingRanking(false);
     setSelectedTopic(null);
+    setIsMobileMenuOpen(false); // Close mobile menu on selection
   };
 
   const handleShopSelect = () => {
     setShowingShop(true);
     setShowingDashboard(false);
     setShowingSettings(false);
+    setShowingChallengeMode(false);
     setShowingRanking(false);
     setSelectedTopic(null);
+    setIsMobileMenuOpen(false); // Close mobile menu on selection
   };
 
   const handleSettingsSelect = () => {
@@ -462,6 +471,7 @@ function App() {
     setShowingChallengeMode(false);
     setShowingRanking(false);
     setSelectedTopic(null);
+    setIsMobileMenuOpen(false); // Close mobile menu on selection
   };
 
   const handleChallengeSelect = () => {
@@ -471,6 +481,7 @@ function App() {
     setShowingSettings(false);
     setShowingRanking(false);
     setSelectedTopic(null);
+    setIsMobileMenuOpen(false); // Close mobile menu on selection
   };
 
   const handleRankingSelect = () => {
@@ -480,6 +491,7 @@ function App() {
     setShowingSettings(false);
     setShowingChallengeMode(false);
     setSelectedTopic(null);
+    setIsMobileMenuOpen(false); // Close mobile menu on selection
   };
 
   const handleChallengeComplete = (score: number) => {
@@ -660,34 +672,62 @@ function App() {
         selectedTheme={gamificationData.selectedTheme}
       />
 
-      <div className="flex">
-        <Sidebar
-          selectedTopic={selectedTopic}
-          selectedCategory={selectedCategory}
-          userProgress={userProgress}
-          gamificationData={gamificationData}
-          onTopicSelect={handleTopicSelect}
-          onCategorySelect={handleCategorySelect}
-          onDashboardSelect={handleDashboardSelect}
-          showingDashboard={showingDashboard}
-          onShopSelect={handleShopSelect}
-          onSettingsSelect={handleSettingsSelect}
-          onChallengeSelect={handleChallengeSelect}
-          onRankingSelect={handleRankingSelect}
-          showingShop={showingShop}
-          showingSettings={showingSettings}
-          showingChallengeMode={showingChallengeMode}
-          showingRanking={showingRanking}
-          onLoginClick={() => setShowLoginModal(true)}
-          onSignupClick={() => setShowSignupModal(true)}
-          syncStatus={syncStatus}
-        />
+      <div className="flex min-h-screen">
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Sidebar - Mobile Drawer / Desktop Static */}
+        <div className={`
+          fixed md:relative
+          inset-y-0 left-0
+          z-50 md:z-0
+          transform md:transform-none
+          transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
+          <Sidebar
+            selectedTopic={selectedTopic}
+            selectedCategory={selectedCategory}
+            userProgress={userProgress}
+            gamificationData={gamificationData}
+            onTopicSelect={handleTopicSelect}
+            onCategorySelect={handleCategorySelect}
+            onDashboardSelect={handleDashboardSelect}
+            showingDashboard={showingDashboard}
+            onShopSelect={handleShopSelect}
+            onSettingsSelect={handleSettingsSelect}
+            onChallengeSelect={handleChallengeSelect}
+            onRankingSelect={handleRankingSelect}
+            showingShop={showingShop}
+            showingSettings={showingSettings}
+            showingChallengeMode={showingChallengeMode}
+            showingRanking={showingRanking}
+            onLoginClick={() => setShowLoginModal(true)}
+            onSignupClick={() => setShowSignupModal(true)}
+            syncStatus={syncStatus}
+            onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
+          />
+        </div>
 
         {/* Main Content */}
-        <main className="flex-1">
-          <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <main className="flex-1 w-full md:w-auto">
+          <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors mr-3"
+                aria-label="Open menu"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
                 {showingDashboard
                   ? 'Dashboard'
                   : showingShop
@@ -712,7 +752,7 @@ function App() {
             </div>
           </header>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="max-w-4xl">
               {showingChallengeMode ? (
                 (() => {
