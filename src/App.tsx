@@ -21,6 +21,7 @@ import { updateStreak } from './utils/streak';
 import { checkForNewAchievements } from './utils/achievements';
 import { generateWeeklyChallenge, shouldGenerateNewChallenge, updateChallengeProgress, isChallengeComplete } from './utils/challenges';
 import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, GEM_SHOP_ITEMS } from './utils/gems';
+import { getStatusChangeInfo } from './utils/statusCalculation';
 
 function App() {
   const { user, loading: authLoading } = useAuth();
@@ -682,6 +683,25 @@ function App() {
                       userProgress={userProgress[selectedTopic]}
                       gamificationData={gamificationData}
                       onProgressUpdate={(progress) => {
+                        const oldProgress = userProgress[selectedTopic];
+                        const oldStatus = oldProgress?.status || 'not_started';
+                        const newStatus = progress.status;
+                        
+                        // Detect status changes and provide feedback
+                        const statusChange = getStatusChangeInfo(oldStatus, newStatus, progress.quizScores);
+                        
+                        if (statusChange.changed) {
+                          // Award bonus XP for achieving mastery
+                          if (statusChange.isUpgrade && newStatus === 'mastered') {
+                            setTimeout(() => {
+                              awardXP(50, '🎓 Topic Mastered!');
+                            }, 500);
+                          }
+                          
+                          // Show status change message
+                          console.log(statusChange.message);
+                        }
+                        
                         setUserProgress(prev => ({
                           ...prev,
                           [selectedTopic]: progress

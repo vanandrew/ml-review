@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { Topic, TopicProgress, QuizScore, GamificationData } from '../types';
-import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp, CheckCircle, Clock, BookmarkIcon } from 'lucide-react';
 import Quiz from './Quiz';
 import BiasVarianceDemo from './BiasVarianceDemo';
 import { getQuizQuestionsForTopic } from '../data/quizQuestions';
 import { selectRandomQuestions } from '../utils/quizUtils';
+import { calculateTopicStatus } from '../utils/statusCalculation';
 
 // Declare KaTeX renderMathInElement type
 declare global {
@@ -63,22 +64,20 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
     }
   }, [activeTab, topic.content]);
 
-  const updateStatus = (status: 'not_started' | 'reviewing' | 'mastered') => {
-    const newProgress: TopicProgress = {
-      ...userProgress,
-      status,
-      lastAccessed: new Date(),
-      quizScores: userProgress?.quizScores || []
-    };
-    onProgressUpdate(newProgress);
-  };
-
   const handleQuizComplete = (quizScore: QuizScore) => {
+    const updatedScores = [...(userProgress?.quizScores || []), quizScore];
+    
+    // Automatically calculate status based on quiz performance
+    const newStatus = calculateTopicStatus(
+      userProgress?.status || 'not_started',
+      updatedScores
+    );
+    
     const newProgress: TopicProgress = {
       ...userProgress,
-      status: userProgress?.status || 'reviewing',
+      status: newStatus,
       lastAccessed: new Date(),
-      quizScores: [...(userProgress?.quizScores || []), quizScore],
+      quizScores: updatedScores,
       firstCompletion: userProgress?.firstCompletion || new Date(),
     };
     onProgressUpdate(newProgress);
@@ -123,15 +122,24 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
           </p>
         </div>
         <div className="flex items-center space-x-3">
-          <select
-            value={userProgress?.status || 'not_started'}
-            onChange={(e) => updateStatus(e.target.value as any)}
-            className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+          {/* Read-only status badge */}
+          <div 
+            className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
+              userProgress?.status === 'mastered' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
+              userProgress?.status === 'reviewing' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' :
+              'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-400'
+            }`}
+            title="Status automatically updates based on your quiz performance"
           >
-            <option value="not_started">Not Started</option>
-            <option value="reviewing">Reviewing</option>
-            <option value="mastered">Mastered</option>
-          </select>
+            {userProgress?.status === 'mastered' ? <CheckCircle className="w-4 h-4" /> :
+             userProgress?.status === 'reviewing' ? <Clock className="w-4 h-4" /> :
+             <BookmarkIcon className="w-4 h-4" />}
+            <span>
+              {userProgress?.status === 'mastered' ? 'Mastered' :
+               userProgress?.status === 'reviewing' ? 'Reviewing' :
+               'Not Started'}
+            </span>
+          </div>
           {userProgress?.quizScores && userProgress.quizScores.length > 0 && (
             <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400">
               <BarChart3 className="w-4 h-4" />
@@ -318,6 +326,32 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
                         </div>
                       </div>
                     )}
+                    
+                    {/* Mastery Progress Info */}
+                    {userProgress?.status !== 'mastered' && userProgress?.quizScores && userProgress.quizScores.length > 0 && (
+                      <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="text-sm text-blue-900 dark:text-blue-100">
+                          <p className="font-medium mb-1">🎯 Path to Mastery:</p>
+                          <ul className="text-xs space-y-1 text-blue-700 dark:text-blue-300">
+                            <li>• Complete at least 2 quizzes</li>
+                            <li>• Achieve 80%+ average on your last 3 quizzes</li>
+                            <li>• OR score 100% twice in a row</li>
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {userProgress?.status === 'mastered' && (
+                      <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="text-sm text-green-900 dark:text-green-100">
+                          <p className="font-medium">✨ Topic Mastered!</p>
+                          <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                            Keep practicing to maintain your mastery status
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    
                     <button
                       onClick={handleStartQuiz}
                       className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

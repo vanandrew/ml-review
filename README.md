@@ -8,7 +8,8 @@ https://nononsense.me/ml-review
 - 💬 **342+ Interview Questions**: Detailed 3-5 paragraph answers for each question
 - 🧪 **Practice Quizzes**: Random 10-question quizzes from large question pools (20+ questions per topic)
 - 💻 **Code Examples**: Python implementations for key concepts
-- 📈 **Progress Tracking**: Mark topics as reviewing or mastered, with localStorage persistence
+- 📈 **Smart Progress Tracking**: Automatic status updates based on quiz performance
+- 🎯 **Mastery System**: Earn "mastered" status by demonstrating consistent performance
 - 🎮 **Interactive Demo**: Bias-Variance Tradeoff visualization
 - 🎲 **Quiz Variety**: Different random questions each time you take a quiz
 - 🌙 **Dark/Light Theme**: Toggle between themes for comfortable learning
@@ -28,7 +29,45 @@ The app features a comprehensive quiz system with:
 - ✅ All Foundations topics (7/7) - **COMPLETE**
 - ⏸️ Classical ML, Neural Networks, Computer Vision, NLP, Transformers, Advanced Topics, ML Systems - **IN PROGRESS**
 
-See [QUIZ_TODO.md](QUIZ_TODO.md) for contribution opportunities!rep
+See [QUIZ_TODO.md](QUIZ_TODO.md) for contribution opportunities!
+
+## Mastery System
+
+The app features an **automatic mastery tracking system** that updates your progress based on quiz performance:
+
+### Status Levels
+
+- **Not Started**: You haven't taken any quizzes for this topic yet
+- **Reviewing**: You're actively learning and practicing
+- **Mastered**: You've demonstrated consistent high performance
+
+### How to Achieve Mastery
+
+Mastery status is automatically earned when you meet one of these criteria:
+
+1. **Consistent Performance**: 
+   - Complete at least 2 quizzes
+   - Achieve 80%+ average on your last 3 quizzes
+
+2. **Perfect Streak**:
+   - Score 100% on 2 consecutive quizzes
+
+### Maintaining Mastery
+
+Your mastery status is dynamic and reflects your current knowledge level:
+- If you score below 70% on a quiz, your status may return to "Reviewing"
+- If your average drops below 75%, you'll need to practice more
+- This ensures your progress reflects actual mastery, not just completion
+
+### Benefits
+
+- 🎯 **Clear Goals**: Know exactly what it takes to master each topic
+- 📊 **Honest Progress**: Status reflects your actual performance
+- 🎓 **Bonus XP**: Earn 50 bonus XP when you achieve mastery
+- 🏆 **Challenge Access**: Master topics to unlock advanced challenge modes
+- 📈 **Motivated Learning**: Visual feedback encourages consistent practice
+
+rep
 
 A comprehensive platform to master machine learning concepts for technical interviews, built with React and TypeScript.
 
