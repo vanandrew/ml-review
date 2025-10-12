@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { QuizQuestion } from '../types';
+import { QuizQuestion, ConsumableInventory } from '../types';
 import { Trophy, Zap, X, Check, Award } from 'lucide-react';
 
 interface ChallengeModeProps {
@@ -7,12 +7,17 @@ interface ChallengeModeProps {
   highScore: number;
   onComplete: (score: number) => void;
   onExit: () => void;
+  consumableInventory?: ConsumableInventory;
+  onUseConsumable?: (itemType: keyof ConsumableInventory) => void;
 }
 
-export default function ChallengeMode({ allQuestions, highScore, onComplete, onExit }: ChallengeModeProps) {
+export default function ChallengeMode({ allQuestions, highScore, onComplete, onExit, consumableInventory, onUseConsumable }: ChallengeModeProps) {
   const [remainingQuestions, setRemainingQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<QuizQuestion | null>(null);
   const [currentScore, setCurrentScore] = useState(0);
+  // TODO: Implement extra life feature
+  // const [showExtraLifePrompt, setShowExtraLifePrompt] = useState(false);
+  const [showExtraLifePrompt, setShowExtraLifePrompt] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [gameOver, setGameOver] = useState(false);
@@ -56,11 +61,17 @@ export default function ChallengeMode({ allQuestions, highScore, onComplete, onE
         }
       }, 1500);
     } else {
-      // Wrong answer - game over
-      setTimeout(() => {
-        setGameOver(true);
-        onComplete(currentScore);
-      }, 1500);
+      // Wrong answer - check for extra life
+      if (consumableInventory && consumableInventory.extraLives > 0 && !showExtraLifePrompt) {
+        // Show extra life prompt
+        setShowExtraLifePrompt(true);
+      } else {
+        // Game over
+        setTimeout(() => {
+          setGameOver(true);
+          onComplete(currentScore);
+        }, 1500);
+      }
     }
   };
 
@@ -68,6 +79,33 @@ export default function ChallengeMode({ allQuestions, highScore, onComplete, onE
     if (gameOver || window.confirm('Are you sure you want to exit? Your progress will be lost.')) {
       onExit();
     }
+  };
+
+  const handleUseExtraLife = () => {
+    if (onUseConsumable) {
+      onUseConsumable('extraLives');
+      setShowExtraLifePrompt(false);
+      // Reset for next question
+      const newRemaining = remainingQuestions.slice(1);
+      if (newRemaining.length > 0) {
+        setCurrentQuestion(newRemaining[0]);
+        setRemainingQuestions(newRemaining);
+      } else {
+        setGameOver(true);
+        onComplete(currentScore);
+      }
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+      setShowResult(false);
+    }
+  };
+
+  const handleDeclineExtraLife = () => {
+    setShowExtraLifePrompt(false);
+    setTimeout(() => {
+      setGameOver(true);
+      onComplete(currentScore);
+    }, 500);
   };
 
   if (!currentQuestion) {
@@ -167,7 +205,49 @@ export default function ChallengeMode({ allQuestions, highScore, onComplete, onE
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <>
+      {/* Extra Life Prompt Modal */}
+      {showExtraLifePrompt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl border-2 border-red-500 p-8 max-w-md w-full">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <X className="w-12 h-12 text-red-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Wrong Answer!
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                You have {consumableInventory?.extraLives} extra {consumableInventory?.extraLives === 1 ? 'life' : 'lives'} available.
+                Use one to continue?
+              </p>
+              
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 mb-6">
+                <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                  ❤️ Using an extra life will skip this question and let you continue your run!
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleUseExtraLife}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all font-bold flex items-center justify-center gap-2"
+                >
+                  ❤️ Use Extra Life
+                </button>
+                <button
+                  onClick={handleDeclineExtraLife}
+                  className="flex-1 px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
+                >
+                  End Run
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center justify-between mb-4">
@@ -279,5 +359,6 @@ export default function ChallengeMode({ allQuestions, highScore, onComplete, onE
         )}
       </div>
     </div>
+    </>
   );
 }

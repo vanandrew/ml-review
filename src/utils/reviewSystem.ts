@@ -1,4 +1,4 @@
-import { UserProgress, TopicProgress } from '../types';
+import { UserProgress, TopicProgress, QuizScore } from '../types';
 
 export type ReviewStatus = 'new' | 'learning' | 'mastered' | 'needs-review';
 
@@ -27,16 +27,133 @@ const REVIEW_INTERVALS = {
 };
 
 /**
+ * Decay configuration for mastered topics
+ * Topics decay faster if they have lower mastery strength
+ */
+const DECAY_CONFIG = {
+  BASE_DECAY_DAYS: 30,          // Base days before decay starts
+  MIN_DECAY_DAYS: 7,            // Minimum days before decay (weak mastery)
+  MAX_DECAY_DAYS: 90,           // Maximum days before decay (strong mastery)
+  MASTERY_STRENGTH_THRESHOLD: 50, // Below this, decay is faster
+};
+
+/**
+ * Calculate mastery strength based on quiz performance history
+ * Returns a value from 0-100 indicating how strong the mastery is
+ * Higher values = more consistent high performance = slower decay
+ */
+export function calculateMasteryStrength(quizScores: QuizScore[]): number {
+  if (quizScores.length === 0) return 0;
+  
+  // Factors that contribute to mastery strength:
+  // 1. Number of quizzes taken (more = stronger)
+  // 2. Consistency of high scores (90%+)
+  // 3. Recency of perfect scores
+  // 4. Overall average performance
+  
+  const recentScores = quizScores.slice(-10); // Last 10 quizzes
+  const totalQuizzes = quizScores.length;
+  
+  // Calculate average score percentage
+  const avgPercent = recentScores.reduce((sum, score) => {
+    return sum + (score.score / score.totalQuestions) * 100;
+  }, 0) / recentScores.length;
+  
+  // Count high scores (90%+) in recent quizzes
+  const highScoreCount = recentScores.filter(score => 
+    (score.score / score.totalQuestions) * 100 >= 90
+  ).length;
+  
+  // Calculate streak of consecutive high scores (90%+)
+  let highScoreStreak = 0;
+  for (let i = recentScores.length - 1; i >= 0; i--) {
+    const percent = (recentScores[i].score / recentScores[i].totalQuestions) * 100;
+    if (percent >= 90) {
+      highScoreStreak++;
+    } else {
+      break;
+    }
+  }
+  
+  // Calculate components (each out of 25 points, total = 100)
+  const avgComponent = Math.min((avgPercent / 100) * 25, 25);
+  const consistencyComponent = (highScoreCount / recentScores.length) * 25;
+  const streakComponent = Math.min((highScoreStreak / 5) * 25, 25); // 5+ streak = max points
+  const volumeComponent = Math.min((totalQuizzes / 20) * 25, 25); // 20+ quizzes = max points
+  
+  return Math.round(avgComponent + consistencyComponent + streakComponent + volumeComponent);
+}
+
+/**
+ * Calculate days until decay based on mastery strength
+ * Stronger mastery = longer time before needing review
+ */
+export function calculateDecayDays(masteryStrength: number, lastScore: number | null): number {
+  // Base decay days modified by mastery strength
+  const strengthMultiplier = masteryStrength / 100;
+  
+  let decayDays = DECAY_CONFIG.BASE_DECAY_DAYS + 
+    (DECAY_CONFIG.MAX_DECAY_DAYS - DECAY_CONFIG.BASE_DECAY_DAYS) * strengthMultiplier;
+  
+  // Further adjust based on last score
+  if (lastScore !== null) {
+    if (lastScore === 100) {
+      decayDays *= 1.2; // 20% longer for perfect scores
+    } else if (lastScore >= 90) {
+      decayDays *= 1.1; // 10% longer for high scores
+    } else if (lastScore < 80) {
+      decayDays *= 0.7; // 30% shorter for lower scores
+    }
+  }
+  
+  // Ensure within bounds
+  return Math.max(
+    DECAY_CONFIG.MIN_DECAY_DAYS,
+    Math.min(Math.round(decayDays), DECAY_CONFIG.MAX_DECAY_DAYS)
+  );
+}
+
+/**
+ * Check if a mastered topic has decayed and needs review
+ */
+export function hasDecayed(progress: TopicProgress): boolean {
+  if (progress.status !== 'mastered') return false;
+  if (!progress.lastMasteredDate) return false;
+  
+  const masteryStrength = progress.masteryStrength || 0;
+  const lastScore = progress.quizScores?.[progress.quizScores.length - 1];
+  const lastScorePercent = lastScore ? (lastScore.score / lastScore.totalQuestions) * 100 : null;
+  
+  const decayDays = calculateDecayDays(masteryStrength, lastScorePercent);
+  const lastMasteredDate = progress.lastMasteredDate instanceof Date 
+    ? progress.lastMasteredDate 
+    : new Date(progress.lastMasteredDate);
+  const daysSinceMastery = Math.floor(
+    (Date.now() - lastMasteredDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  
+  return daysSinceMastery >= decayDays;
+}
+
+/**
  * Calculate review status based on topic progress
  */
 export function calculateReviewStatus(progress: TopicProgress | undefined): ReviewStatus {
   if (!progress) return 'new';
   
   if (progress.status === 'mastered') {
-    // Check if review is due
+    // Check if topic has decayed due to time
+    if (hasDecayed(progress)) {
+      return 'needs-review';
+    }
+    
+    // Check if review is due based on spaced repetition
     if (progress.lastAccessed) {
+      const lastAccessed = progress.lastAccessed instanceof Date 
+        ? progress.lastAccessed 
+        : new Date(progress.lastAccessed);
       const daysSinceReview = Math.floor(
-        (Date.now() - progress.lastAccessed.getTime()) / (1000 * 60 * 60 * 24)
+        (Date.now() - lastAccessed.getTime()) / (1000 * 60 * 60 * 24)
       );
       
       // Get the last quiz score to determine interval
@@ -132,7 +249,7 @@ export function calculateReviewPriority(
 export function getReviewQueue(userProgress: UserProgress, allTopicIds: string[]): ReviewItem[] {
   const reviewItems: ReviewItem[] = [];
   
-  allTopicIds.forEach((topicId, index) => {
+  allTopicIds.forEach((topicId) => {
     const progress = userProgress[topicId];
     const status = calculateReviewStatus(progress);
     

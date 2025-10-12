@@ -1,11 +1,12 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { Topic, TopicProgress, QuizScore, GamificationData } from '../types';
-import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp, CheckCircle, Clock, BookmarkIcon } from 'lucide-react';
+import { Topic, TopicProgress, QuizScore, GamificationData, ConsumableInventory } from '../types';
+import { BookOpen, Code, HelpCircle, Brain, BarChart3, Play, ChevronDown, ChevronUp, CheckCircle, Clock, BookmarkIcon, Award } from 'lucide-react';
 import Quiz from './Quiz';
 import BiasVarianceDemo from './BiasVarianceDemo';
 import { getQuizQuestionsForTopic } from '../data/quizQuestions';
 import { selectRandomQuestions } from '../utils/quizUtils';
 import { calculateTopicStatus } from '../utils/statusCalculation';
+import { calculateDaysUntilDecay } from '../utils/decaySystem';
 
 // Declare KaTeX renderMathInElement type
 declare global {
@@ -21,9 +22,10 @@ interface TopicViewProps {
   onProgressUpdate: (progress: TopicProgress) => void;
   onAwardXP: (amount: number, reason: string) => void;
   onQuizComplete: (score: QuizScore) => void;
+  onUseConsumable: (itemType: keyof ConsumableInventory) => void;
 }
 
-export default function TopicView({ topic, userProgress, onProgressUpdate, onQuizComplete }: TopicViewProps) {
+export default function TopicView({ topic, userProgress, gamificationData, onProgressUpdate, onQuizComplete, onUseConsumable }: TopicViewProps) {
   const [activeTab, setActiveTab] = useState<'theory' | 'code' | 'questions' | 'demo' | 'quiz'>('theory');
   const [showQuiz, setShowQuiz] = useState(false);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
@@ -68,17 +70,27 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
     const updatedScores = [...(userProgress?.quizScores || []), quizScore];
     
     // Automatically calculate status based on quiz performance
-    const newStatus = calculateTopicStatus(
+    const statusResult = calculateTopicStatus(
       userProgress?.status || 'not_started',
-      updatedScores
+      updatedScores,
+      {
+        masteryStrength: userProgress?.masteryStrength,
+        lastMasteredDate: userProgress?.lastMasteredDate,
+        highScoreStreak: userProgress?.highScoreStreak,
+      }
     );
     
     const newProgress: TopicProgress = {
       ...userProgress,
-      status: newStatus,
+      status: statusResult.status,
       lastAccessed: new Date(),
       quizScores: updatedScores,
       firstCompletion: userProgress?.firstCompletion || new Date(),
+      masteryStrength: statusResult.masteryStrength,
+      highScoreStreak: statusResult.highScoreStreak,
+      lastMasteredDate: statusResult.shouldUpdateMasteredDate 
+        ? new Date() 
+        : userProgress?.lastMasteredDate,
     };
     onProgressUpdate(newProgress);
     
@@ -145,6 +157,14 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
               <BarChart3 className="w-4 h-4" />
               <span>
                 Best: {Math.max(...userProgress.quizScores.map(s => Math.round((s.score / s.totalQuestions) * 100)))}%
+              </span>
+            </div>
+          )}
+          {userProgress?.status === 'mastered' && userProgress.masteryStrength !== undefined && (
+            <div className="flex items-center space-x-1 text-sm text-blue-600 dark:text-blue-400">
+              <CheckCircle className="w-4 h-4" />
+              <span title="Mastery strength - higher values mean slower decay">
+                Strength: {userProgress.masteryStrength}/100
               </span>
             </div>
           )}
@@ -296,6 +316,8 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
                 onComplete={handleQuizComplete}
                 onClose={handleQuizClose}
                 onRetake={handleQuizRetake}
+                consumableInventory={gamificationData.consumableInventory}
+                onUseConsumable={onUseConsumable}
               />
             ) : (
               <div className="text-center py-8">
@@ -344,10 +366,56 @@ export default function TopicView({ topic, userProgress, onProgressUpdate, onQui
                     {userProgress?.status === 'mastered' && (
                       <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                         <div className="text-sm text-green-900 dark:text-green-100">
-                          <p className="font-medium">✨ Topic Mastered!</p>
-                          <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-                            Keep practicing to maintain your mastery status
-                          </p>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-medium flex items-center gap-2">
+                                <Award className="w-4 h-4" />
+                                ✨ Topic Mastered!
+                              </p>
+                              <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                                Keep practicing to maintain your mastery status
+                              </p>
+                            </div>
+                            {userProgress.masteryStrength !== undefined && (
+                              <div className="ml-4 text-right">
+                                <div className="text-lg font-bold text-green-700 dark:text-green-300">
+                                  {userProgress.masteryStrength}/100
+                                </div>
+                                <div className="text-xs text-green-600 dark:text-green-400">
+                                  Mastery Strength
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          {(() => {
+                            const daysUntilDecay = calculateDaysUntilDecay(userProgress);
+                            if (daysUntilDecay !== null) {
+                              return (
+                                <div className={`mt-3 pt-3 border-t ${
+                                  daysUntilDecay <= 7 
+                                    ? 'border-orange-300 dark:border-orange-700'
+                                    : 'border-green-300 dark:border-green-700'
+                                }`}>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className={daysUntilDecay <= 7 ? 'text-orange-700 dark:text-orange-300' : 'text-green-700 dark:text-green-300'}>
+                                      {daysUntilDecay === 0 && '⚠️ Needs review now'}
+                                      {daysUntilDecay > 0 && daysUntilDecay <= 7 && `⏰ Review in ${daysUntilDecay} ${daysUntilDecay === 1 ? 'day' : 'days'}`}
+                                      {daysUntilDecay > 7 && `✅ Review in ${daysUntilDecay} days`}
+                                    </span>
+                                    <span className="text-green-600 dark:text-green-400">
+                                      {userProgress.highScoreStreak || 0}🔥 streak
+                                    </span>
+                                  </div>
+                                  {daysUntilDecay <= 7 && daysUntilDecay > 0 && (
+                                    <p className="mt-2 text-xs text-orange-700 dark:text-orange-300">
+                                      💡 This topic will decay soon. Take a quiz to refresh your mastery!
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
                         </div>
                       </div>
                     )}

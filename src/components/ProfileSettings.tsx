@@ -10,6 +10,7 @@ interface ProfileSettingsProps {
   onBadgeChange: (badge: string) => void;
   onDailyGoalChange: (goal: number) => void;
   purchasedItems: string[];
+  onResetAllProgress: () => void;
 }
 
 const AVAILABLE_BADGES = ['⭐', '🚀', '🧠', '🎯', '💎', '🏆', '🔥', '⚡'];
@@ -28,6 +29,7 @@ export default function ProfileSettings({
   onBadgeChange,
   onDailyGoalChange,
   purchasedItems,
+  onResetAllProgress,
 }: ProfileSettingsProps) {
   const { user, updateUserProfile } = useAuth();
   const [editingProfile, setEditingProfile] = useState(false);
@@ -279,7 +281,7 @@ export default function ProfileSettings({
         </h2>
         
         <div className="flex gap-3">
-          {[10, 20, 50, 100].map(goal => (
+          {[50, 100, 200, 300].map(goal => (
             <button
               key={goal}
               onClick={() => onDailyGoalChange(goal)}
@@ -337,6 +339,46 @@ export default function ProfileSettings({
             </span>
           </label>
         </div>
+      </div>
+
+      {/* Danger Zone - Reset All Progress */}
+      <div className="bg-red-50 dark:bg-red-900/20 rounded-lg shadow-sm border-2 border-red-200 dark:border-red-800 p-6">
+        <h2 className="text-xl font-bold text-red-900 dark:text-red-300 mb-2 flex items-center gap-2">
+          <SettingsIcon className="w-5 h-5" />
+          Danger Zone
+        </h2>
+        <p className="text-sm text-red-700 dark:text-red-400 mb-4">
+          This action cannot be undone. All your progress, XP, gems, achievements, and purchased items will be permanently deleted.
+        </p>
+        <button
+          onClick={() => {
+            const confirmed = window.confirm(
+              'Are you sure you want to reset ALL progress?\n\n' +
+              'This will delete:\n' +
+              '• All topic progress and mastery\n' +
+              '• XP, level, and ranking\n' +
+              '• Gems and purchased items\n' +
+              '• Achievements and streaks\n' +
+              '• Challenge mode scores\n' +
+              '• Consumable inventory\n\n' +
+              'This action CANNOT be undone!'
+            );
+            if (confirmed) {
+              const doubleConfirm = window.confirm(
+                '⚠️ FINAL WARNING ⚠️\n\n' +
+                'This will permanently delete all your progress!\n\n' +
+                'Are you absolutely sure?'
+              );
+              if (doubleConfirm) {
+                onResetAllProgress();
+              }
+            }
+          }}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2 shadow-md hover:shadow-lg"
+        >
+          <SettingsIcon className="w-5 h-5" />
+          Reset All Progress
+        </button>
       </div>
     </div>
   );

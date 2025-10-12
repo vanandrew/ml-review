@@ -48,10 +48,39 @@ Mastery status is automatically earned when you meet one of these criteria:
 
 ### Maintaining Mastery
 
+### Maintaining Mastery
+
 Your mastery status is dynamic and reflects your current knowledge level:
 - If you score below 70% on a quiz, your status may return to "Reviewing"
 - If your average drops below 75%, you'll need to practice more
 - This ensures your progress reflects actual mastery, not just completion
+
+### Mastery Decay System
+
+To ensure you retain knowledge over time, mastered topics use a **smart decay system**:
+
+- **Mastery Strength**: Each mastered topic has a strength rating (0-100) based on:
+  - Average quiz performance
+  - Consistency of high scores (90%+)
+  - Number of quizzes taken
+  - Current high score streak
+
+- **Decay Timeline**: Topics automatically downgrade from "Mastered" to "Reviewing" after a period without practice
+  - **Strong mastery** (80-100 strength): Up to 90 days before decay
+  - **Medium mastery** (50-79 strength): 30-60 days before decay
+  - **Weak mastery** (0-49 strength): 7-30 days before decay
+
+- **Decay Adjustments**: 
+  - Perfect scores (100%) extend decay time by 20%
+  - High scores (90%+) extend decay time by 10%
+  - Lower scores (<80%) reduce decay time by 30%
+
+- **Dashboard Warnings**: Get notified about:
+  - Topics decaying within 7 days
+  - Topics that have already decayed and need review
+  - Your average mastery strength across all topics
+
+This system ensures you regularly review mastered content and maintain long-term retention!
 
 ### Benefits
 

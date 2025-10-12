@@ -11,7 +11,7 @@ export default function DailyGoals({ gamificationData, onSetGoal }: DailyGoalsPr
   const progress = Math.min(100, Math.round((dailyXP / dailyGoal) * 100));
   const isComplete = dailyXP >= dailyGoal;
 
-  const goalOptions = [10, 20, 50, 100];
+  const goalOptions = [50, 100, 200, 300];
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">

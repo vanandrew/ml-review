@@ -38,6 +38,9 @@ export interface TopicProgress {
   lastAccessed: Date;
   quizScores: QuizScore[];
   firstCompletion?: Date;
+  masteryStrength?: number; // 0-100, based on consistency of high scores
+  lastMasteredDate?: Date; // When topic was last marked as mastered
+  highScoreStreak?: number; // Consecutive quizzes with 90%+ scores
 }
 
 export interface QuizScore {
@@ -90,6 +93,9 @@ export interface GamificationData {
   selectedBadge: string;
   // Endless Challenge Mode
   challengeModeHighScore: number;
+  // Phase 5: Consumables & Power-ups
+  consumableInventory: ConsumableInventory;
+  activePowerUps: ActivePowerUp[];
 }
 
 export interface GemTransaction {
@@ -108,6 +114,25 @@ export interface ChallengeModeStats {
   hardModeCompleted: number;
   perfectRunStreak: number;
   bestPerfectRun: number;
+}
+
+export interface ConsumableInventory {
+  hints: number;
+  streakFreezes: number;
+  xpBoosts: number; // Number of quizzes with 2x XP remaining
+  knowledgePotions: number; // Number of questions with elimination remaining
+  timeExtensions: number;
+  secondChances: number;
+  extraLives: number;
+  multiplierBoosts: number;
+}
+
+export interface ActivePowerUp {
+  id: string;
+  type: 'double-gems' | 'premium-week' | 'scholars-blessing' | 'xp-boost';
+  activatedAt: Date;
+  expiresAt: Date;
+  remaining?: number; // For counted items like xp-boost (remaining quizzes)
 }
 
 export interface WeeklyChallenge {

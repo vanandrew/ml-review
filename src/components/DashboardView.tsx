@@ -4,6 +4,8 @@ import DailyGoals from './DailyGoals';
 import WeeklyChallengeCard from './WeeklyChallengeCard';
 import MotivationalQuoteCard from './MotivationalQuoteCard';
 import ReviewQueue from './ReviewQueue';
+import DecayWarning from './DecayWarning';
+import RankingBadge from './RankingBadge';
 import { getReviewQueue } from '../utils/reviewSystem';
 import { getTopicById } from '../data/topicsIndex';
 
@@ -38,6 +40,24 @@ export default function DashboardView({ gamificationData, userProgress, onSetDai
 
       {/* Motivational Quote */}
       <MotivationalQuoteCard />
+
+      {/* Rankings Display */}
+      <RankingBadge 
+        gamificationData={gamificationData}
+        userProgress={userProgress}
+      />
+
+      {/* Decay Warning - Shows mastery maintenance status */}
+      <DecayWarning 
+        userProgress={userProgress}
+        onSelectTopic={(topicId) => {
+          const topic = getTopicById(topicId);
+          if (topic) {
+            onSelectTopic(topicId, topic.category);
+          }
+        }}
+        getTopicTitle={getTopicTitle}
+      />
 
       {/* Top Row: Daily Goals and Weekly Challenge */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

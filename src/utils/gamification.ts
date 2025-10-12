@@ -1,16 +1,16 @@
 import { GamificationData } from '../types';
 
 // XP Calculation Constants
-export const XP_PER_CORRECT_ANSWER = 10;
-export const XP_PERFECT_BONUS = 20;
+export const XP_PER_CORRECT_ANSWER = 5;
+export const XP_PERFECT_BONUS = 50;
 export const XP_DAILY_STREAK_BONUS = 5;
-export const XP_FIRST_TIME_COMPLETION = 50;
-export const XP_REVIEW_MASTERED = 15;
+export const XP_FIRST_TIME_COMPLETION = 25;
+export const XP_REVIEW_MASTERED = 10;
 
 // Level System
 export function calculateLevel(xp: number): number {
   const levels = [
-    0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700
+    0, 300, 700, 1200, 1800, 2500, 3300, 4200, 5200, 6300
   ];
   
   let level = 1;
@@ -25,7 +25,7 @@ export function calculateLevel(xp: number): number {
   if (xp >= levels[levels.length - 1]) {
     const baseXP = levels[levels.length - 1];
     const baseLevel = levels.length;
-    const increment = 550;
+    const increment = 1000;
     const additionalLevels = Math.floor((xp - baseXP) / increment);
     level = baseLevel + additionalLevels;
   }
@@ -36,7 +36,7 @@ export function calculateLevel(xp: number): number {
 export function getXPForNextLevel(currentXP: number): number {
   const currentLevel = calculateLevel(currentXP);
   const nextLevel = currentLevel + 1;
-  const levels = [0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700];
+  const levels = [0, 300, 700, 1200, 1800, 2500, 3300, 4200, 5200, 6300];
   
   if (nextLevel - 1 < levels.length) {
     return levels[nextLevel - 1];
@@ -44,14 +44,14 @@ export function getXPForNextLevel(currentXP: number): number {
   
   const baseXP = levels[levels.length - 1];
   const baseLevel = levels.length;
-  const increment = 550;
+  const increment = 1000;
   return baseXP + (nextLevel - baseLevel) * increment;
 }
 
 export function getXPProgress(currentXP: number): { current: number; required: number; percentage: number } {
   const currentLevel = calculateLevel(currentXP);
   const nextLevelXP = getXPForNextLevel(currentXP);
-  const levels = [0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700];
+  const levels = [0, 300, 700, 1200, 1800, 2500, 3300, 4200, 5200, 6300];
   let currentLevelStartXP = 0;
   
   if (currentLevel - 1 < levels.length) {
@@ -59,7 +59,7 @@ export function getXPProgress(currentXP: number): { current: number; required: n
   } else {
     const baseXP = levels[levels.length - 1];
     const baseLevel = levels.length;
-    const increment = 550;
+    const increment = 1000;
     currentLevelStartXP = baseXP + (currentLevel - baseLevel) * increment;
   }
   
@@ -89,7 +89,7 @@ export function initializeGamificationData(): GamificationData {
     },
     themeChanges: 0,
     dailyXP: 0,
-    dailyGoal: 20,
+    dailyGoal: 100,
     lastDailyReset: null,
     weeklyChallenge: null,
     activityHistory: [],
@@ -111,6 +111,18 @@ export function initializeGamificationData(): GamificationData {
     selectedBadge: '⭐',
     // Endless Challenge Mode
     challengeModeHighScore: 0,
+    // Phase 5: Consumables & Power-ups
+    consumableInventory: {
+      hints: 3, // Start with 3 hints to try the system
+      streakFreezes: 1,
+      xpBoosts: 0,
+      knowledgePotions: 0,
+      timeExtensions: 0,
+      secondChances: 0,
+      extraLives: 1, // Start with 1 extra life
+      multiplierBoosts: 0,
+    },
+    activePowerUps: [],
   };
 }
 

@@ -1,5 +1,5 @@
 
-import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap, LogIn, UserCircle, LogOut, Cloud, CloudOff } from 'lucide-react';
+import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap, LogIn, UserCircle, LogOut, Cloud, CloudOff, Trophy } from 'lucide-react';
 import { categories } from '../data/categories';
 import { UserProgress, GamificationData } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,9 +18,11 @@ interface SidebarProps {
   onShopSelect?: () => void;
   onSettingsSelect?: () => void;
   onChallengeSelect?: () => void;
+  onRankingSelect?: () => void;
   showingShop?: boolean;
   showingSettings?: boolean;
   showingChallengeMode?: boolean;
+  showingRanking?: boolean;
   onLoginClick?: () => void;
   onSignupClick?: () => void;
   syncStatus?: { isSyncing: boolean; lastSyncTime: Date | null; syncError: string | null };
@@ -38,9 +40,11 @@ export default function Sidebar({
   onShopSelect,
   onSettingsSelect,
   onChallengeSelect,
+  onRankingSelect,
   showingShop,
   showingSettings,
   showingChallengeMode,
+  showingRanking,
   onLoginClick,
   onSignupClick,
   syncStatus,
@@ -208,6 +212,22 @@ export default function Sidebar({
           >
             <Zap className="w-4 h-4" />
             <span>Challenge Mode</span>
+          </button>
+        </div>
+
+        {/* Rankings Button */}
+        <div className="px-2 mb-2">
+          <button
+            onClick={() => !showingChallengeMode && onRankingSelect && onRankingSelect()}
+            disabled={showingChallengeMode}
+            className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+              showingRanking
+                ? 'bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 text-purple-700 dark:text-purple-400 font-medium border border-purple-300 dark:border-purple-700'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <Trophy className="w-4 h-4" />
+            <span>Rankings</span>
           </button>
         </div>
 

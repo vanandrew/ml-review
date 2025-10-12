@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore } from './types';
+import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore, ConsumableInventory } from './types';
 import { useAuth } from './contexts/AuthContext';
 import { migrateLocalDataToFirestore, saveUserDataToFirestore, loadUserDataFromFirestore, updateUserProfile } from './utils/firebaseSync';
 import Sidebar from './components/Sidebar';
@@ -8,6 +8,7 @@ import DashboardView from './components/DashboardView';
 import GemShop from './components/GemShop';
 import ProfileSettings from './components/ProfileSettings';
 import ChallengeMode from './components/ChallengeMode';
+import RankingDisplay from './components/RankingDisplay';
 import XPReward from './components/XPReward';
 import AchievementModal from './components/AchievementModal';
 import ConfettiAnimation from './components/ConfettiAnimation';
@@ -20,7 +21,7 @@ import { initializeGamificationData, calculateLevel, XP_PER_CORRECT_ANSWER, XP_P
 import { updateStreak } from './utils/streak';
 import { checkForNewAchievements } from './utils/achievements';
 import { generateWeeklyChallenge, shouldGenerateNewChallenge, updateChallengeProgress, isChallengeComplete } from './utils/challenges';
-import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, GEM_SHOP_ITEMS } from './utils/gems';
+import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, addConsumable, activatePowerUp, getShopItem } from './utils/gems';
 import { getStatusChangeInfo } from './utils/statusCalculation';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
   const [showingShop, setShowingShop] = useState(false);
   const [showingSettings, setShowingSettings] = useState(false);
   const [showingChallengeMode, setShowingChallengeMode] = useState(false);
+  const [showingRanking, setShowingRanking] = useState(false);
   const [userProgress, setUserProgress] = useState<UserProgress>({});
   const [gamificationData, setGamificationData] = useState<GamificationData>({
     ...initializeGamificationData(),
@@ -441,6 +443,7 @@ function App() {
     setShowingDashboard(true);
     setShowingShop(false);
     setShowingSettings(false);
+    setShowingRanking(false);
     setSelectedTopic(null);
   };
 
@@ -448,6 +451,7 @@ function App() {
     setShowingShop(true);
     setShowingDashboard(false);
     setShowingSettings(false);
+    setShowingRanking(false);
     setSelectedTopic(null);
   };
 
@@ -456,6 +460,7 @@ function App() {
     setShowingShop(false);
     setShowingDashboard(false);
     setShowingChallengeMode(false);
+    setShowingRanking(false);
     setSelectedTopic(null);
   };
 
@@ -464,6 +469,16 @@ function App() {
     setShowingDashboard(false);
     setShowingShop(false);
     setShowingSettings(false);
+    setShowingRanking(false);
+    setSelectedTopic(null);
+  };
+
+  const handleRankingSelect = () => {
+    setShowingRanking(true);
+    setShowingDashboard(false);
+    setShowingShop(false);
+    setShowingSettings(false);
+    setShowingChallengeMode(false);
     setSelectedTopic(null);
   };
 
@@ -481,7 +496,7 @@ function App() {
   };
 
   const handlePurchaseItem = (itemId: string) => {
-    const item = GEM_SHOP_ITEMS.find(i => i.id === itemId);
+    const item = getShopItem(itemId);
     if (!item) return;
 
     setGamificationData(prev => {
@@ -491,11 +506,69 @@ function App() {
         return prev;
       }
       
-      return {
+      const updatedData = {
         ...prev,
         gems: result.gems,
         gemTransactions: result.transactions,
-        purchasedItems: [...prev.purchasedItems, itemId],
+      };
+
+      // Handle consumables - add to inventory
+      if (item.consumable) {
+        updatedData.consumableInventory = addConsumable(
+          prev.consumableInventory,
+          itemId,
+          item.quantity || 1
+        );
+      } else {
+        // Non-consumables are one-time purchases
+        updatedData.purchasedItems = [...prev.purchasedItems, itemId];
+      }
+
+      // Handle time-based power-ups
+      if (item.duration && ['double-gems', 'premium-week', 'scholars-blessing'].includes(itemId)) {
+        updatedData.activePowerUps = activatePowerUp(
+          prev.activePowerUps,
+          itemId,
+          item.duration
+        );
+      }
+
+      // Handle XP boost (count-based power-up)
+      if (itemId === 'xp-boost' && item.quantity) {
+        updatedData.activePowerUps = activatePowerUp(
+          prev.activePowerUps,
+          itemId,
+          72, // 3 days max to use
+          item.quantity
+        );
+      }
+
+      // Auto-apply theme if purchased
+      if (itemId.startsWith('theme-')) {
+        updatedData.selectedTheme = itemId;
+      }
+
+      // Auto-apply badge if purchased
+      if (itemId.startsWith('badge-')) {
+        updatedData.selectedBadge = item.icon;
+      }
+      
+      return updatedData;
+    });
+  };
+
+  const handleUseConsumable = (itemType: keyof ConsumableInventory) => {
+    setGamificationData(prev => {
+      if (prev.consumableInventory[itemType] <= 0) {
+        return prev;
+      }
+      
+      const updatedInventory = { ...prev.consumableInventory };
+      updatedInventory[itemType]--;
+      
+      return {
+        ...prev,
+        consumableInventory: updatedInventory,
       };
     });
   };
@@ -519,6 +592,20 @@ function App() {
       ...prev,
       dailyGoal: goal,
     }));
+  };
+
+  const handleResetAllProgress = () => {
+    // Reset all progress and gamification data to initial state
+    setUserProgress({});
+    setGamificationData({
+      ...initializeGamificationData(),
+      challengeModeHighScore: 0,
+    });
+    // Clear localStorage
+    localStorage.removeItem('ml-review-progress');
+    localStorage.removeItem('ml-review-gamification');
+    // Show success message
+    alert('All progress has been reset successfully!');
   };
 
   return (
@@ -586,9 +673,11 @@ function App() {
           onShopSelect={handleShopSelect}
           onSettingsSelect={handleSettingsSelect}
           onChallengeSelect={handleChallengeSelect}
+          onRankingSelect={handleRankingSelect}
           showingShop={showingShop}
           showingSettings={showingSettings}
           showingChallengeMode={showingChallengeMode}
+          showingRanking={showingRanking}
           onLoginClick={() => setShowLoginModal(true)}
           onSignupClick={() => setShowSignupModal(true)}
           syncStatus={syncStatus}
@@ -603,6 +692,8 @@ function App() {
                   ? 'Dashboard'
                   : showingShop
                   ? 'Gem Shop'
+                  : showingRanking
+                  ? 'Rankings'
                   : showingSettings
                   ? 'Settings'
                   : showingChallengeMode
@@ -640,6 +731,8 @@ function App() {
                       highScore={gamificationData.challengeModeHighScore}
                       onComplete={handleChallengeComplete}
                       onExit={handleChallengeExit}
+                      consumableInventory={gamificationData.consumableInventory}
+                      onUseConsumable={handleUseConsumable}
                     />
                   );
                 })()
@@ -647,8 +740,15 @@ function App() {
                 <GemShop
                   currentGems={gamificationData.gems}
                   purchasedItems={gamificationData.purchasedItems}
+                  consumableInventory={gamificationData.consumableInventory}
+                  activePowerUps={gamificationData.activePowerUps}
                   onPurchase={handlePurchaseItem}
                   selectedTheme={gamificationData.selectedTheme}
+                />
+              ) : showingRanking ? (
+                <RankingDisplay
+                  gamificationData={gamificationData}
+                  userProgress={userProgress}
                 />
               ) : showingSettings ? (
                 <ProfileSettings
@@ -659,6 +759,7 @@ function App() {
                   onBadgeChange={handleBadgeChange}
                   onDailyGoalChange={handleSetDailyGoal}
                   purchasedItems={gamificationData.purchasedItems}
+                  onResetAllProgress={handleResetAllProgress}
                 />
               ) : showingDashboard ? (
                 <DashboardView
@@ -708,7 +809,8 @@ function App() {
                         }));
                       }}
                       onAwardXP={awardXP}
-                      onQuizComplete={(score) => handleQuizComplete(score, selectedTopic)}
+                      onQuizComplete={(score: QuizScore) => handleQuizComplete(score, selectedTopic!)}
+                      onUseConsumable={handleUseConsumable}
                     />
                   );
                 })()

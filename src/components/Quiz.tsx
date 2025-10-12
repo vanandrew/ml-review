@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { QuizQuestion, QuizScore } from '../types';
-import { CheckCircle, XCircle, RotateCcw, Trophy, Clock } from 'lucide-react';
+import { QuizQuestion, QuizScore, ConsumableInventory } from '../types';
+import { CheckCircle, XCircle, RotateCcw, Trophy, Clock, Lightbulb, Beaker } from 'lucide-react';
 import { XP_PER_CORRECT_ANSWER, XP_PERFECT_BONUS } from '../utils/gamification';
 
 interface QuizProps {
@@ -8,6 +8,8 @@ interface QuizProps {
   onComplete: (score: QuizScore) => void;
   onClose: () => void;
   onRetake?: () => void;
+  consumableInventory?: ConsumableInventory;
+  onUseConsumable?: (itemType: keyof ConsumableInventory) => void;
 }
 
 interface QuizState {
@@ -18,7 +20,7 @@ interface QuizState {
   endTime: Date | null;
 }
 
-export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizProps) {
+export default function Quiz({ questions, onComplete, onClose, onRetake, consumableInventory, onUseConsumable }: QuizProps) {
   const [quizState, setQuizState] = useState<QuizState>({
     currentQuestion: 0,
     selectedAnswers: {},
@@ -28,10 +30,44 @@ export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizP
   });
 
   const [showExplanation, setShowExplanation] = useState(false);
+  const [usedHints, setUsedHints] = useState<Set<number>>(new Set());
+  const [eliminatedAnswers, setEliminatedAnswers] = useState<Set<string>>(new Set());
+  const [knowledgePotionRemaining, setKnowledgePotionRemaining] = useState(0);
 
   const currentQ = questions[quizState.currentQuestion];
   const isLastQuestion = quizState.currentQuestion === questions.length - 1;
   const hasAnswered = quizState.selectedAnswers[quizState.currentQuestion] !== undefined;
+
+  const handleUseHint = () => {
+    if (consumableInventory && consumableInventory.hints > 0 && !usedHints.has(quizState.currentQuestion) && !hasAnswered) {
+      setUsedHints(new Set(usedHints).add(quizState.currentQuestion));
+      onUseConsumable?.('hints');
+      setShowExplanation(true);
+    }
+  };
+
+  const handleUseKnowledgePotion = () => {
+    if (consumableInventory && consumableInventory.knowledgePotions >= 5 && knowledgePotionRemaining === 0 && !hasAnswered) {
+      // Use 5 knowledge potions for 5 questions of elimination
+      setKnowledgePotionRemaining(5);
+      // Eliminate 2 wrong answers for current question
+      const wrongAnswers = currentQ.options
+        .map((_, idx: number) => idx)
+        .filter((idx: number) => idx !== currentQ.correctAnswer);
+      const toEliminate = wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 2);
+      const newEliminated = new Set(eliminatedAnswers);
+      toEliminate.forEach((idx: number) => newEliminated.add(`${quizState.currentQuestion}-${idx}`));
+      setEliminatedAnswers(newEliminated);
+      // Consume 5 potions
+      for (let i = 0; i < 5; i++) {
+        onUseConsumable?.('knowledgePotions');
+      }
+    }
+  };
+
+  const isAnswerEliminated = (answerIdx: number) => {
+    return eliminatedAnswers.has(`${quizState.currentQuestion}-${answerIdx}`);
+  };
 
   const handleAnswerSelect = (answerIndex: number) => {
     // Only allow selecting answer if not already answered
@@ -78,6 +114,23 @@ export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizP
         currentQuestion: prev.currentQuestion + 1
       }));
       setShowExplanation(false);
+      // Decrement knowledge potion remaining count
+      if (knowledgePotionRemaining > 0) {
+        setKnowledgePotionRemaining(knowledgePotionRemaining - 1);
+        // If still remaining, apply elimination to next question
+        if (knowledgePotionRemaining - 1 > 0) {
+          setTimeout(() => {
+            const nextQ = questions[quizState.currentQuestion + 1];
+            const wrongAnswers = nextQ.options
+              .map((_, idx: number) => idx)
+              .filter((idx: number) => idx !== nextQ.correctAnswer);
+            const toEliminate = wrongAnswers.sort(() => Math.random() - 0.5).slice(0, 2);
+            const newEliminated = new Set(eliminatedAnswers);
+            toEliminate.forEach((idx: number) => newEliminated.add(`${quizState.currentQuestion + 1}-${idx}`));
+            setEliminatedAnswers(newEliminated);
+          }, 100);
+        }
+      }
     }
   };
 
@@ -247,15 +300,63 @@ export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizP
             {currentQ.question}
           </h3>
 
+          {/* Consumable Items */}
+          {consumableInventory && !hasAnswered && (
+            <div className="mb-4">
+              {(consumableInventory.hints > 0 || consumableInventory.knowledgePotions >= 5) ? (
+                <div className="flex gap-2">
+                  {consumableInventory.hints > 0 && !usedHints.has(quizState.currentQuestion) && (
+                    <button
+                      onClick={handleUseHint}
+                      className="flex items-center gap-2 px-3 py-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700 rounded-lg hover:bg-yellow-100 dark:hover:bg-yellow-900/30 transition-colors text-sm font-medium"
+                      title="Show explanation hint"
+                    >
+                      <Lightbulb className="w-4 h-4" />
+                      Use Hint ({consumableInventory.hints})
+                    </button>
+                  )}
+                  {consumableInventory.knowledgePotions >= 5 && knowledgePotionRemaining === 0 && (
+                    <button
+                      onClick={handleUseKnowledgePotion}
+                      className="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-700 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors text-sm font-medium"
+                      title="Eliminate 2 wrong answers for next 5 questions"
+                    >
+                      <Beaker className="w-4 h-4" />
+                      Use Knowledge Potion ({Math.floor(consumableInventory.knowledgePotions / 5)})
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    💡 <strong>Tip:</strong> Buy hints and knowledge potions from the Gem Shop to help with difficult questions!
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {knowledgePotionRemaining > 0 && (
+            <div className="mb-4 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-300 dark:border-purple-700 rounded-lg">
+              <p className="text-sm text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                <Beaker className="w-4 h-4" />
+                Knowledge Potion Active: {knowledgePotionRemaining} questions remaining (2 wrong answers eliminated)
+              </p>
+            </div>
+          )}
+
           <div className="space-y-3">
             {currentQ.options.map((option, index) => {
               const isSelected = quizState.selectedAnswers[quizState.currentQuestion] === index;
               const isCorrect = index === currentQ.correctAnswer;
               const showCorrectness = showExplanation && hasAnswered;
+              const eliminated = isAnswerEliminated(index);
 
               let buttonClass = 'w-full p-4 text-left border rounded-lg transition-colors ';
 
-              if (showCorrectness) {
+              if (eliminated) {
+                buttonClass += 'opacity-30 cursor-not-allowed border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 ';
+              } else if (showCorrectness) {
                 if (isCorrect) {
                   buttonClass += 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100';
                 } else if (isSelected && !isCorrect) {
@@ -272,8 +373,8 @@ export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizP
               return (
                 <button
                   key={index}
-                  onClick={() => handleAnswerSelect(index)}
-                  disabled={showCorrectness}
+                  onClick={() => !eliminated && handleAnswerSelect(index)}
+                  disabled={showCorrectness || eliminated}
                   className={buttonClass}
                 >
                   <div className="flex items-center space-x-3">
@@ -293,15 +394,23 @@ export default function Quiz({ questions, onComplete, onClose, onRetake }: QuizP
             })}
           </div>
 
-          {/* Explanation */}
-          {showExplanation && hasAnswered && (
+          {/* Explanation (shows after answering OR when hint is used) */}
+          {showExplanation && (hasAnswered || usedHints.has(quizState.currentQuestion)) && (
             <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+              <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                {usedHints.has(quizState.currentQuestion) && !hasAnswered && (
+                  <Lightbulb className="w-4 h-4" />
+                )}
                 Explanation
               </h4>
               <p className="text-blue-800 dark:text-blue-200 text-sm">
                 {currentQ.explanation}
               </p>
+              {usedHints.has(quizState.currentQuestion) && !hasAnswered && (
+                <p className="text-blue-600 dark:text-blue-300 text-xs mt-2 italic">
+                  💡 Hint used - explanation revealed before answering
+                </p>
+              )}
             </div>
           )}
         </div>
