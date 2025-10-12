@@ -175,5 +175,40 @@ export const hyperparameterTuningQuestions: QuizQuestion[] = [
     options: ['Audio tool', 'Scalable distributed hyperparameter tuning framework', 'Grid search only', 'No such tool'],
     correctAnswer: 1,
     explanation: 'Ray Tune is a scalable hyperparameter tuning library supporting distributed search across multiple machines, with various search algorithms and early stopping strategies.'
+  },
+  {
+    id: 'hpt26',
+    question: 'What is the main benefit of successive halving in hyperparameter optimization?',
+    options: ['Tests all configurations equally', 'Quickly eliminates poor configurations, allocating more resources to promising ones', 'Only works with neural networks', 'Requires manual intervention'],
+    correctAnswer: 1,
+    explanation: 'Successive halving trains many configurations with small budgets initially, then iteratively eliminates the worst half and doubles the budget for survivors.'
+  },
+  {
+    id: 'hpt27',
+    question: 'When tuning batch size for neural networks, what tradeoff should you consider?',
+    options: ['No tradeoff exists', 'Larger batch size: faster training but may reduce generalization', 'Smaller is always better', 'Size doesn\'t matter'],
+    correctAnswer: 1,
+    explanation: 'Larger batches are computationally efficient but may lead to sharp minima (poor generalization). Smaller batches add noise that can help find flatter, more generalizable minima.'
+  },
+  {
+    id: 'hpt28',
+    question: 'What is population-based training (PBT)?',
+    options: ['Training one model', 'Evolves population of models, periodically replacing poor performers with mutations of good ones', 'Standard grid search', 'Random search variant'],
+    correctAnswer: 1,
+    explanation: 'PBT trains a population in parallel, periodically copying weights from top performers to poor performers while mutating their hyperparameters, jointly optimizing hyperparameters and weights.'
+  },
+  {
+    id: 'hpt29',
+    question: 'Why should you consider the total computational budget when choosing a tuning strategy?',
+    options: ['Budget doesn\'t matter', 'Limited budget favors efficient methods like Bayesian optimization over exhaustive grid search', 'Only matters for neural networks', 'Budget only affects final model'],
+    correctAnswer: 1,
+    explanation: 'With limited compute, sample-efficient methods (Bayesian optimization, Hyperband) find good configurations faster than grid search, which wastes budget on clearly poor regions.'
+  },
+  {
+    id: 'hpt30',
+    question: 'What is transfer learning in the context of hyperparameter tuning?',
+    options: ['Not applicable', 'Using optimal hyperparameters from similar tasks as starting point', 'Only for image tasks', 'Random initialization'],
+    correctAnswer: 1,
+    explanation: 'Hyperparameters that work well on similar tasks (e.g., other image classification problems) often work well on your task, providing a warm start for optimization.'
   }
 ];

@@ -140,5 +140,40 @@ export const supervisedVsUnsupervisedVsReinforcementQuestions: QuizQuestion[] = 
     options: ['Pure supervised learning', 'Pure unsupervised learning', 'Reinforcement learning with simulated environments', 'Self-supervised learning'],
     correctAnswer: 0,
     explanation: 'Pure supervised learning requires human-labeled examples for all training data, which is the most labor-intensive.'
+  },
+  {
+    id: 'suvsr21',
+    question: 'Self-supervised learning is most similar to:',
+    options: ['Supervised learning with automatic labels', 'Pure unsupervised learning', 'Reinforcement learning', 'Active learning'],
+    correctAnswer: 0,
+    explanation: 'Self-supervised learning automatically generates labels from the data itself (e.g., predicting masked words), making it similar to supervised learning but without manual labeling.'
+  },
+  {
+    id: 'suvsr22',
+    question: 'Which learning paradigm is best for discovering customer segments in marketing data?',
+    options: ['Supervised learning', 'Unsupervised learning', 'Reinforcement learning', 'Transfer learning'],
+    correctAnswer: 1,
+    explanation: 'Unsupervised learning (clustering) is ideal for discovering natural customer segments without predefined categories.'
+  },
+  {
+    id: 'suvsr23',
+    question: 'In reinforcement learning, what is a "policy"?',
+    options: ['The training dataset', 'A strategy mapping states to actions', 'The reward function', 'The validation set'],
+    correctAnswer: 1,
+    explanation: 'A policy in RL defines the agent\'s behavior by mapping states (or observations) to actions to take.'
+  },
+  {
+    id: 'suvsr24',
+    question: 'Which type of learning would you use for autonomous vehicle control?',
+    options: ['Supervised learning only', 'Unsupervised learning only', 'Combination of supervised and reinforcement learning', 'Transfer learning only'],
+    correctAnswer: 2,
+    explanation: 'Autonomous vehicles typically use supervised learning (perception) combined with reinforcement learning (decision-making and control).'
+  },
+  {
+    id: 'suvsr25',
+    question: 'What is the key difference between supervised and unsupervised dimensionality reduction?',
+    options: ['Supervised uses labels, unsupervised doesn\'t', 'Unsupervised is always faster', 'Supervised always performs better', 'There is no difference'],
+    correctAnswer: 0,
+    explanation: 'Supervised dimensionality reduction (e.g., LDA) uses class labels to find discriminative features, while unsupervised (e.g., PCA) ignores labels.'
   }
 ];

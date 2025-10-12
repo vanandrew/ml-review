@@ -141,6 +141,41 @@ export const linearRegressionQuestions: QuizQuestion[] = [
     options: ['No effect', 'Can significantly influence the fitted line', 'Improves accuracy', 'Only affects intercept'],
     correctAnswer: 1,
     explanation: 'Outliers can have a large impact on the regression line since linear regression minimizes squared errors, giving more weight to large errors.'
+  },
+  {
+    id: 'lr21',
+    question: 'What is heteroscedasticity in linear regression?',
+    options: ['Constant variance', 'Non-constant variance of errors across values', 'Linear relationship', 'No correlation'],
+    correctAnswer: 1,
+    explanation: 'Heteroscedasticity occurs when the variance of errors is not constant across different levels of the independent variables, violating a key assumption.'
+  },
+  {
+    id: 'lr22',
+    question: 'What is the closed-form solution for linear regression called?',
+    options: ['Gradient descent', 'Normal equation: β = (X\'X)⁻¹X\'y', 'Backpropagation', 'Stochastic method'],
+    correctAnswer: 1,
+    explanation: 'The normal equation provides a closed-form solution by setting the gradient to zero and solving directly for optimal parameters.'
+  },
+  {
+    id: 'lr23',
+    question: 'When is gradient descent preferred over the normal equation?',
+    options: ['Always', 'For large datasets where X\'X is expensive to compute', 'Never', 'Only for classification'],
+    correctAnswer: 1,
+    explanation: 'Gradient descent is preferred when the number of features is very large (>10,000) since computing (X\'X)⁻¹ becomes computationally expensive.'
+  },
+  {
+    id: 'lr24',
+    question: 'What is the Ridge regression objective function?',
+    options: ['MSE only', 'MSE + λ∑βᵢ²', 'MSE + λ∑|βᵢ|', 'MAE only'],
+    correctAnswer: 1,
+    explanation: 'Ridge regression adds an L2 penalty term (λ times sum of squared coefficients) to MSE to prevent overfitting.'
+  },
+  {
+    id: 'lr25',
+    question: 'What is the Lasso regression objective function?',
+    options: ['MSE + λ∑βᵢ²', 'MSE + λ∑|βᵢ|', 'MSE only', 'Cross-entropy'],
+    correctAnswer: 1,
+    explanation: 'Lasso regression adds an L1 penalty term (λ times sum of absolute coefficients) to MSE, which can drive coefficients to exactly zero.'
   }
 ];
 
@@ -285,5 +320,40 @@ export const logisticRegressionQuestions: QuizQuestion[] = [
     options: ['Accuracy', 'AUC-ROC or F1 score', 'MSE', 'R²'],
     correctAnswer: 1,
     explanation: 'AUC-ROC and F1 score are better metrics for imbalanced datasets as they account for both precision and recall.'
+  },
+  {
+    id: 'log21',
+    question: 'What is the variance-bias tradeoff in regularized logistic regression?',
+    options: ['No tradeoff', 'Regularization reduces variance but may increase bias', 'Only affects training speed', 'Irrelevant to logistic regression'],
+    correctAnswer: 1,
+    explanation: 'Regularization constrains model complexity, reducing overfitting (variance) but may prevent fitting complex patterns (increasing bias).'
+  },
+  {
+    id: 'log22',
+    question: 'How does L1 regularization differ from L2 in logistic regression?',
+    options: ['No difference', 'L1 can produce sparse models with some weights exactly zero', 'L1 is always better', 'L1 is faster'],
+    correctAnswer: 1,
+    explanation: 'L1 (Lasso) regularization can drive weights to exactly zero, performing implicit feature selection, while L2 (Ridge) shrinks weights toward zero.'
+  },
+  {
+    id: 'log23',
+    question: 'What is calibration in logistic regression?',
+    options: ['Training speed', 'Agreement between predicted probabilities and true frequencies', 'Model accuracy', 'Feature scaling'],
+    correctAnswer: 1,
+    explanation: 'A calibrated model\'s predicted probability of 0.7 should correspond to the event occurring 70% of the time in similar predictions.'
+  },
+  {
+    id: 'log24',
+    question: 'When should you adjust the classification threshold from 0.5?',
+    options: ['Never', 'When costs of false positives and false negatives differ', 'Always use 0.5', 'Only for neural networks'],
+    correctAnswer: 1,
+    explanation: 'If false positives and false negatives have different costs (e.g., medical diagnosis), adjust the threshold to optimize for your specific metric.'
+  },
+  {
+    id: 'log25',
+    question: 'What is the Newton-Raphson method in logistic regression optimization?',
+    options: ['Random search', 'Second-order optimization using Hessian matrix', 'First-order method', 'Grid search'],
+    correctAnswer: 1,
+    explanation: 'Newton-Raphson uses second-order derivatives (Hessian) for faster convergence than first-order methods like gradient descent, but is more expensive per iteration.'
   }
 ];

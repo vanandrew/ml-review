@@ -141,6 +141,41 @@ export const decisionTreesQuestions: QuizQuestion[] = [
     options: ['No, linear models only', 'Yes, naturally through hierarchical splits', 'Only with preprocessing', 'Only for categorical features'],
     correctAnswer: 1,
     explanation: 'Decision trees naturally capture feature interactions because subsequent splits depend on previous splits in the tree path.'
+  },
+  {
+    id: 'dt21',
+    question: 'What is cost-complexity pruning (weakest link pruning)?',
+    options: ['Random pruning', 'Pruning based on tradeoff between tree size and training error', 'Removing all leaves', 'Pre-pruning only'],
+    correctAnswer: 1,
+    explanation: 'Cost-complexity pruning uses a parameter α to balance tree complexity and training error, removing subtrees that provide little benefit.'
+  },
+  {
+    id: 'dt22',
+    question: 'What advantage do decision trees have over neural networks?',
+    options: ['Always more accurate', 'More interpretable and require less data preprocessing', 'Faster inference', 'Better for images'],
+    correctAnswer: 1,
+    explanation: 'Decision trees are highly interpretable, handle mixed data types naturally, and don\'t require extensive preprocessing like normalization.'
+  },
+  {
+    id: 'dt23',
+    question: 'What is the variance reduction criterion for regression trees?',
+    options: ['Gini impurity', 'Minimizing variance in child nodes', 'Entropy', 'Information gain'],
+    correctAnswer: 1,
+    explanation: 'Regression trees split to minimize the weighted sum of variances in the resulting child nodes.'
+  },
+  {
+    id: 'dt24',
+    question: 'How do decision trees handle multicollinearity?',
+    options: ['Fail completely', 'Not affected - will pick one feature arbitrarily', 'Require preprocessing', 'Automatically combine features'],
+    correctAnswer: 1,
+    explanation: 'Decision trees are unaffected by multicollinearity as they select features independently at each split based on information gain.'
+  },
+  {
+    id: 'dt25',
+    question: 'What is a decision stump?',
+    options: ['Broken tree', 'Decision tree with only one split (depth=1)', 'Very deep tree', 'Pruned tree'],
+    correctAnswer: 1,
+    explanation: 'A decision stump is a decision tree with maximum depth of 1, containing only the root node and two leaf nodes, often used as weak learners in boosting.'
   }
 ];
 
@@ -285,6 +320,41 @@ export const randomForestsQuestions: QuizQuestion[] = [
     options: ['10% of data', 'Same as original dataset (with replacement)', '50% of data', '2× dataset size'],
     correctAnswer: 1,
     explanation: 'Each tree is trained on a bootstrap sample of the same size as the original dataset, sampled with replacement.'
+  },
+  {
+    id: 'rf21',
+    question: 'What is the typical impact of increasing the number of trees in Random Forest?',
+    options: ['Always decreases performance', 'Performance improves then plateaus, never hurts (except computation)', 'Causes overfitting', 'No impact'],
+    correctAnswer: 1,
+    explanation: 'More trees generally improve or stabilize performance without causing overfitting, though with diminishing returns after a certain point.'
+  },
+  {
+    id: 'rf22',
+    question: 'How does Random Forest handle imbalanced datasets?',
+    options: ['Cannot handle', 'Can use balanced class weights or balanced bootstrap sampling', 'Always fails', 'Requires external preprocessing'],
+    correctAnswer: 1,
+    explanation: 'Random Forest can handle imbalance through class weighting or by sampling equal amounts from each class (balanced subsample bootstrap).'
+  },
+  {
+    id: 'rf23',
+    question: 'What is the relationship between max_features and model variance?',
+    options: ['No relationship', 'Lower max_features increases tree diversity, reducing variance', 'Higher max_features reduces variance', 'Only affects bias'],
+    correctAnswer: 1,
+    explanation: 'Lower max_features makes trees more different from each other (more diverse), which improves ensemble variance reduction.'
+  },
+  {
+    id: 'rf24',
+    question: 'Can Random Forest be used for unsupervised learning?',
+    options: ['No, only supervised', 'Yes, for tasks like proximity-based clustering or outlier detection', 'Only for classification', 'Only for regression'],
+    correctAnswer: 1,
+    explanation: 'Random Forest can compute proximities between samples (how often they end up in the same leaf), useful for clustering and anomaly detection.'
+  },
+  {
+    id: 'rf25',
+    question: 'What is warm_start in Random Forest?',
+    options: ['Preheating GPU', 'Reusing existing trees when adding more trees', 'Initial preprocessing', 'No such parameter'],
+    correctAnswer: 1,
+    explanation: 'warm_start allows adding more trees to an existing forest without retraining from scratch, useful for incremental training.'
   }
 ];
 
@@ -429,5 +499,40 @@ export const gradientBoostingQuestions: QuizQuestion[] = [
     options: ['Fastest training', 'Often achieves state-of-the-art results on structured data', 'Easiest to use', 'Requires no tuning'],
     correctAnswer: 1,
     explanation: 'Gradient boosting often achieves the best results on structured/tabular data and is a go-to choice in competitions like Kaggle.'
+  },
+  {
+    id: 'gb21',
+    question: 'What is column subsampling in gradient boosting?',
+    options: ['Removing columns', 'Randomly selecting subset of features for each tree', 'Sorting columns', 'No such technique'],
+    correctAnswer: 1,
+    explanation: 'Column (feature) subsampling randomly selects a subset of features for each tree, similar to Random Forest, reducing overfitting.'
+  },
+  {
+    id: 'gb22',
+    question: 'How does CatBoost handle categorical features differently?',
+    options: ['Ignores them', 'Uses target statistics with ordered encoding to prevent overfitting', 'One-hot encoding only', 'Removes them'],
+    correctAnswer: 1,
+    explanation: 'CatBoost uses ordered target statistics (ordered boosting) to encode categorical features, reducing target leakage compared to standard target encoding.'
+  },
+  {
+    id: 'gb23',
+    question: 'What is the dart (Dropouts meet Multiple Additive Regression Trees) technique?',
+    options: ['Tree pruning', 'Randomly dropping trees during training to prevent overfitting', 'Feature selection', 'Data augmentation'],
+    correctAnswer: 1,
+    explanation: 'DART applies dropout to trees during training, randomly dropping trees to prevent over-specialization and improve generalization.'
+  },
+  {
+    id: 'gb24',
+    question: 'Why might gradient boosting be preferred over Random Forest?',
+    options: ['Always faster', 'Can achieve higher accuracy with proper tuning', 'Easier to use', 'Requires no hyperparameters'],
+    correctAnswer: 1,
+    explanation: 'Gradient boosting can achieve higher accuracy than Random Forest on many problems, especially with careful hyperparameter tuning, though it\'s more sensitive to overfitting.'
+  },
+  {
+    id: 'gb25',
+    question: 'What is stochastic gradient boosting?',
+    options: ['Random initialization', 'Using random subsamples of data for each tree', 'Random tree depth', 'Random predictions'],
+    correctAnswer: 1,
+    explanation: 'Stochastic gradient boosting samples a fraction of training data for each tree, adding randomness that improves generalization and speeds up training.'
   }
 ];

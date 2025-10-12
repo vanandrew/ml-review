@@ -175,5 +175,40 @@ export const evaluationMetricsQuestions: QuizQuestion[] = [
     options: ['Predicted negative, actually negative', 'Predicted positive, actually positive', 'Predicted positive, actually negative', 'Predicted negative, actually positive'],
     correctAnswer: 1,
     explanation: 'A true positive (TP) occurs when the model correctly predicts the positive class.'
+  },
+  {
+    id: 'em26',
+    question: 'What is the Precision-Recall curve useful for?',
+    options: ['Only for regression', 'Evaluating classifiers on imbalanced datasets', 'Clustering evaluation', 'Feature selection'],
+    correctAnswer: 1,
+    explanation: 'PR curves are more informative than ROC curves for imbalanced datasets, showing the tradeoff between precision and recall at different thresholds.'
+  },
+  {
+    id: 'em27',
+    question: 'What is the Matthews Correlation Coefficient (MCC)?',
+    options: ['Regression metric only', 'Balanced measure for binary classification, even with imbalanced classes', 'Same as accuracy', 'Only for multi-class'],
+    correctAnswer: 1,
+    explanation: 'MCC ranges from -1 to +1 and considers all confusion matrix elements, providing a balanced measure even for imbalanced datasets.'
+  },
+  {
+    id: 'em28',
+    question: 'For ranking problems (e.g., search engines), what metric is commonly used?',
+    options: ['Accuracy', 'Mean Average Precision (MAP) or NDCG', 'MSE', 'R²'],
+    correctAnswer: 1,
+    explanation: 'MAP and NDCG (Normalized Discounted Cumulative Gain) evaluate ranking quality, considering both relevance and position in ranked results.'
+  },
+  {
+    id: 'em29',
+    question: 'What does the Brier score measure?',
+    options: ['Ranking quality', 'Accuracy of probabilistic predictions', 'Clustering quality', 'Feature importance'],
+    correctAnswer: 1,
+    explanation: 'Brier score measures the mean squared difference between predicted probabilities and actual outcomes, assessing calibration of probability estimates.'
+  },
+  {
+    id: 'em30',
+    question: 'In time series forecasting, what is MAPE?',
+    options: ['Mean Absolute Percentage Error', 'Maximum Prediction Error', 'Model Average Performance', 'Median Approximation Error'],
+    correctAnswer: 0,
+    explanation: 'MAPE (Mean Absolute Percentage Error) expresses forecast error as a percentage of actual values, useful for comparing across different scales.'
   }
 ];

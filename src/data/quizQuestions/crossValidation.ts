@@ -140,5 +140,40 @@ export const crossValidationQuestions: QuizQuestion[] = [
     options: ['Standard k-fold', 'Stratified k-fold', 'Group k-fold by patient', 'LOOCV'],
     correctAnswer: 2,
     explanation: 'Group k-fold by patient ensures all images from one patient stay in the same fold, preventing data leakage.'
+  },
+  {
+    id: 'cv21',
+    question: 'What is the bias-variance tradeoff consideration in choosing k for k-fold CV?',
+    options: ['Higher k reduces bias but increases variance', 'Higher k increases both bias and variance', 'Lower k reduces both bias and variance', 'k doesn\'t affect bias or variance'],
+    correctAnswer: 0,
+    explanation: 'Higher k (more folds) uses more training data per fold, reducing bias in estimates but increasing variance due to higher correlation between folds.'
+  },
+  {
+    id: 'cv22',
+    question: 'Why might LOOCV have high variance in performance estimates?',
+    options: ['Too much data', 'Training sets are highly correlated', 'Not enough folds', 'Random initialization'],
+    correctAnswer: 1,
+    explanation: 'In LOOCV, training sets overlap by n-2 samples, making them highly similar and correlated, leading to high variance in estimates.'
+  },
+  {
+    id: 'cv23',
+    question: 'When is cross-validation particularly important?',
+    options: ['With millions of training samples', 'With limited data and many hyperparameters to tune', 'For simple linear models', 'When you have unlimited compute'],
+    correctAnswer: 1,
+    explanation: 'CV is crucial when data is limited and you need reliable estimates for comparing many hyperparameter configurations.'
+  },
+  {
+    id: 'cv24',
+    question: 'What is Monte Carlo cross-validation?',
+    options: ['Same as k-fold', 'Repeated random train-test splits', 'A specific k value', 'Cross-validation for games'],
+    correctAnswer: 1,
+    explanation: 'Monte Carlo CV repeatedly creates random train-test splits (not necessarily exhaustive like k-fold) and averages results.'
+  },
+  {
+    id: 'cv25',
+    question: 'In nested cross-validation, what is the purpose of the outer loop?',
+    options: ['Hyperparameter tuning', 'Unbiased performance estimation', 'Feature selection', 'Data augmentation'],
+    correctAnswer: 1,
+    explanation: 'The outer CV loop provides an unbiased estimate of model performance, while inner loops handle hyperparameter tuning.'
   }
 ];

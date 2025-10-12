@@ -140,5 +140,40 @@ export const regularizationQuestions: QuizQuestion[] = [
     options: ['Always use 0.01', 'Random guess', 'Validation set performance', 'Training set performance'],
     correctAnswer: 2,
     explanation: 'The optimal λ is chosen by evaluating different values on a validation set and selecting the best performing one.'
+  },
+  {
+    id: 'reg21',
+    question: 'What is the effect of L2 regularization on the weight update rule in gradient descent?',
+    options: ['Weights grow faster', 'Weights shrink proportionally each update', 'Weights become zero', 'No effect on updates'],
+    correctAnswer: 1,
+    explanation: 'L2 regularization adds a term that shrinks weights proportionally to their current values during each gradient descent update (weight decay).'
+  },
+  {
+    id: 'reg22',
+    question: 'Label smoothing is a regularization technique that:',
+    options: ['Blurs images', 'Softens hard 0/1 labels to prevent overconfidence', 'Removes noisy labels', 'Balances classes'],
+    correctAnswer: 1,
+    explanation: 'Label smoothing replaces hard 0/1 labels with soft labels (e.g., 0.9/0.1), preventing the model from becoming overconfident.'
+  },
+  {
+    id: 'reg23',
+    question: 'Noise injection during training acts as:',
+    options: ['Data corruption', 'Implicit regularization', 'Feature engineering', 'Debugging tool'],
+    correctAnswer: 1,
+    explanation: 'Adding noise to inputs or weights during training acts as implicit regularization, making the model more robust to small perturbations.'
+  },
+  {
+    id: 'reg24',
+    question: 'What is mixup as a regularization technique?',
+    options: ['Mixing training and test data', 'Creating training samples by interpolating between examples', 'Combining multiple models', 'Shuffling data randomly'],
+    correctAnswer: 1,
+    explanation: 'Mixup creates synthetic training examples by linearly interpolating between pairs of samples and their labels, improving generalization.'
+  },
+  {
+    id: 'reg25',
+    question: 'Spectral normalization in neural networks regularizes by:',
+    options: ['Normalizing inputs', 'Constraining spectral norm of weight matrices', 'Normalizing outputs', 'Using spectral analysis'],
+    correctAnswer: 1,
+    explanation: 'Spectral normalization constrains the largest singular value (spectral norm) of weight matrices, controlling the Lipschitz constant of the network.'
   }
 ];

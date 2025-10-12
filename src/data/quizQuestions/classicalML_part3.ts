@@ -141,6 +141,41 @@ export const svmQuestions: QuizQuestion[] = [
     options: ['Never', 'When data is linearly separable and speed is important', 'For small datasets only', 'For multi-class only'],
     correctAnswer: 1,
     explanation: 'Linear SVM is much faster and preferred when data is linearly separable or has very high dimensions.'
+  },
+  {
+    id: 'svm21',
+    question: 'What is the role of support vectors in SVM?',
+    options: ['All training points', 'Only the points on or within the margin', 'Only incorrectly classified points', 'Random samples'],
+    correctAnswer: 1,
+    explanation: 'Support vectors are the training points that lie on or within the margin boundaries - they define the hyperplane and are the only points that matter for the decision boundary.'
+  },
+  {
+    id: 'svm22',
+    question: 'How does SVM handle non-separable data?',
+    options: ['Fails completely', 'Uses soft margin with slack variables to allow misclassification', 'Only uses kernel trick', 'Removes outliers'],
+    correctAnswer: 1,
+    explanation: 'Soft margin SVM introduces slack variables (ξ) that allow some points to be misclassified or within the margin, controlled by parameter C.'
+  },
+  {
+    id: 'svm23',
+    question: 'What is the dual formulation of SVM?',
+    options: ['Training two SVMs', 'Reformulation using Lagrange multipliers focusing on support vectors', 'Using two kernels', 'Two-class only'],
+    correctAnswer: 1,
+    explanation: 'The dual formulation uses Lagrange multipliers and depends only on dot products between samples, enabling the kernel trick efficiently.'
+  },
+  {
+    id: 'svm24',
+    question: 'Why is feature scaling crucial for SVM?',
+    options: ['Not important', 'SVM is sensitive to feature scales due to distance-based optimization', 'Only for visualization', 'Only for linear kernel'],
+    correctAnswer: 1,
+    explanation: 'SVM optimization depends on distances/margins, so features with larger scales can dominate. Standardization is essential for fair feature treatment.'
+  },
+  {
+    id: 'svm25',
+    question: 'What is nu-SVM?',
+    options: ['New version of SVM', 'Alternative formulation using parameter ν to control support vectors', 'Faster SVM', 'GPU-accelerated SVM'],
+    correctAnswer: 1,
+    explanation: 'Nu-SVM uses parameter ν ∈ (0,1) which provides an interpretable bound on the fraction of support vectors and margin errors.'
   }
 ];
 
@@ -285,6 +320,41 @@ export const knnQuestions: QuizQuestion[] = [
     options: ['Always', 'Small to medium datasets with low dimensionality and non-linear patterns', 'Large datasets', 'High dimensional data'],
     correctAnswer: 1,
     explanation: 'K-NN works best on smaller datasets with low to medium dimensionality where non-linear decision boundaries are needed.'
+  },
+  {
+    id: 'knn21',
+    question: 'What is the difference between K-NN classification and regression?',
+    options: ['No difference', 'Classification uses majority vote, regression uses mean/median', 'Only voting method differs', 'Cannot do regression'],
+    correctAnswer: 1,
+    explanation: 'K-NN classification predicts the majority class among K neighbors, while K-NN regression predicts the mean (or median) value of K neighbors.'
+  },
+  {
+    id: 'knn22',
+    question: 'What is radius-based neighbors?',
+    options: ['K-NN variant', 'Uses all neighbors within fixed radius instead of K nearest', 'Circular K-NN', 'No such method'],
+    correctAnswer: 1,
+    explanation: 'Radius neighbors consider all points within a fixed distance radius rather than a fixed number K, useful when density varies.'
+  },
+  {
+    id: 'knn23',
+    question: 'How does K-NN handle class imbalance?',
+    options: ['Automatically balanced', 'May need weighted voting or resampling', 'Cannot handle', 'Always fair'],
+    correctAnswer: 1,
+    explanation: 'Majority class can dominate in K-NN. Distance-weighted voting or resampling techniques help handle imbalanced classes.'
+  },
+  {
+    id: 'knn24',
+    question: 'What is locality-sensitive hashing (LSH) used for in K-NN?',
+    options: ['Encryption', 'Approximate nearest neighbor search for faster queries', 'Feature hashing', 'Data preprocessing'],
+    correctAnswer: 1,
+    explanation: 'LSH creates hash functions that map similar points to same buckets, enabling fast approximate nearest neighbor search in high dimensions.'
+  },
+  {
+    id: 'knn25',
+    question: 'Can K-NN do outlier detection?',
+    options: ['No, only classification', 'Yes, points far from all neighbors are potential outliers', 'Only with special kernel', 'Requires preprocessing'],
+    correctAnswer: 1,
+    explanation: 'K-NN can identify outliers by measuring average distance to K nearest neighbors - points with large distances are anomalies.'
   }
 ];
 
@@ -429,5 +499,40 @@ export const kMeansQuestions: QuizQuestion[] = [
     options: ['K-Means for small data', 'K-Means using random subsets for faster training', 'K-Means with fewer clusters', 'K-Means++ variant'],
     correctAnswer: 1,
     explanation: 'Mini-Batch K-Means uses random subsets of data in each iteration, trading slight accuracy for much faster computation on large datasets.'
+  },
+  {
+    id: 'km21',
+    question: 'What is the complexity of K-Means clustering?',
+    options: ['O(n)', 'O(n × K × I × d) where n=samples, K=clusters, I=iterations, d=dimensions', 'O(n²)', 'O(K²)'],
+    correctAnswer: 1,
+    explanation: 'K-Means complexity is roughly O(n × K × I × d), linear in number of samples but depends on clusters, iterations, and dimensions.'
+  },
+  {
+    id: 'km22',
+    question: 'What is fuzzy K-Means (Fuzzy C-Means)?',
+    options: ['Unclear K-Means', 'Allows points to belong to multiple clusters with membership degrees', 'K-Means with noise', 'Random K-Means'],
+    correctAnswer: 1,
+    explanation: 'Fuzzy K-Means assigns membership probabilities to each cluster instead of hard assignments, useful when cluster boundaries are unclear.'
+  },
+  {
+    id: 'km23',
+    question: 'How does K-Means handle different cluster densities?',
+    options: ['Perfectly', 'Poorly - assumes similar density', 'Adapts automatically', 'Only works with equal density'],
+    correctAnswer: 1,
+    explanation: 'K-Means assumes clusters have similar sizes and densities. It struggles with clusters of very different densities or sizes.'
+  },
+  {
+    id: 'km24',
+    question: 'What is the relationship between K-Means and GMM?',
+    options: ['Unrelated', 'K-Means is a special case of GMM with spherical, equal-variance components', 'GMM is simpler', 'Same algorithm'],
+    correctAnswer: 1,
+    explanation: 'K-Means can be seen as GMM (Gaussian Mixture Model) with spherical covariance matrices and equal variance, using hard assignments.'
+  },
+  {
+    id: 'km25',
+    question: 'What preprocessing can improve K-Means results?',
+    options: ['None needed', 'Feature scaling/standardization and removing outliers', 'Only dimensionality reduction', 'No preprocessing helps'],
+    correctAnswer: 1,
+    explanation: 'Standardizing features ensures equal influence, and removing outliers prevents them from distorting centroids significantly.'
   }
 ];

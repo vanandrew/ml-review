@@ -141,6 +141,41 @@ export const pcaQuestions: QuizQuestion[] = [
     options: ['No difference', 'PCA is unsupervised (maximizes variance), LDA is supervised (maximizes class separation)', 'PCA is supervised', 'LDA is unsupervised'],
     correctAnswer: 1,
     explanation: 'PCA finds directions of maximum variance ignoring labels, while LDA finds directions that maximize class separation using labels.'
+  },
+  {
+    id: 'pca21',
+    question: 'What is incremental PCA?',
+    options: ['Faster PCA', 'PCA that processes data in mini-batches for large datasets', 'PCA with more components', 'PCA for streaming data'],
+    correctAnswer: 1,
+    explanation: 'Incremental PCA processes data in mini-batches, allowing PCA on datasets too large to fit in memory.'
+  },
+  {
+    id: 'pca22',
+    question: 'What is sparse PCA?',
+    options: ['PCA for sparse data', 'PCA with L1 regularization to get sparse loadings', 'PCA with missing values', 'Fast PCA'],
+    correctAnswer: 1,
+    explanation: 'Sparse PCA adds L1 penalty to get principal components with many zero loadings, improving interpretability.'
+  },
+  {
+    id: 'pca23',
+    question: 'How does PCA relate to SVD (Singular Value Decomposition)?',
+    options: ['Unrelated', 'PCA eigenvectors are SVD right singular vectors', 'PCA is simpler', 'SVD is for matrices only'],
+    correctAnswer: 1,
+    explanation: 'PCA can be computed via SVD: principal components are the right singular vectors, and eigenvalues relate to singular values squared.'
+  },
+  {
+    id: 'pca24',
+    question: 'What is randomized PCA?',
+    options: ['Random initialization', 'Approximation algorithm using random projections for faster computation', 'PCA with noise', 'Unreliable PCA'],
+    correctAnswer: 1,
+    explanation: 'Randomized PCA uses randomized algorithms to approximate principal components much faster, especially useful for high-dimensional data.'
+  },
+  {
+    id: 'pca25',
+    question: 'Can PCA be used for data compression?',
+    options: ['No', 'Yes, by keeping top k components and reconstructing approximate data', 'Only for images', 'Only lossless'],
+    correctAnswer: 1,
+    explanation: 'PCA provides lossy compression by projecting to k dimensions and reconstructing, minimizing reconstruction error for given dimensionality.'
   }
 ];
 
@@ -285,5 +320,40 @@ export const naiveBayesQuestions: QuizQuestion[] = [
     options: ['Always', 'High-dimensional data (like text) where features are relatively independent', 'Low-dimensional data', 'When features are highly correlated'],
     correctAnswer: 1,
     explanation: 'Naive Bayes excels in high-dimensional spaces (e.g., text classification) where despite some dependence, the independence assumption is reasonable enough.'
+  },
+  {
+    id: 'nb21',
+    question: 'What is complement Naive Bayes?',
+    options: ['Standard NB', 'Variant using complement of each class for imbalanced data', 'NB with extra features', 'NB for regression'],
+    correctAnswer: 1,
+    explanation: 'Complement Naive Bayes estimates parameters from the complement (all other classes) and is particularly suited for imbalanced datasets.'
+  },
+  {
+    id: 'nb22',
+    question: 'How does Naive Bayes handle continuous features?',
+    options: ['Cannot handle', 'Assumes distribution (usually Gaussian) for each class', 'Discretizes all features', 'Uses only mean'],
+    correctAnswer: 1,
+    explanation: 'Gaussian Naive Bayes assumes continuous features follow a Gaussian distribution within each class, estimating mean and variance.'
+  },
+  {
+    id: 'nb23',
+    question: 'What is the prior probability in Naive Bayes?',
+    options: ['Feature probability', 'P(Class) before seeing data', 'Likelihood', 'Posterior'],
+    correctAnswer: 1,
+    explanation: 'Prior probability P(C) represents the baseline probability of each class before observing any features, typically estimated from training data frequencies.'
+  },
+  {
+    id: 'nb24',
+    question: 'What makes Naive Bayes particularly fast?',
+    options: ['GPU acceleration', 'Linear time training and prediction due to independence assumption', 'Small model size', 'No training needed'],
+    correctAnswer: 1,
+    explanation: 'The independence assumption allows computing probabilities as simple products, making both training and prediction very fast and scalable.'
+  },
+  {
+    id: 'nb25',
+    question: 'Can Naive Bayes be used for semi-supervised learning?',
+    options: ['No', 'Yes, can use EM algorithm to iteratively label unlabeled data', 'Only supervised', 'Only unsupervised'],
+    correctAnswer: 1,
+    explanation: 'Naive Bayes can be extended to semi-supervised learning using Expectation-Maximization to iteratively improve with unlabeled data.'
   }
 ];

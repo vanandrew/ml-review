@@ -140,5 +140,40 @@ export const biasVarianceTradeoffQuestions: QuizQuestion[] = [
     options: ['High bias', 'High variance', 'Irreducible error', 'Insufficient training'],
     correctAnswer: 1,
     explanation: 'This is a classic sign of overfitting due to high variance - the model memorizes training data but fails to generalize.'
+  },
+  {
+    id: 'bv21',
+    question: 'Which ensemble technique primarily reduces bias?',
+    options: ['Bagging', 'Boosting', 'Stacking with same model type', 'Random dropout'],
+    correctAnswer: 1,
+    explanation: 'Boosting sequentially trains weak learners that focus on mistakes, primarily reducing bias by creating a strong learner.'
+  },
+  {
+    id: 'bv22',
+    question: 'In the context of neural networks, which increases model capacity and reduces bias?',
+    options: ['Adding dropout layers', 'Increasing layer width or depth', 'Increasing batch size', 'Decreasing learning rate'],
+    correctAnswer: 1,
+    explanation: 'Increasing network width (more neurons) or depth (more layers) increases capacity, allowing the model to fit more complex patterns and reduce bias.'
+  },
+  {
+    id: 'bv23',
+    question: 'What is the typical behavior of bias and variance as you increase model training time?',
+    options: ['Both increase', 'Bias increases, variance decreases', 'Bias decreases, variance increases', 'Both decrease initially'],
+    correctAnswer: 2,
+    explanation: 'With more training, the model fits the training data better (reducing bias) but may start overfitting (increasing variance).'
+  },
+  {
+    id: 'bv24',
+    question: 'In a bias-variance tradeoff plot, where is the optimal model complexity?',
+    options: ['At minimum bias', 'At minimum variance', 'At minimum total error', 'At maximum complexity'],
+    correctAnswer: 2,
+    explanation: 'The optimal complexity is where total error (bias² + variance + irreducible error) is minimized, balancing both components.'
+  },
+  {
+    id: 'bv25',
+    question: 'Which statement about ensemble methods is TRUE?',
+    options: ['Ensembles always increase both bias and variance', 'Ensembles can reduce variance without increasing bias', 'Ensembles only work with linear models', 'Ensembles increase irreducible error'],
+    correctAnswer: 1,
+    explanation: 'Ensemble methods like bagging can significantly reduce variance by averaging multiple models without substantially increasing bias.'
   }
 ];

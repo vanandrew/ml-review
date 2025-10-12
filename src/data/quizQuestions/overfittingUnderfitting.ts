@@ -140,5 +140,40 @@ export const overfittingUnderfittingQuestions: QuizQuestion[] = [
     options: ['Overfitting', 'Underfitting', 'Well-fitted', 'Impossible'],
     correctAnswer: 1,
     explanation: 'Making the same prediction regardless of input indicates severe underfitting - the model hasn\'t learned any patterns.'
+  },
+  {
+    id: 'ou21',
+    question: 'What is double descent in deep learning?',
+    options: ['Training loss increases twice', 'Test error can decrease again after initial increase with model size', 'Using two learning rates', 'Training for two epochs'],
+    correctAnswer: 1,
+    explanation: 'Double descent is a phenomenon where test error first decreases, then increases (classical overfitting), then decreases again as model capacity continues to grow.'
+  },
+  {
+    id: 'ou22',
+    question: 'Which visualization best helps identify overfitting?',
+    options: ['Confusion matrix', 'Learning curves (train vs validation loss)', 'ROC curve', 'Feature importance plot'],
+    correctAnswer: 1,
+    explanation: 'Learning curves showing training vs validation loss over time clearly reveal overfitting when training loss decreases but validation loss increases.'
+  },
+  {
+    id: 'ou23',
+    question: 'Data augmentation helps prevent overfitting by:',
+    options: ['Reducing model size', 'Artificially increasing training data diversity', 'Removing outliers', 'Simplifying the model'],
+    correctAnswer: 1,
+    explanation: 'Data augmentation creates variations of training samples, effectively increasing data diversity and making the model more robust to variations.'
+  },
+  {
+    id: 'ou24',
+    question: 'What is "benign overfitting"?',
+    options: ['Overfitting that doesn\'t hurt performance', 'Overfitting in interpolating models that still generalize well', 'Overfitting on training data only', 'A type of regularization'],
+    correctAnswer: 1,
+    explanation: 'Benign overfitting occurs in overparameterized models (like large neural networks) that fit training data perfectly yet still generalize well.'
+  },
+  {
+    id: 'ou25',
+    question: 'If your model has high training error and the error doesn\'t decrease with more training, you likely have:',
+    options: ['Overfitting', 'Underfitting', 'Vanishing gradients or underfitting', 'Perfect model'],
+    correctAnswer: 2,
+    explanation: 'Persistently high training error suggests the model cannot learn from the data, indicating underfitting or optimization issues like vanishing gradients.'
   }
 ];

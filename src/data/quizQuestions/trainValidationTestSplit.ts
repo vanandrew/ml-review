@@ -140,5 +140,40 @@ export const trainValidationTestSplitQuestions: QuizQuestion[] = [
     options: ['Development set', 'Shadow set', 'Holdout set for monitoring production', 'Cache set'],
     correctAnswer: 2,
     explanation: 'A production holdout set is maintained to continuously monitor model performance in production and detect degradation.'
+  },
+  {
+    id: 'split21',
+    question: 'What is "data snooping" in the context of train-test splits?',
+    options: ['Looking at data distributions', 'Making decisions based on test set knowledge', 'Analyzing training data', 'Feature engineering'],
+    correctAnswer: 1,
+    explanation: 'Data snooping occurs when you make modeling decisions (features, architecture) based on knowledge of the test set, causing overfitting.'
+  },
+  {
+    id: 'split22',
+    question: 'Why should feature scaling parameters (mean, std) be computed only on training data?',
+    options: ['It\'s faster', 'To prevent data leakage from test set', 'To save memory', 'It doesn\'t matter'],
+    correctAnswer: 1,
+    explanation: 'Computing scaling parameters on all data causes data leakage - test set statistics influence preprocessing, inflating performance estimates.'
+  },
+  {
+    id: 'split23',
+    question: 'For medical diagnosis with patient data, why must you split by patient ID?',
+    options: ['To balance classes', 'To prevent data leakage from same patient', 'To speed up training', 'To reduce variance'],
+    correctAnswer: 1,
+    explanation: 'Multiple samples from the same patient are highly correlated; splitting by patient prevents the model from implicitly learning patient-specific patterns.'
+  },
+  {
+    id: 'split24',
+    question: 'What is the "dev set" in machine learning?',
+    options: ['Same as training set', 'Another name for validation set', 'Same as test set', 'A completely different concept'],
+    correctAnswer: 1,
+    explanation: 'Dev set (development set) is another term for validation set, used for hyperparameter tuning and model selection.'
+  },
+  {
+    id: 'split25',
+    question: 'When using k-fold cross-validation, do you still need a separate test set?',
+    options: ['No, CV replaces test set', 'Yes, for final unbiased evaluation', 'Only for small datasets', 'Only for neural networks'],
+    correctAnswer: 1,
+    explanation: 'Cross-validation is for model selection/tuning. A separate test set is still needed for final unbiased performance evaluation.'
   }
 ];
