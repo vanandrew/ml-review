@@ -1,4 +1,6 @@
-import { User, Palette, Bell, Settings as SettingsIcon } from 'lucide-react';
+import { useState } from 'react';
+import { User, Palette, Bell, Settings as SettingsIcon, Mail, Lock, UserCircle as UserCircleIcon, Save } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ProfileSettingsProps {
   selectedTheme: string;
@@ -27,6 +29,31 @@ export default function ProfileSettings({
   onDailyGoalChange,
   purchasedItems,
 }: ProfileSettingsProps) {
+  const { user, updateUserProfile } = useAuth();
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [displayName, setDisplayName] = useState(user?.displayName || '');
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const handleSaveProfile = async () => {
+    if (!displayName.trim()) {
+      setSaveMessage({ type: 'error', text: 'Display name cannot be empty' });
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setSaveMessage(null);
+      await updateUserProfile(displayName.trim());
+      setSaveMessage({ type: 'success', text: 'Profile updated successfully!' });
+      setEditingProfile(false);
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (error: any) {
+      setSaveMessage({ type: 'error', text: error.message || 'Failed to update profile' });
+    } finally {
+      setSaving(false);
+    }
+  };
   const canUseTheme = (themeId: string) => {
     const theme = AVAILABLE_THEMES.find(t => t.id === themeId);
     return theme?.free || purchasedItems.includes(themeId);
@@ -58,6 +85,114 @@ export default function ProfileSettings({
           Customize your learning experience
         </p>
       </div>
+
+      {/* Account Information */}
+      {user && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <UserCircleIcon className="w-6 h-6" />
+            Account Information
+          </h2>
+          
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              {user.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt={user.displayName || 'User'} 
+                  className="w-16 h-16 rounded-full"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                  <UserCircleIcon className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+                </div>
+              )}
+              <div className="flex-1">
+                {editingProfile ? (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                      placeholder="Display name"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSaveProfile}
+                        disabled={saving}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg disabled:opacity-50"
+                      >
+                        <Save className="w-4 h-4" />
+                        {saving ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingProfile(false);
+                          setDisplayName(user.displayName || '');
+                          setSaveMessage(null);
+                        }}
+                        disabled={saving}
+                        className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-lg disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {user.displayName || 'No name set'}
+                    </p>
+                    <button
+                      onClick={() => setEditingProfile(true)}
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      Edit profile
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {saveMessage && (
+              <div className={`p-3 rounded-lg text-sm ${
+                saveMessage.type === 'success' 
+                  ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200'
+                  : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200'
+              }`}>
+                {saveMessage.text}
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-2">
+                <Mail className="w-4 h-4" />
+                <span className="text-sm">Email</span>
+              </div>
+              <p className="text-gray-900 dark:text-white font-medium">
+                {user.email}
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-2">
+                <Lock className="w-4 h-4" />
+                <span className="text-sm">Account Status</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                  user.emailVerified
+                    ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200'
+                    : 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200'
+                }`}>
+                  {user.emailVerified ? '✓ Verified' : '⚠ Not Verified'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Profile Badge */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">

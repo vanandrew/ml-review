@@ -147,3 +147,36 @@ export interface XPReward {
   amount: number;
   reason: string;
 }
+
+// Authentication Types
+
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+}
+
+export interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export interface FirestoreUserData {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  createdAt: Date;
+  lastLoginAt: Date;
+  progress: UserProgress;
+  gamification: GamificationData;
+}
+
+export interface SyncStatus {
+  isSyncing: boolean;
+  lastSyncTime: Date | null;
+  syncError: string | null;
+}

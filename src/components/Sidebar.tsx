@@ -1,7 +1,8 @@
 
-import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap } from 'lucide-react';
+import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap, LogIn, UserCircle, LogOut, Cloud, CloudOff } from 'lucide-react';
 import { categories } from '../data/categories';
 import { UserProgress, GamificationData } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 import GamificationStats from './GamificationStats';
 import GemDisplay from './GemDisplay';
 
@@ -20,6 +21,9 @@ interface SidebarProps {
   showingShop?: boolean;
   showingSettings?: boolean;
   showingChallengeMode?: boolean;
+  onLoginClick?: () => void;
+  onSignupClick?: () => void;
+  syncStatus?: { isSyncing: boolean; lastSyncTime: Date | null; syncError: string | null };
 }
 
 export default function Sidebar({
@@ -37,7 +41,11 @@ export default function Sidebar({
   showingShop,
   showingSettings,
   showingChallengeMode,
+  onLoginClick,
+  onSignupClick,
+  syncStatus,
 }: SidebarProps) {
+  const { user, logout } = useAuth();
   const getProgressIcon = (topicId: string) => {
     const progress = userProgress[topicId];
     if (!progress || progress.status === 'not_started') {
@@ -79,6 +87,82 @@ export default function Sidebar({
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           Master ML concepts for interviews
         </p>
+      </div>
+
+      {/* Authentication Section */}
+      <div className="px-4 mb-4">
+        {user ? (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center space-x-2 mb-2">
+              {user.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt={user.displayName || 'User'} 
+                  className="w-8 h-8 rounded-full"
+                />
+              ) : (
+                <UserCircle className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                  {user.displayName || 'User'}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-1 text-xs text-gray-600 dark:text-gray-400">
+                {syncStatus?.isSyncing ? (
+                  <>
+                    <Cloud className="w-3 h-3 animate-pulse" />
+                    <span>Syncing...</span>
+                  </>
+                ) : syncStatus?.syncError ? (
+                  <>
+                    <CloudOff className="w-3 h-3 text-red-500" />
+                    <span className="text-red-500">Offline</span>
+                  </>
+                ) : (
+                  <>
+                    <Cloud className="w-3 h-3 text-green-500" />
+                    <span className="text-green-600 dark:text-green-400">Synced</span>
+                  </>
+                )}
+              </div>
+              <button
+                onClick={logout}
+                className="text-xs text-red-600 dark:text-red-400 hover:underline flex items-center space-x-1"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+              Sign in to save your progress across devices
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={onLoginClick}
+                className="w-full flex items-center justify-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2 px-3 rounded-lg transition-colors"
+              >
+                <LogIn className="w-3 h-3" />
+                <span>Login</span>
+              </button>
+              <button
+                onClick={onSignupClick}
+                className="w-full flex items-center justify-center space-x-1 bg-white dark:bg-gray-600 hover:bg-gray-50 dark:hover:bg-gray-500 text-gray-900 dark:text-white text-xs font-medium py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-500 transition-colors"
+              >
+                <UserCircle className="w-3 h-3" />
+                <span>Sign Up</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Gamification Stats */}

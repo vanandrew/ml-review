@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore } from './types';
+import { useAuth } from './contexts/AuthContext';
+import { migrateLocalDataToFirestore, saveUserDataToFirestore, loadUserDataFromFirestore, updateUserProfile } from './utils/firebaseSync';
 import Sidebar from './components/Sidebar';
 import TopicView from './components/TopicView';
 import DashboardView from './components/DashboardView';
@@ -10,6 +12,8 @@ import XPReward from './components/XPReward';
 import AchievementModal from './components/AchievementModal';
 import ConfettiAnimation from './components/ConfettiAnimation';
 import LevelUpModal from './components/LevelUpModal';
+import LoginModal from './components/LoginModal';
+import SignupModal from './components/SignupModal';
 import { getTopicById } from './data/topicsIndex';
 import { quizQuestionPools } from './data/quizQuestions';
 import { initializeGamificationData, calculateLevel, XP_PER_CORRECT_ANSWER, XP_PERFECT_BONUS, XP_FIRST_TIME_COMPLETION, checkAndResetDailyProgress } from './utils/gamification';
@@ -19,6 +23,15 @@ import { generateWeeklyChallenge, shouldGenerateNewChallenge, updateChallengePro
 import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, GEM_SHOP_ITEMS } from './utils/gems';
 
 function App() {
+  const { user, loading: authLoading } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<{ isSyncing: boolean; lastSyncTime: Date | null; syncError: string | null }>({
+    isSyncing: false,
+    lastSyncTime: null,
+    syncError: null,
+  });
+  
   // Initialize theme from localStorage synchronously to avoid flash
   const [theme, setTheme] = useState<ThemeMode>(() => {
     const savedTheme = localStorage.getItem('ml-review-theme') as ThemeMode;
@@ -93,6 +106,61 @@ function App() {
       }
     }
   }, []);
+
+  // Authentication and sync effect
+  useEffect(() => {
+    if (authLoading) return;
+
+    const syncData = async () => {
+      if (user) {
+        setSyncStatus({ isSyncing: true, lastSyncTime: null, syncError: null });
+        
+        try {
+          // Update user profile in Firestore
+          await updateUserProfile(user);
+
+          // Check if this is first login (migrate local data)
+          await migrateLocalDataToFirestore(user.uid);
+
+          // Load data from Firestore
+          const cloudData = await loadUserDataFromFirestore(user.uid);
+          
+          if (cloudData) {
+            // Use cloud data
+            setUserProgress(cloudData.progress);
+            if (cloudData.gamification) {
+              setGamificationData(cloudData.gamification);
+            }
+          }
+
+          setSyncStatus({ isSyncing: false, lastSyncTime: new Date(), syncError: null });
+        } catch (error) {
+          console.error('Sync error:', error);
+          setSyncStatus({ isSyncing: false, lastSyncTime: null, syncError: 'Sync failed. Using local data.' });
+        }
+      }
+    };
+
+    syncData();
+  }, [user, authLoading]);
+
+  // Save to Firestore when data changes (debounced)
+  useEffect(() => {
+    if (!user) return;
+
+    const saveData = async () => {
+      try {
+        await saveUserDataToFirestore(user.uid, userProgress, gamificationData);
+        setSyncStatus(prev => ({ ...prev, lastSyncTime: new Date() }));
+      } catch (error) {
+        console.error('Save error:', error);
+      }
+    };
+
+    // Debounce save to avoid too many writes
+    const timeoutId = setTimeout(saveData, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [userProgress, gamificationData, user]);
 
   // Update streak on app load
   useEffect(() => {
@@ -454,6 +522,24 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Authentication Modals */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSwitchToSignup={() => {
+          setShowLoginModal(false);
+          setShowSignupModal(true);
+        }}
+      />
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={() => {
+          setShowSignupModal(false);
+          setShowLoginModal(false);
+        }}
+      />
+
       {/* XP Reward Notification */}
       {xpReward && (
         <XPReward
@@ -502,6 +588,9 @@ function App() {
           showingShop={showingShop}
           showingSettings={showingSettings}
           showingChallengeMode={showingChallengeMode}
+          onLoginClick={() => setShowLoginModal(true)}
+          onSignupClick={() => setShowSignupModal(true)}
+          syncStatus={syncStatus}
         />
 
         {/* Main Content */}
