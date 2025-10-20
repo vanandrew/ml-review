@@ -291,7 +291,7 @@ test('CostTracker - Initialization', () => {
   assert(tracking.dailyLimit === 1.0, 'Default daily limit should be $1');
   assert(tracking.monthlyLimit === 10.0, 'Default monthly limit should be $10');
   assert(tracking.dailySpend === 0, 'Initial spend should be 0');
-  assert(tracking.estimatedCostPerQuestion === 0.003, 'Claude cost should be $0.003');
+  assert(tracking.estimatedCostPerQuestion === 0.001, 'Claude cost should be $0.001');
 });
 
 test('CostTracker - Record question generation', () => {
@@ -301,8 +301,8 @@ test('CostTracker - Record question generation', () => {
   const tracking = tracker.getTracking();
 
   assert(tracking.questionsGeneratedToday === 10, 'Should track question count');
-  assert(tracking.dailySpend === 0.03, 'Should calculate cost (10 * $0.003)');
-  assert(tracking.monthlySpend === 0.03, 'Should update monthly spend');
+  assert(tracking.dailySpend === 0.01, 'Should calculate cost (10 * $0.001)');
+  assert(tracking.monthlySpend === 0.01, 'Should update monthly spend');
 });
 
 test('CostTracker - Can make request check', () => {
@@ -310,10 +310,10 @@ test('CostTracker - Can make request check', () => {
 
   assert(tracker.canMakeRequest(10) === true, 'Should allow request under limit');
 
-  tracker.recordQuestionGeneration(300); // $0.90
+  tracker.recordQuestionGeneration(900); // $0.90
   assert(tracker.canMakeRequest(10) === true, 'Should allow request approaching limit');
 
-  tracker.recordQuestionGeneration(40); // Total $1.02 > $1.00 limit
+  tracker.recordQuestionGeneration(110); // Total $1.01 > $1.00 limit
   assert(tracker.canMakeRequest(1) === false, 'Should block request over limit');
 });
 
@@ -321,25 +321,25 @@ test('CostTracker - Estimate cost', () => {
   const tracker = new CostTracker('claude');
 
   const cost = tracker.estimateCost(10);
-  assert(cost === 0.03, 'Should estimate $0.03 for 10 questions');
+  assert(cost === 0.01, 'Should estimate $0.01 for 10 questions');
 });
 
 test('CostTracker - Remaining budget', () => {
   const tracker = new CostTracker('claude');
 
-  tracker.recordQuestionGeneration(100); // $0.30
+  tracker.recordQuestionGeneration(100); // $0.10
   const remaining = tracker.getRemainingDailyBudget();
 
-  assert(remaining === 0.70, 'Should calculate remaining budget');
+  assert(remaining === 0.90, 'Should calculate remaining budget');
 });
 
 test('CostTracker - Usage percentage', () => {
   const tracker = new CostTracker('claude');
 
-  tracker.recordQuestionGeneration(100); // $0.30 = 30%
+  tracker.recordQuestionGeneration(100); // $0.10 = 10%
   const percentage = tracker.getDailyUsagePercentage();
 
-  assert(percentage === 30, 'Should calculate usage percentage');
+  assert(percentage === 10, 'Should calculate usage percentage');
 });
 
 test('CostTracker - Approaching limit detection', () => {
@@ -347,7 +347,7 @@ test('CostTracker - Approaching limit detection', () => {
 
   assert(tracker.isApproachingDailyLimit() === false, 'Should not be approaching initially');
 
-  tracker.recordQuestionGeneration(270); // $0.81 = 81%
+  tracker.recordQuestionGeneration(810); // $0.81 = 81%
   assert(tracker.isApproachingDailyLimit() === true, 'Should detect approaching limit');
 });
 
@@ -355,11 +355,11 @@ test('CostTracker - Remaining questions', () => {
   const tracker = new CostTracker('claude');
 
   const remaining = tracker.getRemainingQuestionsToday();
-  assert(remaining === 333, 'Should calculate remaining questions ($1 / $0.003)');
+  assert(remaining === 1000, 'Should calculate remaining questions ($1 / $0.001)');
 
   tracker.recordQuestionGeneration(100);
   const remainingAfter = tracker.getRemainingQuestionsToday();
-  assert(remainingAfter === 233, 'Should update remaining questions');
+  assert(remainingAfter === 900, 'Should update remaining questions');
 });
 
 test('CostTracker - Set limits', () => {
@@ -381,7 +381,7 @@ test('CostTracker - Record evaluation', () => {
 
   assert(tracking.evaluationsToday === 5, 'Should track evaluation count');
   // Evaluations cost 1.5x question cost
-  assert(tracking.dailySpend === 0.0225, 'Should calculate evaluation cost');
+  assert(tracking.dailySpend === 0.0075, 'Should calculate evaluation cost');
 });
 
 test('CostTracker - Summary', () => {
@@ -390,7 +390,7 @@ test('CostTracker - Summary', () => {
   tracker.recordQuestionGeneration(10);
   const summary = tracker.getSummary();
 
-  assert(summary.includes('$0.03'), 'Summary should include spend');
+  assert(summary.includes('$0.01'), 'Summary should include spend');
   assert(summary.includes('10'), 'Summary should include question count');
 });
 

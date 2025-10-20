@@ -184,17 +184,27 @@ export const AISettingsComponent: React.FC<AISettingsProps> = ({
               {isLoading ? 'Saving...' : 'Save'}
             </button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Get your API key from{' '}
-            <a
-              href="https://console.anthropic.com/settings/keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              console.anthropic.com
-            </a>
-          </p>
+          <div className="text-xs text-gray-600 dark:text-gray-400 mt-2 space-y-1">
+            <p className="font-medium text-gray-700 dark:text-gray-300">How to get your Claude API key:</p>
+            <ol className="list-decimal list-inside space-y-0.5 ml-2">
+              <li>
+                Go to{' '}
+                <a
+                  href="https://console.anthropic.com/settings/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  console.anthropic.com
+                </a>
+              </li>
+              <li>Sign in or create a free account</li>
+              <li>Navigate to "API Keys" in settings</li>
+              <li>Click "Create Key" and give it a name</li>
+              <li>Copy the key (starts with "sk-ant-") and paste it above</li>
+            </ol>
+            <p className="text-xs italic mt-1">Note: You'll need to add billing information to use the API</p>
+          </div>
         </div>
       </div>
 
@@ -242,9 +252,6 @@ export const AISettingsComponent: React.FC<AISettingsProps> = ({
               <span className="font-medium">{tracking.questionsGeneratedToday}</span>
             </div>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Estimated cost: ~$0.003 per question
-          </p>
         </div>
       )}
 
@@ -268,7 +275,6 @@ export const AISettingsComponent: React.FC<AISettingsProps> = ({
           <li>Your API key is stored encrypted in Firestore</li>
           <li>Fresh questions generated every quiz attempt</li>
           <li>All questions are AI-generated for maximum variety</li>
-          <li>Estimated cost: ~$0.003 per question</li>
         </ul>
       </div>
     </div>

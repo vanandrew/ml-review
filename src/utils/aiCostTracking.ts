@@ -33,15 +33,13 @@ export const RATE_LIMITS: Record<string, RateLimitConfig> = {
 /**
  * Estimated costs per question for different providers
  * Based on actual 2025 pricing from provider documentation:
- * - Claude Haiku 4.5: $1/1M input, $5/1M output (~$0.001/question)
- * - Claude Sonnet 4.5: $3/1M input, $15/1M output (~$0.003/question)
+ * - Claude Haiku 4.5: $1/1M input, $5/1M output (~$0.001/question) - Current default
  * - OpenAI GPT-4: varies by model (~$0.01/question)
  * - Gemini: varies by tier (~$0.002/question)
  */
 export const COST_PER_QUESTION: Record<string, number> = {
   'claude': 0.001,        // Haiku 4.5 (current model)
   'claude-haiku': 0.001,  // Explicit Haiku pricing
-  'claude-sonnet': 0.003, // Explicit Sonnet pricing
   'openai': 0.01,
   'gemini': 0.002,
 };
