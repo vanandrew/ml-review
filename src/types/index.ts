@@ -83,19 +83,20 @@ export interface GamificationData {
   lastDailyReset: string | null;
   weeklyChallenge: WeeklyChallenge | null;
   activityHistory: ActivityRecord[];
-  // Phase 4: Gems and Challenge Modes
+  // Phase 4: Gems
   gems: number;
   lastDailyLoginGems: string | null;
   gemTransactions: GemTransaction[];
   purchasedItems: string[];
-  challengeModeStats: ChallengeModeStats;
   selectedTheme: string;
   selectedBadge: string;
-  // Endless Challenge Mode
-  challengeModeHighScore: number;
   // Phase 5: Consumables & Power-ups
   consumableInventory: ConsumableInventory;
   activePowerUps: ActivePowerUp[];
+  // Phase 1 MVP: AI Question Generation
+  aiSettings?: AISettings;
+  aiQuestionCache?: string[]; // IDs of cached questions
+  aiCostTracking?: AICostTracking;
 }
 
 export interface GemTransaction {
@@ -106,25 +107,9 @@ export interface GemTransaction {
   timestamp: Date;
 }
 
-export interface ChallengeModeStats {
-  normalCompleted: number;
-  timedCompleted: number;
-  lightningCompleted: number;
-  randomMixCompleted: number;
-  hardModeCompleted: number;
-  perfectRunStreak: number;
-  bestPerfectRun: number;
-}
-
 export interface ConsumableInventory {
   hints: number;
   streakFreezes: number;
-  xpBoosts: number; // Number of quizzes with 2x XP remaining
-  knowledgePotions: number; // Number of questions with elimination remaining
-  timeExtensions: number;
-  secondChances: number;
-  extraLives: number;
-  multiplierBoosts: number;
 }
 
 export interface ActivePowerUp {
@@ -204,4 +189,24 @@ export interface SyncStatus {
   isSyncing: boolean;
   lastSyncTime: Date | null;
   syncError: string | null;
+}
+
+// Phase 1 MVP: AI Question Generation Types
+
+export interface AISettings {
+  provider: 'claude' | null;
+  preferences: {
+    questionDifficulty: 'beginner' | 'intermediate' | 'advanced';
+  };
+}
+
+export interface AICostTracking {
+  dailySpend: number;
+  monthlySpend: number;
+  dailyLimit: number; // For tracking only, not enforced
+  monthlyLimit: number; // For tracking only, not enforced
+  questionsGeneratedToday: number;
+  evaluationsToday: number;
+  lastResetDate: string;
+  estimatedCostPerQuestion: number;
 }

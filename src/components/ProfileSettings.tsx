@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { User, Palette, Bell, Settings as SettingsIcon, Mail, Lock, UserCircle as UserCircleIcon, Save } from 'lucide-react';
+import { User, Palette, Bell, Settings as SettingsIcon, Mail, Lock, UserCircle as UserCircleIcon, Save, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { AISettings as AISettingsType, AICostTracking } from '../types';
+import AISettingsComponent from './AISettings';
 
 interface ProfileSettingsProps {
   selectedTheme: string;
@@ -11,6 +13,10 @@ interface ProfileSettingsProps {
   onDailyGoalChange: (goal: number) => void;
   purchasedItems: string[];
   onResetAllProgress: () => void;
+  aiSettings?: AISettingsType;
+  aiCostTracking?: AICostTracking;
+  onAISettingsUpdate?: (settings: AISettingsType) => void;
+  onAICostTrackingUpdate?: (tracking: AICostTracking) => void;
 }
 
 const AVAILABLE_BADGES = ['⭐', '🚀', '🧠', '🎯', '💎', '🏆', '🔥', '⚡'];
@@ -30,6 +36,10 @@ export default function ProfileSettings({
   onDailyGoalChange,
   purchasedItems,
   onResetAllProgress,
+  aiSettings,
+  aiCostTracking,
+  onAISettingsUpdate,
+  onAICostTrackingUpdate,
 }: ProfileSettingsProps) {
   const { user, updateUserProfile } = useAuth();
   const [editingProfile, setEditingProfile] = useState(false);
@@ -341,6 +351,22 @@ export default function ProfileSettings({
         </div>
       </div>
 
+      {/* AI Question Generation Settings */}
+      {user && onAISettingsUpdate && onAICostTrackingUpdate && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <Sparkles className="w-6 h-6" />
+            AI Question Generation
+          </h2>
+          <AISettingsComponent
+            aiSettings={aiSettings}
+            aiCostTracking={aiCostTracking}
+            onUpdate={onAISettingsUpdate}
+            onCostUpdate={onAICostTrackingUpdate}
+          />
+        </div>
+      )}
+
       {/* Danger Zone - Reset All Progress */}
       <div className="bg-red-50 dark:bg-red-900/20 rounded-lg shadow-sm border-2 border-red-200 dark:border-red-800 p-6">
         <h2 className="text-xl font-bold text-red-900 dark:text-red-300 mb-2 flex items-center gap-2">
@@ -359,7 +385,6 @@ export default function ProfileSettings({
               '• XP, level, and ranking\n' +
               '• Gems and purchased items\n' +
               '• Achievements and streaks\n' +
-              '• Challenge mode scores\n' +
               '• Consumable inventory\n\n' +
               'This action CANNOT be undone!'
             );

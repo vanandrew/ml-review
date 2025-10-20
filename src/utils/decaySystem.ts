@@ -56,9 +56,9 @@ export function calculateDaysUntilDecay(progress: TopicProgress): number | null 
   const lastScorePercent = lastScore ? (lastScore.score / lastScore.totalQuestions) * 100 : null;
   
   // Calculate decay days based on mastery strength
-  const BASE_DECAY_DAYS = 30;
-  const MIN_DECAY_DAYS = 7;
-  const MAX_DECAY_DAYS = 90;
+  const BASE_DECAY_DAYS = 7;
+  const MIN_DECAY_DAYS = 2;
+  const MAX_DECAY_DAYS = 30;
   
   const strengthMultiplier = masteryStrength / 100;
   let decayDays = BASE_DECAY_DAYS + (MAX_DECAY_DAYS - BASE_DECAY_DAYS) * strengthMultiplier;

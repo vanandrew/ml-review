@@ -31,9 +31,9 @@ const REVIEW_INTERVALS = {
  * Topics decay faster if they have lower mastery strength
  */
 const DECAY_CONFIG = {
-  BASE_DECAY_DAYS: 30,          // Base days before decay starts
-  MIN_DECAY_DAYS: 7,            // Minimum days before decay (weak mastery)
-  MAX_DECAY_DAYS: 90,           // Maximum days before decay (strong mastery)
+  BASE_DECAY_DAYS: 7,           // Base days before decay starts
+  MIN_DECAY_DAYS: 2,            // Minimum days before decay (weak mastery)
+  MAX_DECAY_DAYS: 30,           // Maximum days before decay (strong mastery)
   MASTERY_STRENGTH_THRESHOLD: 50, // Below this, decay is faster
 };
 

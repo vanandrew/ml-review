@@ -93,36 +93,33 @@ export function initializeGamificationData(): GamificationData {
     lastDailyReset: null,
     weeklyChallenge: null,
     activityHistory: [],
-    // Phase 4: Gems and Challenge Modes
+    // Phase 4: Gems
     gems: 0,
     lastDailyLoginGems: null,
     gemTransactions: [],
     purchasedItems: [],
-    challengeModeStats: {
-      normalCompleted: 0,
-      timedCompleted: 0,
-      lightningCompleted: 0,
-      randomMixCompleted: 0,
-      hardModeCompleted: 0,
-      perfectRunStreak: 0,
-      bestPerfectRun: 0,
-    },
     selectedTheme: 'default',
     selectedBadge: '⭐',
-    // Endless Challenge Mode
-    challengeModeHighScore: 0,
     // Phase 5: Consumables & Power-ups
     consumableInventory: {
       hints: 3, // Start with 3 hints to try the system
       streakFreezes: 1,
-      xpBoosts: 0,
-      knowledgePotions: 0,
-      timeExtensions: 0,
-      secondChances: 0,
-      extraLives: 1, // Start with 1 extra life
-      multiplierBoosts: 0,
     },
     activePowerUps: [],
+    // Phase 1 MVP: AI Question Generation
+    aiSettings: {
+      provider: null,
+      preferences: {
+        questionDifficulty: 'intermediate',
+      },
+    },
+    aiQuestionCache: [],
+    aiCostTracking: {
+      dailySpend: 0,
+      monthlySpend: 0,
+      questionsGeneratedToday: 0,
+      lastResetDate: new Date().toISOString().split('T')[0],
+    },
   };
 }
 

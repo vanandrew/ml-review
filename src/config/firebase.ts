@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
+import { getFunctions } from 'firebase/functions';
 
 // Firebase configuration from environment variables
 const firebaseConfig = {
@@ -17,9 +18,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+console.log('[Firebase Config] Firebase app initialized:', app.name);
+console.log('[Firebase Config] Project ID:', firebaseConfig.projectId);
+
 // Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const functions = getFunctions(app, 'us-central1');
+
+console.log('[Firebase Config] Functions initialized for region: us-central1');
+console.log('[Firebase Config] Functions app:', functions.app.name);
+console.log('[Firebase Config] Functions region:', functions.region || 'default');
 
 // Initialize Analytics (only in production)
 let analytics;

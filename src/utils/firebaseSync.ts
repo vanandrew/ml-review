@@ -80,6 +80,36 @@ export const migrateLocalDataToFirestore = async (userId: string): Promise<void>
 };
 
 /**
+ * Remove undefined values from an object recursively
+ * Firestore doesn't accept undefined values
+ */
+const removeUndefinedFields = (obj: any): any => {
+  if (obj === null || obj === undefined) {
+    return null;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => removeUndefinedFields(item));
+  }
+
+  if (obj instanceof Date) {
+    return obj;
+  }
+
+  if (typeof obj === 'object') {
+    const cleaned: any = {};
+    for (const key in obj) {
+      if (obj[key] !== undefined) {
+        cleaned[key] = removeUndefinedFields(obj[key]);
+      }
+    }
+    return cleaned;
+  }
+
+  return obj;
+};
+
+/**
  * Save user progress and gamification data to Firestore
  */
 export const saveUserDataToFirestore = async (
@@ -88,6 +118,11 @@ export const saveUserDataToFirestore = async (
   gamification?: GamificationData
 ): Promise<void> => {
   try {
+    console.log('[FirebaseSync] Saving data for user:', userId, {
+      topics: Object.keys(progress).length,
+      totalQuizScores: Object.values(progress).reduce((sum, p) => sum + (p.quizScores?.length || 0), 0)
+    });
+
     const userDocRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userDocRef);
 
@@ -96,24 +131,29 @@ export const saveUserDataToFirestore = async (
     };
 
     if (progress) {
-      updateData.progress = progress;
+      // Clean undefined values from progress
+      updateData.progress = removeUndefinedFields(progress);
     }
 
     if (gamification) {
-      updateData.gamification = gamification;
+      // Clean undefined values from gamification
+      updateData.gamification = removeUndefinedFields(gamification);
     }
 
     if (userDoc.exists()) {
+      console.log('[FirebaseSync] Updating existing document');
       await updateDoc(userDocRef, updateData);
     } else {
+      console.log('[FirebaseSync] Creating new document');
       // Create new user document
       await setDoc(userDocRef, {
         ...updateData,
         createdAt: serverTimestamp(),
       });
     }
+    console.log('[FirebaseSync] ✅ Save successful');
   } catch (error) {
-    console.error('Error saving to Firestore:', error);
+    console.error('[FirebaseSync] ❌ Error saving to Firestore:', error);
     throw error;
   }
 };

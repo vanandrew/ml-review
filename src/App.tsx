@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
-import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore, ConsumableInventory } from './types';
+import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore, ConsumableInventory, AISettings as AISettingsType, AICostTracking } from './types';
 import { useAuth } from './contexts/AuthContext';
 import { migrateLocalDataToFirestore, saveUserDataToFirestore, loadUserDataFromFirestore, updateUserProfile } from './utils/firebaseSync';
 import Sidebar from './components/Sidebar';
@@ -8,7 +8,6 @@ import TopicView from './components/TopicView';
 import DashboardView from './components/DashboardView';
 import GemShop from './components/GemShop';
 import ProfileSettings from './components/ProfileSettings';
-import ChallengeMode from './components/ChallengeMode';
 import RankingDisplay from './components/RankingDisplay';
 import XPReward from './components/XPReward';
 import AchievementModal from './components/AchievementModal';
@@ -17,12 +16,11 @@ import LevelUpModal from './components/LevelUpModal';
 import LoginModal from './components/LoginModal';
 import SignupModal from './components/SignupModal';
 import { getTopicById } from './data/topicsIndex';
-import { quizQuestionPools } from './data/quizQuestions';
 import { initializeGamificationData, calculateLevel, XP_PER_CORRECT_ANSWER, XP_PERFECT_BONUS, XP_FIRST_TIME_COMPLETION, checkAndResetDailyProgress } from './utils/gamification';
 import { updateStreak } from './utils/streak';
 import { checkForNewAchievements } from './utils/achievements';
 import { generateWeeklyChallenge, shouldGenerateNewChallenge, updateChallengeProgress, isChallengeComplete } from './utils/challenges';
-import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, addConsumable, activatePowerUp, getShopItem } from './utils/gems';
+import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, addConsumable, getShopItem } from './utils/gems';
 import { getStatusChangeInfo } from './utils/statusCalculation';
 
 function App() {
@@ -30,6 +28,7 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoadingFromFirestore, setIsLoadingFromFirestore] = useState(false);
   const [syncStatus, setSyncStatus] = useState<{ isSyncing: boolean; lastSyncTime: Date | null; syncError: string | null }>({
     isSyncing: false,
     lastSyncTime: null,
@@ -47,13 +46,11 @@ function App() {
   const [showingDashboard, setShowingDashboard] = useState(false);
   const [showingShop, setShowingShop] = useState(false);
   const [showingSettings, setShowingSettings] = useState(false);
-  const [showingChallengeMode, setShowingChallengeMode] = useState(false);
   const [showingRanking, setShowingRanking] = useState(false);
   const [userProgress, setUserProgress] = useState<UserProgress>({});
-  const [gamificationData, setGamificationData] = useState<GamificationData>({
-    ...initializeGamificationData(),
-    challengeModeHighScore: 0,
-  });
+  const [gamificationData, setGamificationData] = useState<GamificationData>(
+    initializeGamificationData()
+  );
   const [xpReward, setXpReward] = useState<{ amount: number; reason: string } | null>(null);
   const [newAchievement, setNewAchievement] = useState<AchievementDefinition | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -101,10 +98,6 @@ function App() {
             unlockedDate: new Date(a.unlockedDate)
           }));
         }
-        // Ensure challengeModeHighScore exists (for backwards compatibility)
-        if (data.challengeModeHighScore === undefined) {
-          data.challengeModeHighScore = 0;
-        }
         setGamificationData(data);
       } catch (error) {
         console.error('Failed to load gamification data:', error);
@@ -118,8 +111,9 @@ function App() {
 
     const syncData = async () => {
       if (user) {
+        setIsLoadingFromFirestore(true);
         setSyncStatus({ isSyncing: true, lastSyncTime: null, syncError: null });
-        
+
         try {
           // Update user profile in Firestore
           await updateUserProfile(user);
@@ -128,21 +122,39 @@ function App() {
           await migrateLocalDataToFirestore(user.uid);
 
           // Load data from Firestore
+          console.log('[Sync] Loading data from Firestore for user:', user.uid);
           const cloudData = await loadUserDataFromFirestore(user.uid);
-          
+
           if (cloudData) {
+            console.log('[Sync] ✅ Loaded cloud data:', {
+              topics: Object.keys(cloudData.progress).length,
+              totalQuizScores: Object.values(cloudData.progress).reduce((sum, p) => sum + (p.quizScores?.length || 0), 0),
+              progressDetails: Object.entries(cloudData.progress).map(([topicId, p]) => ({
+                topicId,
+                scores: p.quizScores?.length || 0,
+                status: p.status
+              }))
+            });
             // Use cloud data
             setUserProgress(cloudData.progress);
             if (cloudData.gamification) {
               setGamificationData(cloudData.gamification);
             }
+          } else {
+            console.log('[Sync] ⚠️ No cloud data found, using local data');
           }
 
           setSyncStatus({ isSyncing: false, lastSyncTime: new Date(), syncError: null });
+          // Important: Set this after state updates to prevent save during load
+          setTimeout(() => setIsLoadingFromFirestore(false), 100);
         } catch (error) {
           console.error('Sync error:', error);
           setSyncStatus({ isSyncing: false, lastSyncTime: null, syncError: 'Sync failed. Using local data.' });
+          setIsLoadingFromFirestore(false);
         }
+      } else {
+        // User logged out, allow saves again
+        setIsLoadingFromFirestore(false);
       }
     };
 
@@ -151,21 +163,41 @@ function App() {
 
   // Save to Firestore when data changes (debounced)
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      console.log('[Save] Skipping save - no user logged in');
+      return;
+    }
+
+    if (isLoadingFromFirestore) {
+      console.log('[Save] Skipping save - currently loading from Firestore');
+      return;
+    }
 
     const saveData = async () => {
       try {
+        console.log('[Save] Debounced save triggered', {
+          userId: user.uid,
+          topics: Object.keys(userProgress).length,
+          totalQuizScores: Object.values(userProgress).reduce((sum, p) => sum + (p.quizScores?.length || 0), 0),
+          totalXP: gamificationData.totalXP,
+          gems: gamificationData.gems
+        });
         await saveUserDataToFirestore(user.uid, userProgress, gamificationData);
         setSyncStatus(prev => ({ ...prev, lastSyncTime: new Date() }));
+        console.log('[Save] ✅ Debounced save completed successfully');
       } catch (error) {
-        console.error('Save error:', error);
+        console.error('[Save] ❌ Debounced save error:', error);
+        setSyncStatus(prev => ({ ...prev, syncError: 'Save failed' }));
       }
     };
 
-    // Debounce save to avoid too many writes
-    const timeoutId = setTimeout(saveData, 2000);
-    return () => clearTimeout(timeoutId);
-  }, [userProgress, gamificationData, user]);
+    // Debounce save to avoid too many writes (500ms is enough to batch rapid changes)
+    const timeoutId = setTimeout(saveData, 500);
+    return () => {
+      console.log('[Save] Debounced save cancelled (state changed before timeout)');
+      clearTimeout(timeoutId);
+    };
+  }, [userProgress, gamificationData, user, isLoadingFromFirestore]);
 
   // Update streak on app load
   useEffect(() => {
@@ -424,7 +456,6 @@ function App() {
     setShowingDashboard(false);
     setShowingShop(false);
     setShowingSettings(false);
-    setShowingChallengeMode(false);
     setShowingRanking(false);
     setIsMobileMenuOpen(false); // Close mobile menu on selection
 
@@ -448,7 +479,6 @@ function App() {
     setShowingDashboard(true);
     setShowingShop(false);
     setShowingSettings(false);
-    setShowingChallengeMode(false);
     setShowingRanking(false);
     setSelectedTopic(null);
     setIsMobileMenuOpen(false); // Close mobile menu on selection
@@ -458,7 +488,6 @@ function App() {
     setShowingShop(true);
     setShowingDashboard(false);
     setShowingSettings(false);
-    setShowingChallengeMode(false);
     setShowingRanking(false);
     setSelectedTopic(null);
     setIsMobileMenuOpen(false); // Close mobile menu on selection
@@ -468,17 +497,6 @@ function App() {
     setShowingSettings(true);
     setShowingShop(false);
     setShowingDashboard(false);
-    setShowingChallengeMode(false);
-    setShowingRanking(false);
-    setSelectedTopic(null);
-    setIsMobileMenuOpen(false); // Close mobile menu on selection
-  };
-
-  const handleChallengeSelect = () => {
-    setShowingChallengeMode(true);
-    setShowingDashboard(false);
-    setShowingShop(false);
-    setShowingSettings(false);
     setShowingRanking(false);
     setSelectedTopic(null);
     setIsMobileMenuOpen(false); // Close mobile menu on selection
@@ -489,22 +507,8 @@ function App() {
     setShowingDashboard(false);
     setShowingShop(false);
     setShowingSettings(false);
-    setShowingChallengeMode(false);
     setSelectedTopic(null);
     setIsMobileMenuOpen(false); // Close mobile menu on selection
-  };
-
-  const handleChallengeComplete = (score: number) => {
-    if (score > gamificationData.challengeModeHighScore) {
-      setGamificationData(prev => ({
-        ...prev,
-        challengeModeHighScore: score,
-      }));
-    }
-  };
-
-  const handleChallengeExit = () => {
-    setShowingChallengeMode(false);
   };
 
   const handlePurchaseItem = (itemId: string) => {
@@ -517,7 +521,7 @@ function App() {
         alert('Not enough gems!');
         return prev;
       }
-      
+
       const updatedData = {
         ...prev,
         gems: result.gems,
@@ -536,25 +540,6 @@ function App() {
         updatedData.purchasedItems = [...prev.purchasedItems, itemId];
       }
 
-      // Handle time-based power-ups
-      if (item.duration && ['double-gems', 'premium-week', 'scholars-blessing'].includes(itemId)) {
-        updatedData.activePowerUps = activatePowerUp(
-          prev.activePowerUps,
-          itemId,
-          item.duration
-        );
-      }
-
-      // Handle XP boost (count-based power-up)
-      if (itemId === 'xp-boost' && item.quantity) {
-        updatedData.activePowerUps = activatePowerUp(
-          prev.activePowerUps,
-          itemId,
-          72, // 3 days max to use
-          item.quantity
-        );
-      }
-
       // Auto-apply theme if purchased
       if (itemId.startsWith('theme-')) {
         updatedData.selectedTheme = itemId;
@@ -564,7 +549,7 @@ function App() {
       if (itemId.startsWith('badge-')) {
         updatedData.selectedBadge = item.icon;
       }
-      
+
       return updatedData;
     });
   };
@@ -609,15 +594,26 @@ function App() {
   const handleResetAllProgress = () => {
     // Reset all progress and gamification data to initial state
     setUserProgress({});
-    setGamificationData({
-      ...initializeGamificationData(),
-      challengeModeHighScore: 0,
-    });
+    setGamificationData(initializeGamificationData());
     // Clear localStorage
     localStorage.removeItem('ml-review-progress');
     localStorage.removeItem('ml-review-gamification');
     // Show success message
     alert('All progress has been reset successfully!');
+  };
+
+  const handleAISettingsUpdate = (settings: AISettingsType) => {
+    setGamificationData(prev => ({
+      ...prev,
+      aiSettings: settings,
+    }));
+  };
+
+  const handleAICostTrackingUpdate = (tracking: AICostTracking) => {
+    setGamificationData(prev => ({
+      ...prev,
+      aiCostTracking: tracking,
+    }));
   };
 
   return (
@@ -701,11 +697,9 @@ function App() {
             showingDashboard={showingDashboard}
             onShopSelect={handleShopSelect}
             onSettingsSelect={handleSettingsSelect}
-            onChallengeSelect={handleChallengeSelect}
             onRankingSelect={handleRankingSelect}
             showingShop={showingShop}
             showingSettings={showingSettings}
-            showingChallengeMode={showingChallengeMode}
             showingRanking={showingRanking}
             onLoginClick={() => setShowLoginModal(true)}
             onSignupClick={() => setShowSignupModal(true)}
@@ -736,8 +730,6 @@ function App() {
                   ? 'Rankings'
                   : showingSettings
                   ? 'Settings'
-                  : showingChallengeMode
-                  ? 'Challenge Mode'
                   : selectedTopic
                   ? selectedTopic.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
                   : 'Getting Started'
@@ -754,29 +746,7 @@ function App() {
 
           <div className="p-4 sm:p-6">
             <div className="max-w-4xl">
-              {showingChallengeMode ? (
-                (() => {
-                  // Get all questions from mastered topics
-                  const masteredTopicIds = Object.entries(userProgress)
-                    .filter(([_, progress]) => progress.status === 'mastered')
-                    .map(([topicId]) => topicId);
-
-                  const allMasteredQuestions = masteredTopicIds.flatMap(topicId => 
-                    quizQuestionPools[topicId] || []
-                  );
-
-                  return (
-                    <ChallengeMode
-                      allQuestions={allMasteredQuestions}
-                      highScore={gamificationData.challengeModeHighScore}
-                      onComplete={handleChallengeComplete}
-                      onExit={handleChallengeExit}
-                      consumableInventory={gamificationData.consumableInventory}
-                      onUseConsumable={handleUseConsumable}
-                    />
-                  );
-                })()
-              ) : showingShop ? (
+              {showingShop ? (
                 <GemShop
                   currentGems={gamificationData.gems}
                   purchasedItems={gamificationData.purchasedItems}
@@ -800,6 +770,10 @@ function App() {
                   onDailyGoalChange={handleSetDailyGoal}
                   purchasedItems={gamificationData.purchasedItems}
                   onResetAllProgress={handleResetAllProgress}
+                  aiSettings={gamificationData.aiSettings}
+                  aiCostTracking={gamificationData.aiCostTracking}
+                  onAISettingsUpdate={handleAISettingsUpdate}
+                  onAICostTrackingUpdate={handleAICostTrackingUpdate}
                 />
               ) : showingDashboard ? (
                 <DashboardView
@@ -827,10 +801,10 @@ function App() {
                         const oldProgress = userProgress[selectedTopic];
                         const oldStatus = oldProgress?.status || 'not_started';
                         const newStatus = progress.status;
-                        
+
                         // Detect status changes and provide feedback
                         const statusChange = getStatusChangeInfo(oldStatus, newStatus, progress.quizScores);
-                        
+
                         if (statusChange.changed) {
                           // Award bonus XP for achieving mastery
                           if (statusChange.isUpgrade && newStatus === 'mastered') {
@@ -838,15 +812,22 @@ function App() {
                               awardXP(50, '🎓 Topic Mastered!');
                             }, 500);
                           }
-                          
+
                           // Show status change message
                           console.log(statusChange.message);
                         }
-                        
-                        setUserProgress(prev => ({
-                          ...prev,
+
+                        // Update local state - this will trigger the debounced save useEffect
+                        const updatedProgress = {
+                          ...userProgress,
                           [selectedTopic]: progress
-                        }));
+                        };
+                        console.log('[Progress] Updating user progress state', {
+                          topicId: selectedTopic,
+                          quizScores: updatedProgress[selectedTopic]?.quizScores?.length || 0,
+                          latestScore: updatedProgress[selectedTopic]?.quizScores?.slice(-1)[0]
+                        });
+                        setUserProgress(updatedProgress);
                       }}
                       onAwardXP={awardXP}
                       onQuizComplete={(score: QuizScore) => handleQuizComplete(score, selectedTopic!)}

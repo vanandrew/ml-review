@@ -1,5 +1,5 @@
 
-import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, Zap, LogIn, UserCircle, LogOut, Cloud, CloudOff, Trophy, X } from 'lucide-react';
+import { ChevronRight, BookOpen, CheckCircle, Circle, LayoutDashboard, ShoppingCart, Settings, LogIn, UserCircle, LogOut, Cloud, CloudOff, Trophy, X } from 'lucide-react';
 import { categories } from '../data/categories';
 import { UserProgress, GamificationData } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,11 +17,9 @@ interface SidebarProps {
   showingDashboard: boolean;
   onShopSelect?: () => void;
   onSettingsSelect?: () => void;
-  onChallengeSelect?: () => void;
   onRankingSelect?: () => void;
   showingShop?: boolean;
   showingSettings?: boolean;
-  showingChallengeMode?: boolean;
   showingRanking?: boolean;
   onLoginClick?: () => void;
   onSignupClick?: () => void;
@@ -40,11 +38,9 @@ export default function Sidebar({
   showingDashboard,
   onShopSelect,
   onSettingsSelect,
-  onChallengeSelect,
   onRankingSelect,
   showingShop,
   showingSettings,
-  showingChallengeMode,
   showingRanking,
   onLoginClick,
   onSignupClick,
@@ -192,7 +188,7 @@ export default function Sidebar({
       <div className="px-4 mb-4">
         <GemDisplay 
           gems={gamificationData.gems} 
-          onClick={showingChallengeMode ? undefined : onShopSelect} 
+          onClick={onShopSelect} 
           selectedTheme={gamificationData.selectedTheme} 
         />
       </div>
@@ -201,44 +197,27 @@ export default function Sidebar({
         {/* Dashboard Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={() => !showingChallengeMode && onDashboardSelect()}
-            disabled={showingChallengeMode}
+            onClick={() => onDashboardSelect()}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingDashboard
                 ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+            }`}
           >
             <LayoutDashboard className="w-4 h-4" />
             <span>Dashboard</span>
           </button>
         </div>
 
-        {/* Challenge Mode Button */}
-        <div className="px-2 mb-2">
-          <button
-            onClick={onChallengeSelect}
-            className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
-              showingChallengeMode
-                ? 'bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 text-yellow-700 dark:text-yellow-400 font-medium border border-yellow-300 dark:border-yellow-700'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
-          >
-            <Zap className="w-4 h-4" />
-            <span>Challenge Mode</span>
-          </button>
-        </div>
-
         {/* Rankings Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={() => !showingChallengeMode && onRankingSelect && onRankingSelect()}
-            disabled={showingChallengeMode}
+            onClick={() => onRankingSelect && onRankingSelect()}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingRanking
                 ? 'bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 text-purple-700 dark:text-purple-400 font-medium border border-purple-300 dark:border-purple-700'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+            }`}
           >
             <Trophy className="w-4 h-4" />
             <span>Rankings</span>
@@ -248,13 +227,12 @@ export default function Sidebar({
         {/* Shop Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={() => !showingChallengeMode && onShopSelect && onShopSelect()}
-            disabled={showingChallengeMode}
+            onClick={() => onShopSelect && onShopSelect()}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingShop
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 font-medium'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+            }`}
           >
             <ShoppingCart className="w-4 h-4" />
             <span>Gem Shop</span>
@@ -264,13 +242,12 @@ export default function Sidebar({
         {/* Settings Button */}
         <div className="px-2 mb-2">
           <button
-            onClick={() => !showingChallengeMode && onSettingsSelect && onSettingsSelect()}
-            disabled={showingChallengeMode}
+            onClick={() => onSettingsSelect && onSettingsSelect()}
             className={`w-full flex items-center space-x-2 px-3 py-2 text-sm rounded-lg transition-colors ${
               showingSettings
                 ? 'bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+            }`}
           >
             <Settings className="w-4 h-4" />
             <span>Settings</span>
@@ -293,13 +270,12 @@ export default function Sidebar({
             return (
               <div key={category.id}>
                 <button
-                  onClick={() => !showingChallengeMode && onCategorySelect(category.id)}
-                  disabled={showingChallengeMode}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors ${
+                  onClick={() => onCategorySelect(category.id)}
+                        className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors ${
                     isExpanded
                       ? getColorClasses(category.color)
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  }`}
                 >
                   <div className="flex items-center space-x-2">
                     <BookOpen className="w-4 h-4" />
@@ -322,13 +298,12 @@ export default function Sidebar({
                     {category.topics.map((topicId) => (
                       <button
                         key={topicId}
-                        onClick={() => !showingChallengeMode && onTopicSelect(topicId, category.id)}
-                        disabled={showingChallengeMode}
-                        className={`w-full flex items-center space-x-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
+                        onClick={() => onTopicSelect(topicId, category.id)}
+                                    className={`w-full flex items-center space-x-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
                           selectedTopic === topicId
                             ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                             : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                        } ${showingChallengeMode ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        }`}
                       >
                         {getProgressIcon(topicId)}
                         <span className="truncate">

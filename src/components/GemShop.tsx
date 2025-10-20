@@ -75,12 +75,6 @@ export default function GemShop({ currentGems, purchasedItems, consumableInvento
   const inventory = consumableInventory || {
     hints: 0,
     streakFreezes: 0,
-    xpBoosts: 0,
-    knowledgePotions: 0,
-    timeExtensions: 0,
-    secondChances: 0,
-    extraLives: 0,
-    multiplierBoosts: 0,
   };
 
   const filteredItems = GEM_SHOP_ITEMS.filter(item => 
@@ -147,12 +141,6 @@ export default function GemShop({ currentGems, purchasedItems, consumableInvento
           if (isConsumable) {
             if (item.id === 'hint-pack') inventoryCount = inventory.hints;
             else if (item.id === 'streak-freeze') inventoryCount = inventory.streakFreezes;
-            else if (item.id === 'xp-boost') inventoryCount = Math.floor(inventory.xpBoosts / 3);
-            else if (item.id === 'knowledge-potion') inventoryCount = Math.floor(inventory.knowledgePotions / 5);
-            else if (item.id === 'time-extension') inventoryCount = inventory.timeExtensions;
-            else if (item.id === 'second-chance') inventoryCount = inventory.secondChances;
-            else if (item.id === 'extra-life') inventoryCount = inventory.extraLives;
-            else if (item.id === 'multiplier-boost') inventoryCount = inventory.multiplierBoosts;
           }
           
           return (
