@@ -127,10 +127,20 @@ export class ClaudeAIService implements AIService {
         throw new Error('No questions returned from Cloud Function');
       }
 
-      console.log(
-        `[Claude AI Service] Successfully generated ${data.questions.length} questions. ` +
-        `Estimated cost: $${data.metadata.estimatedCost.toFixed(3)}`
-      );
+      // Log detailed cost information
+      const metadata = data.metadata;
+      if (metadata.inputTokens && metadata.outputTokens) {
+        console.log(
+          `[Claude AI Service] Successfully generated ${data.questions.length} questions. ` +
+          `Cost: $${metadata.actualCost.toFixed(4)} ` +
+          `(${metadata.inputTokens} input + ${metadata.outputTokens} output = ${metadata.totalTokens} tokens)`
+        );
+      } else {
+        console.log(
+          `[Claude AI Service] Successfully generated ${data.questions.length} questions. ` +
+          `Estimated cost: $${metadata.estimatedCost.toFixed(3)}`
+        );
+      }
 
       return data.questions;
     } catch (error: any) {

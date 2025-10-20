@@ -85,11 +85,14 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
   {"question": "...", "options": ["...", "...", "...", "..."], "correctAnswer": 1, "explanation": "..."}
 ]`;
         const message = await client.messages.create({
-            model: 'claude-sonnet-4-5-20250929',
+            model: 'claude-haiku-4-5-20251001',
             max_tokens: 8000, // Increased for multiple questions
             temperature: 1.0, // Maximum temperature for Anthropic API (0-1.0 range) = most creative and varied
             messages: [{ role: 'user', content: prompt }],
         });
+        // Extract token usage for accurate cost calculation
+        const inputTokens = message.usage.input_tokens;
+        const outputTokens = message.usage.output_tokens;
         const contentBlock = message.content[0];
         if (contentBlock.type !== 'text') {
             throw new Error('Unexpected response type from Claude API');
@@ -128,14 +131,23 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
             const shuffled = shuffleAnswers(q);
             return Object.assign(Object.assign({}, shuffled), { id: `ai-${topicId}-${Date.now()}-${index}`, type: 'multiple-choice', source: 'ai-generated' });
         });
-        const estimatedCost = count * 0.003;
+        // Calculate actual cost based on real token usage
+        // Haiku 4.5 pricing: $1/1M input tokens, $5/1M output tokens
+        const inputCost = (inputTokens / 1000000) * 1.0; // $1 per million
+        const outputCost = (outputTokens / 1000000) * 5.0; // $5 per million
+        const actualCost = inputCost + outputCost;
         res.status(200).json({
             data: {
                 questions,
                 metadata: {
                     count: questions.length,
-                    estimatedCost,
-                    model: 'claude-sonnet-4-5-20250929',
+                    actualCost: actualCost,
+                    estimatedCost: actualCost, // Backward compatibility - now using actual cost
+                    costPerQuestion: actualCost / questions.length,
+                    inputTokens: inputTokens,
+                    outputTokens: outputTokens,
+                    totalTokens: inputTokens + outputTokens,
+                    model: 'claude-haiku-4-5-20251001',
                     generatedAt: new Date().toISOString(),
                 },
             }

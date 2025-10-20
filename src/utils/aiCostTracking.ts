@@ -32,9 +32,16 @@ export const RATE_LIMITS: Record<string, RateLimitConfig> = {
 
 /**
  * Estimated costs per question for different providers
+ * Based on actual 2025 pricing from provider documentation:
+ * - Claude Haiku 4.5: $1/1M input, $5/1M output (~$0.001/question)
+ * - Claude Sonnet 4.5: $3/1M input, $15/1M output (~$0.003/question)
+ * - OpenAI GPT-4: varies by model (~$0.01/question)
+ * - Gemini: varies by tier (~$0.002/question)
  */
 export const COST_PER_QUESTION: Record<string, number> = {
-  'claude': 0.003,
+  'claude': 0.001,        // Haiku 4.5 (current model)
+  'claude-haiku': 0.001,  // Explicit Haiku pricing
+  'claude-sonnet': 0.003, // Explicit Sonnet pricing
   'openai': 0.01,
   'gemini': 0.002,
 };
@@ -51,7 +58,7 @@ export const getDefaultCostTracking = (): CostTracking => {
     questionsGeneratedToday: 0,
     evaluationsToday: 0,
     lastResetDate: new Date().toISOString().split('T')[0],
-    estimatedCostPerQuestion: 0.003, // Default to Claude pricing
+    estimatedCostPerQuestion: 0.001, // Default to Claude Haiku 4.5 pricing
   };
 };
 
@@ -65,7 +72,7 @@ export class CostTracker {
   constructor(provider: string, tracking?: CostTracking) {
     this.provider = provider;
     this.tracking = tracking || getDefaultCostTracking();
-    this.tracking.estimatedCostPerQuestion = COST_PER_QUESTION[provider] || 0.003;
+    this.tracking.estimatedCostPerQuestion = COST_PER_QUESTION[provider] || 0.001;
     this.checkAndResetIfNeeded();
   }
 
