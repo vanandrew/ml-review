@@ -533,7 +533,7 @@ function App() {
         updatedData.consumableInventory = addConsumable(
           prev.consumableInventory,
           itemId,
-          item.quantity || 1
+          1  // Always buy 1 pack, the addConsumable function handles the quantity per pack
         );
       } else {
         // Non-consumables are one-time purchases
