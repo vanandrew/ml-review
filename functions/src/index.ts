@@ -101,7 +101,7 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
 ]`;
 
         const message = await client.messages.create({
-          model: 'claude-haiku-4-5-20251001',
+          model: 'claude-sonnet-4-5-20250929',
           max_tokens: 8000, // Increased for multiple questions
           temperature: 1.0, // Maximum temperature for Anthropic API (0-1.0 range) = most creative and varied
           messages: [{ role: 'user', content: prompt }],
@@ -166,9 +166,9 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
         });
 
         // Calculate actual cost based on real token usage
-        // Haiku 4.5 pricing: $1/1M input tokens, $5/1M output tokens
-        const inputCost = (inputTokens / 1_000_000) * 1.0;   // $1 per million
-        const outputCost = (outputTokens / 1_000_000) * 5.0; // $5 per million
+        // Sonnet 4.5 pricing: $3/1M input tokens, $15/1M output tokens
+        const inputCost = (inputTokens / 1_000_000) * 3.0;   // $3 per million
+        const outputCost = (outputTokens / 1_000_000) * 15.0; // $15 per million
         const actualCost = inputCost + outputCost;
 
         res.status(200).json({
@@ -182,7 +182,7 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
               inputTokens: inputTokens,
               outputTokens: outputTokens,
               totalTokens: inputTokens + outputTokens,
-              model: 'claude-haiku-4-5-20251001',
+              model: 'claude-sonnet-4-5-20250929',
               generatedAt: new Date().toISOString(),
             },
           }
