@@ -103,7 +103,11 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
         const message = await client.messages.create({
           model: 'claude-sonnet-4-5-20250929',
           max_tokens: 8000, // Increased for multiple questions
-          temperature: 1.0, // Maximum temperature for Anthropic API (0-1.0 range) = most creative and varied
+          top_p: 0.95, // When thinking is enabled, only top_p between 0.95-1.0 is allowed (no temperature/top_k)
+          thinking: {
+            type: 'enabled',
+            budget_tokens: 5000, // Allow up to 5000 tokens for thinking (must be >= 1024 and < max_tokens)
+          },
           messages: [{ role: 'user', content: prompt }],
         });
 
