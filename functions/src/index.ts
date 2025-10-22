@@ -115,11 +115,13 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
         const inputTokens = message.usage.input_tokens;
         const outputTokens = message.usage.output_tokens;
 
-        const contentBlock = message.content[0];
-        if (contentBlock.type !== 'text') {
-          throw new Error('Unexpected response type from Claude API');
+        // With extended thinking, response includes thinking blocks followed by text blocks
+        // Find the first text content block (skip thinking/redacted_thinking blocks)
+        const textBlock = message.content.find(block => block.type === 'text');
+        if (!textBlock || textBlock.type !== 'text') {
+          throw new Error('No text content block found in Claude API response');
         }
-        const content = contentBlock.text;
+        const content = textBlock.text;
 
         let questionsData;
         try {
