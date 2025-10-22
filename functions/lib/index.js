@@ -77,6 +77,7 @@ CRITICAL VARIETY AND CREATIVITY REQUIREMENTS:
 - Make questions thought-provoking and interesting - surprise the learner!
 - Test deep understanding and critical thinking, not just memorization
 - Each question should have exactly 4 plausible options with only ONE clearly correct answer
+- Randomize the position of the correct answer among the options
 - Include detailed explanations that provide insight
 
 Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact format:
@@ -119,24 +120,8 @@ Return ONLY a valid JSON array with NO markdown, NO code blocks, in this exact f
         if (!Array.isArray(questionsData) || questionsData.length === 0) {
             throw new Error('Expected an array of questions but got invalid format');
         }
-        // Shuffle answer options to randomize correct answer position
-        const shuffleAnswers = (question) => {
-            const correctAnswerText = question.options[question.correctAnswer];
-            const shuffledOptions = [...question.options];
-            // Fisher-Yates shuffle algorithm
-            for (let i = shuffledOptions.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-            }
-            // Find new position of correct answer
-            const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
-            return Object.assign(Object.assign({}, question), { options: shuffledOptions, correctAnswer: newCorrectIndex });
-        };
-        // Add metadata and shuffle each question
-        const questions = questionsData.map((q, index) => {
-            const shuffled = shuffleAnswers(q);
-            return Object.assign(Object.assign({}, shuffled), { id: `ai-${topicId}-${Date.now()}-${index}`, type: 'multiple-choice', source: 'ai-generated' });
-        });
+        // Add metadata to each question
+        const questions = questionsData.map((q, index) => (Object.assign(Object.assign({}, q), { id: `ai-${topicId}-${Date.now()}-${index}`, type: 'multiple-choice', source: 'ai-generated' })));
         // Calculate actual cost based on real token usage
         // Sonnet 4.5 pricing: $3/1M input tokens, $15/1M output tokens
         const inputCost = (inputTokens / 1000000) * 3.0; // $3 per million
