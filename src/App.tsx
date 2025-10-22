@@ -684,6 +684,7 @@ function App() {
           z-50 md:z-0
           transform md:transform-none
           transition-transform duration-300 ease-in-out
+          bg-white dark:bg-gray-800
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}>
           <Sidebar
