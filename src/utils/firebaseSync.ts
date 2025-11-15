@@ -35,6 +35,9 @@ export const migrateLocalDataToFirestore = async (userId: string): Promise<void>
           if (progress[topicId].firstCompletion) {
             progress[topicId].firstCompletion = new Date(progress[topicId].firstCompletion);
           }
+          if (progress[topicId].lastMasteredDate) {
+            progress[topicId].lastMasteredDate = new Date(progress[topicId].lastMasteredDate);
+          }
           if (progress[topicId].quizScores) {
             progress[topicId].quizScores = progress[topicId].quizScores.map((score: any) => ({
               ...score,
@@ -188,6 +191,12 @@ export const loadUserDataFromFirestore = async (
         progress[topicId].firstCompletion = firstCompletion.toDate ?
           firstCompletion.toDate() :
           new Date(firstCompletion);
+      }
+      if (progress[topicId].lastMasteredDate) {
+        const lastMasteredDate = progress[topicId].lastMasteredDate as any;
+        progress[topicId].lastMasteredDate = lastMasteredDate.toDate ?
+          lastMasteredDate.toDate() :
+          new Date(lastMasteredDate);
       }
       if (progress[topicId].quizScores) {
         progress[topicId].quizScores = progress[topicId].quizScores.map((score: any) => ({

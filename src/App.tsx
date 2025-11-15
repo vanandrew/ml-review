@@ -73,6 +73,9 @@ function App() {
           if (progress[topicId].firstCompletion) {
             progress[topicId].firstCompletion = new Date(progress[topicId].firstCompletion);
           }
+          if (progress[topicId].lastMasteredDate) {
+            progress[topicId].lastMasteredDate = new Date(progress[topicId].lastMasteredDate);
+          }
           if (progress[topicId].quizScores) {
             progress[topicId].quizScores = progress[topicId].quizScores.map((score: any) => ({
               ...score,
