@@ -2,6 +2,7 @@ import { BarChart3, TrendingUp, Award, Calendar, Clock, Target } from 'lucide-re
 import { GamificationData, UserProgress } from '../types';
 import { calculateLevel } from '../utils/gamification';
 import { categories } from '../data/categories';
+import { calculateReviewStatus } from '../utils/reviewSystem';
 
 interface StatsDashboardProps {
   gamificationData: GamificationData;
@@ -11,14 +12,16 @@ interface StatsDashboardProps {
 export default function StatsDashboard({ gamificationData, userProgress }: StatsDashboardProps) {
   const level = calculateLevel(gamificationData.totalXP);
   
-  // Calculate statistics
+  // Calculate statistics using review status (same as Review Queue)
   const topicsStarted = Object.values(userProgress).filter(
     p => p.status === 'reviewing' || p.status === 'mastered'
   ).length;
   
-  const topicsMastered = Object.values(userProgress).filter(
-    p => p.status === 'mastered'
-  ).length;
+  // Count mastered topics using calculateReviewStatus for accuracy
+  const topicsMastered = Object.values(userProgress).filter(p => {
+    const reviewStatus = calculateReviewStatus(p);
+    return reviewStatus === 'mastered' || p.status === 'mastered';
+  }).length;
   
   const totalQuizzesTaken = gamificationData.totalQuizzes;
   const averageScore = totalQuizzesTaken > 0
@@ -30,12 +33,15 @@ export default function StatsDashboard({ gamificationData, userProgress }: Stats
       )
     : 0;
   
-  // Category breakdown
+  // Category breakdown - use review status for accuracy
   const categoryStats = categories.map(category => {
     const categoryTopics = category.topics;
-    const masteredCount = categoryTopics.filter(
-      topicId => userProgress[topicId]?.status === 'mastered'
-    ).length;
+    const masteredCount = categoryTopics.filter(topicId => {
+      const progress = userProgress[topicId];
+      if (!progress) return false;
+      const reviewStatus = calculateReviewStatus(progress);
+      return reviewStatus === 'mastered' || progress.status === 'mastered';
+    }).length;
     const percentage = Math.round((masteredCount / categoryTopics.length) * 100);
     
     return {

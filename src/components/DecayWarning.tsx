@@ -1,5 +1,6 @@
 import { UserProgress } from '../types';
-import { getDecayStatistics, calculateDaysUntilDecay } from '../utils/decaySystem';
+import { calculateDaysUntilDecay } from '../utils/decaySystem';
+import { calculateReviewStatus } from '../utils/reviewSystem';
 import { Clock, TrendingDown, AlertTriangle, Award } from 'lucide-react';
 
 interface DecayWarningProps {
@@ -9,14 +10,26 @@ interface DecayWarningProps {
 }
 
 export default function DecayWarning({ userProgress, onSelectTopic, getTopicTitle }: DecayWarningProps) {
-  const stats = getDecayStatistics(userProgress);
+  // Calculate statistics based on review status (same as Review Queue)
+  const allTopics = Object.entries(userProgress);
   
-  // Get topics that are decaying soon
-  const decayingSoonTopics = Object.entries(userProgress)
+  const masteredTopics = allTopics.filter(([_, progress]) => {
+    const reviewStatus = calculateReviewStatus(progress);
+    return reviewStatus === 'mastered' || progress.status === 'mastered';
+  });
+  
+  const needsReviewTopics = allTopics.filter(([_, progress]) => {
+    const reviewStatus = calculateReviewStatus(progress);
+    return reviewStatus === 'needs-review';
+  });
+  
+  const decayingSoonTopics = allTopics
     .filter(([_, progress]) => {
       if (progress.status !== 'mastered') return false;
+      const reviewStatus = calculateReviewStatus(progress);
+      if (reviewStatus === 'needs-review') return false; // Already needs review
       const daysUntil = calculateDaysUntilDecay(progress);
-      return daysUntil !== null && daysUntil > 0 && daysUntil <= 7;
+      return daysUntil !== null && daysUntil > 0 && daysUntil <= 3;
     })
     .map(([topicId, progress]) => ({
       topicId,
@@ -25,13 +38,24 @@ export default function DecayWarning({ userProgress, onSelectTopic, getTopicTitl
     }))
     .sort((a, b) => a.daysUntil - b.daysUntil)
     .slice(0, 5);
-
+  
+  // Calculate average mastery strength
+  const totalStrength = masteredTopics.reduce((sum, [_, p]) => sum + (p.masteryStrength || 0), 0);
+  const averageMasteryStrength = masteredTopics.length > 0 
+    ? Math.round(totalStrength / masteredTopics.length) 
+    : 0;
+  
+  const stats = {
+    totalMastered: masteredTopics.length,
+    decayingSoon: decayingSoonTopics.length,
+    needsReview: needsReviewTopics.length,
+    averageMasteryStrength,
+  };
+  
   // Don't show if no mastered topics
   if (stats.totalMastered === 0) return null;
 
-  const hasWarnings = stats.needsReview > 0 || stats.decayingSoon > 0;
-
-  return (
+  const hasWarnings = stats.needsReview > 0 || stats.decayingSoon > 0;  return (
     <div className={`rounded-lg shadow-sm border p-6 ${
       hasWarnings 
         ? 'bg-orange-50 dark:bg-orange-900/10 border-orange-200 dark:border-orange-800'

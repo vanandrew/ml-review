@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu } from 'lucide-react';
 import { ThemeMode, UserProgress, GamificationData, AchievementDefinition, QuizScore, ConsumableInventory, AISettings as AISettingsType, AICostTracking } from './types';
 import { useAuth } from './contexts/AuthContext';
@@ -22,6 +22,7 @@ import { checkForNewAchievements } from './utils/achievements';
 import { generateWeeklyChallenge, shouldGenerateNewChallenge, updateChallengeProgress, isChallengeComplete } from './utils/challenges';
 import { awardGems as awardGemsUtil, spendGems, checkDailyLoginGems, calculateGemsEarned, addConsumable, getShopItem } from './utils/gems';
 import { getStatusChangeInfo } from './utils/statusCalculation';
+import { applyDecayToProgress } from './utils/decaySystem';
 
 function App() {
   const { user, loading: authLoading } = useAuth();
@@ -55,6 +56,7 @@ function App() {
   const [newAchievement, setNewAchievement] = useState<AchievementDefinition | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [levelUpData, setLevelUpData] = useState<{ show: boolean; level: number }>({ show: false, level: 0 });
+  const hasRunDecayCheck = useRef(false);
 
   useEffect(() => {
     // Apply initial theme class on mount
@@ -74,7 +76,14 @@ function App() {
             progress[topicId].firstCompletion = new Date(progress[topicId].firstCompletion);
           }
           if (progress[topicId].lastMasteredDate) {
-            progress[topicId].lastMasteredDate = new Date(progress[topicId].lastMasteredDate);
+            const convertedDate = new Date(progress[topicId].lastMasteredDate);
+            // Only set if it's a valid date
+            if (!isNaN(convertedDate.getTime())) {
+              progress[topicId].lastMasteredDate = convertedDate;
+            } else {
+              // Remove invalid date
+              delete progress[topicId].lastMasteredDate;
+            }
           }
           if (progress[topicId].quizScores) {
             progress[topicId].quizScores = progress[topicId].quizScores.map((score: any) => ({
@@ -259,6 +268,54 @@ function App() {
       }));
     }
   }, [gamificationData.weeklyChallenge]); // Re-run when challenge changes
+
+  // Apply decay to mastered topics after data is loaded
+  useEffect(() => {
+    // Only run once after data is loaded from Firestore
+    if (Object.keys(userProgress).length === 0 || isLoadingFromFirestore || hasRunDecayCheck.current) {
+      return;
+    }
+
+    hasRunDecayCheck.current = true;
+    
+    // First, fix mastered topics without lastMasteredDate
+    let needsUpdate = false;
+    const fixedProgress = { ...userProgress };
+    
+    Object.entries(fixedProgress).forEach(([topicId, progress]) => {
+      if (progress.status === 'mastered' && !progress.lastMasteredDate) {
+        // Set it to the last quiz date or last accessed date
+        if (progress.quizScores && progress.quizScores.length > 0) {
+          fixedProgress[topicId] = {
+            ...progress,
+            lastMasteredDate: progress.quizScores[progress.quizScores.length - 1].date,
+          };
+        } else if (progress.lastAccessed) {
+          fixedProgress[topicId] = {
+            ...progress,
+            lastMasteredDate: progress.lastAccessed,
+          };
+        } else {
+          fixedProgress[topicId] = {
+            ...progress,
+            lastMasteredDate: new Date(),
+          };
+        }
+        needsUpdate = true;
+      }
+    });
+    
+    // Apply the fix first if needed
+    const progressToCheck = needsUpdate ? fixedProgress : userProgress;
+    
+    // Now check for decay
+    const { updatedProgress, decayedTopicIds } = applyDecayToProgress(progressToCheck);
+    
+    // Update if either fix was needed or topics decayed
+    if (needsUpdate || decayedTopicIds.length > 0) {
+      setUserProgress(updatedProgress);
+    }
+  }, [userProgress, isLoadingFromFirestore]); // Run when data loads
 
   useEffect(() => {
     // Save theme to localStorage and apply to document

@@ -118,7 +118,7 @@ export function applyDecayToProgress(userProgress: UserProgress): {
  */
 export function getDecayStatistics(userProgress: UserProgress): {
   totalMastered: number;
-  decayingSoon: number; // Within 7 days
+  decayingSoon: number; // Within 3 days
   needsReview: number; // Already decayed
   averageMasteryStrength: number;
 } {
@@ -128,12 +128,14 @@ export function getDecayStatistics(userProgress: UserProgress): {
   let needsReview = 0;
   let totalStrength = 0;
   
-  masteredTopics.forEach(progress => {
-    if (hasDecayed(progress)) {
+  masteredTopics.forEach((progress) => {
+    const decayed = hasDecayed(progress);
+    const daysUntil = calculateDaysUntilDecay(progress);
+    
+    if (decayed) {
       needsReview++;
     } else {
-      const daysUntil = calculateDaysUntilDecay(progress);
-      if (daysUntil !== null && daysUntil <= 7) {
+      if (daysUntil !== null && daysUntil <= 3) { // Changed from 7 to 3 days
         decayingSoon++;
       }
     }
